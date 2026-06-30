@@ -21,12 +21,12 @@ const PriceRangeSlider = () => {
         min={0}
         max={100}
         value={value}
-        onChange={e => setValue(Number(e.target.value))}
+        onChange={(e) => setValue(Number(e.target.value))}
         className="price-slider w-full cursor-pointer"
         style={trackStyle as React.CSSProperties}
       />
     </div>
   );
-}
+};
 
 export default PriceRangeSlider;

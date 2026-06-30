@@ -1,12 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import BackIcon from '@/app/assets/svgs/home/BackIcon';
-import CartIcon from '@/app/assets/svgs/home/CartIcon';
-import StarIcon from '@/app/assets/svgs/home/StarIcon';
-import LoveIcon from '@/app/assets/svgs/home/LoveIcon';
-import Button from '@/app/components/Button';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import BackIcon from "@/app/assets/svgs/home/BackIcon";
+import CartIcon from "@/app/assets/svgs/home/CartIcon";
+import StarIcon from "@/app/assets/svgs/home/StarIcon";
+import LoveIcon from "@/app/assets/svgs/home/LoveIcon";
+import Button from "@/app/components/Button";
+import { useRouter } from "next/navigation";
+import avatarImg from "@/app/assets/images/seller_avatar.png";
 
 const ItemDetailPage = () => {
   const [liked, setLiked] = useState(false);
@@ -18,7 +19,7 @@ const ItemDetailPage = () => {
       <div className="flex items-center justify-between px-5 pt-6 pb-3 bg-white">
         <button
           onClick={() => router.back()}
-          className="w-[38px] h-[38px] rounded-full bg-[#F5F6FA] flex items-center justify-center"
+          className="w-[38px] h-[38px] rounded-full bg-[#FF4304] flex items-center justify-center"
         >
           <BackIcon />
         </button>
@@ -27,7 +28,7 @@ const ItemDetailPage = () => {
 
         <button
           id="item-detail-cart-btn"
-          className="w-[38px] h-[38px] rounded-full bg-[#F5F6FA] flex items-center justify-center"
+          className="w-[38px] h-[38px] rounded-full bg-[#FF4304] flex items-center justify-center"
         >
           <CartIcon />
         </button>
@@ -37,12 +38,11 @@ const ItemDetailPage = () => {
         {/* <Image src={IphoneImage} alt="iPhone" fill className="object-cover" />
          */}
 
-        <div className='bg-[#F0F1F5] w-[280px] h-[280px]'>
-        </div>
+        <div className="bg-[#F0F1F5] w-[280px] h-[280px]"></div>
 
         <button
           id="item-detail-like-btn"
-          onClick={() => setLiked(l => !l)}
+          onClick={() => setLiked((l) => !l)}
           className="absolute bottom-4 right-4 w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center"
         >
           <LoveIcon liked={liked} />
@@ -70,28 +70,39 @@ const ItemDetailPage = () => {
           <p className="text-[#4B5563] text-[10px] mb-4">Lagos</p>
 
           <p className="text-[#374151] text-xs leading-[1.65] mb-5">
-            Stunning 6.1-inch Liquid Retina display, device is a must-have for anyone looking to Bionic
-            chip for lightning-fast performance. This system for breathtaking photos, and A13 system
-            for breathtaking photos, and A13
+            Stunning 6.1-inch Liquid Retina display, device is a must-have for
+            anyone looking to Bionic chip for lightning-fast performance. This
+            system for breathtaking photos, and A13 system for breathtaking
+            photos, and A13
           </p>
 
           {/* Seller Card */}
           <div className="flex items-center justify-between bg-white rounded-2xl border border-[#F0F1F5] shadow-[0_4px_4px_0px_rgba(0,0,0,0.1)] px-4 py-3.5 mb-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-[#E5E7EB] flex items-center justify-center overflow-hidden">
-                
+                <img
+                  src={avatarImg.src}
+                  alt="Sarah Johnson"
+                  className="w-full h-full object-cover"
+                />
               </div>
 
-              <span className="text-xs font-semibold">Sarah Lee</span>
+              <span className="text-xs font-semibold">Sarah Johnson</span>
             </div>
 
             <button
+              onClick={() => router.push("/seller-profile")}
               className="flex items-center gap-1.5 text-primary text-xs font-semibold"
             >
               view seller
-
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M5 12h14M13 6l6 6-6 6" stroke="#FF4304" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M5 12h14M13 6l6 6-6 6"
+                  stroke="#FF4304"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
           </div>
@@ -110,7 +121,7 @@ const ItemDetailPage = () => {
             {/* Review Card */}
             <div className="bg-[#FFF5F3] rounded-2xl p-5 mb-3 text-xs">
               <div className="flex items-center gap-1 mb-2">
-                {[1, 2, 3, 4, 5].map(i => (
+                {[1, 2, 3, 4, 5].map((i) => (
                   <StarIcon key={i} size={14} />
                 ))}
 
@@ -120,15 +131,14 @@ const ItemDetailPage = () => {
               <p className="font-semibold mb-1.5">Sofia L.</p>
 
               <p className="leading-[1.6] mb-4 text-[#374151]">
-                &ldquo;Looks brand new! The fabric feels fresh and crisp. Can&apos;t believe I got this for half the price.&rdquo;
+                &ldquo;Looks brand new! The fabric feels fresh and crisp.
+                Can&apos;t believe I got this for half the price.&rdquo;
               </p>
-              
+
               <p className="text-[#6B7280]">July 28, 2025</p>
             </div>
 
-            <button
-              className="w-full text-center text-primary text-xs font-light py-1"
-            >
+            <button className="w-full text-center text-primary text-xs font-light py-1">
               See all reviews
             </button>
           </div>
@@ -140,14 +150,14 @@ const ItemDetailPage = () => {
           variant="outline"
           onClick={() => {}}
           fullWidth
-          className='text-primary border-primary'
+          className="text-primary border-primary"
         >
           Make Offer
         </Button>
 
         <Button
           variant="primary"
-          onClick={() => router.push('/confirm-order')}
+          onClick={() => router.push("/confirm-order")}
           fullWidth
         >
           Buy Now
