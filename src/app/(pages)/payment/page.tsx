@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import BackIcon from '@/app/assets/svgs/home/BackIcon';
-import CardIcon from '@/app/assets/svgs/home/CardIcon';
-import WalletIcon from '@/app/assets/svgs/home/WalletIcon';
-import BankIcon from '@/app/assets/svgs/home/BankIcon';
-import SecureIcon from '@/app/assets/svgs/home/SecureIcon';
-import LockIcon from '@/app/assets/svgs/home/LockIcon';
-import Input from '@/app/components/Input';
-import Button from '@/app/components/Button';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import BackIcon from "@/app/assets/svgs/home/BackIcon";
+import CardIcon from "@/app/assets/svgs/home/CardIcon";
+import WalletIcon from "@/app/assets/svgs/home/WalletIcon";
+import BankIcon from "@/app/assets/svgs/home/BankIcon";
+import SecureIcon from "@/app/assets/svgs/home/SecureIcon";
+import LockIcon from "@/app/assets/svgs/home/LockIcon";
+import Input from "@/app/components/Input";
+import Button from "@/app/components/Button";
+import { useRouter } from "next/navigation";
 
-type PaymentMethod = 'card' | 'wallet' | 'bank';
+type PaymentMethod = "card" | "wallet" | "bank";
 
 const PaymentPage = () => {
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [agreed, setAgreed] = useState(false);
   const router = useRouter();
 
@@ -23,26 +23,40 @@ const PaymentPage = () => {
   const platformFee = 2250;
   const totalAmount = itemTotal + deliveryFee + platformFee;
 
-  const formatNaira = (amount: number) =>
-    `₦${amount.toLocaleString('en-NG')}`;
+  const formatNaira = (amount: number) => `₦${amount.toLocaleString("en-NG")}`;
 
   const paymentMethods = [
     {
-      id: 'card' as PaymentMethod,
-      label: 'Debit/Credit Card',
-      icon: <CardIcon size={20} color={paymentMethod === 'card' ? '#FF4304' : '#1D1E20'} />,
+      id: "card" as PaymentMethod,
+      label: "Debit/Credit Card",
+      icon: (
+        <CardIcon
+          size={20}
+          color={paymentMethod === "card" ? "#FF4304" : "#1D1E20"}
+        />
+      ),
       subtitle: null,
     },
     {
-      id: 'wallet' as PaymentMethod,
-      label: 'Wallet Balance',
-      icon: <WalletIcon size={20} color={paymentMethod === 'wallet' ? '#FF4304' : '#1D1E20'} />,
-      subtitle: 'Available: ₦500,000',
+      id: "wallet" as PaymentMethod,
+      label: "Wallet Balance",
+      icon: (
+        <WalletIcon
+          size={20}
+          color={paymentMethod === "wallet" ? "#FF4304" : "#1D1E20"}
+        />
+      ),
+      subtitle: "Available: ₦500,000",
     },
     {
-      id: 'bank' as PaymentMethod,
-      label: 'Bank Transfer',
-      icon: <BankIcon size={20} color={paymentMethod === 'bank' ? '#FF4304' : '#1D1E20'} />,
+      id: "bank" as PaymentMethod,
+      label: "Bank Transfer",
+      icon: (
+        <BankIcon
+          size={20}
+          color={paymentMethod === "bank" ? "#FF4304" : "#1D1E20"}
+        />
+      ),
       subtitle: null,
     },
   ];
@@ -56,32 +70,42 @@ const PaymentPage = () => {
         <button
           id="payment-back-btn"
           onClick={() => router.back()}
-          className="w-[38px] h-[38px] rounded-full bg-[#F5F6FA] flex items-center justify-center"
+          className="w-[38px] h-[38px] rounded-full bg-[#FF4304] flex items-center justify-center"
         >
           <BackIcon />
         </button>
-        <span className="text-[#1D1E20] text-[15px] font-semibold">Payment</span>
+        <span className="text-[#1D1E20] text-[15px] font-semibold">
+          Payment
+        </span>
         <div className="w-[38px]" />
       </div>
 
       <div className="flex-1 overflow-y-auto pt-3">
         {/* ── Payment Method ── */}
         <div className="bg-white mx-4 rounded-2xl px-4 py-4 mb-5">
-          <h2 className="text-[#1D1E20] text-sm font-bold mb-3">Payment Method</h2>
+          <h2 className="text-[#1D1E20] text-sm font-bold mb-3">
+            Payment Method
+          </h2>
 
           <div className="space-y-2.5">
-            {paymentMethods.map(method => (
+            {paymentMethods.map((method) => (
               <button
                 key={method.id}
                 id={`payment-method-${method.id}-btn`}
                 onClick={() => setPaymentMethod(method.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[14px] border-2 text-left transition-all ${paymentMethod === method.id
-                  ? 'border-[#FF4304] bg-[#FFF5F3]'
-                  : 'border-[#E5E7EB] bg-white'
-                  }`}
+                className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[14px] border-2 text-left transition-all ${
+                  paymentMethod === method.id
+                    ? "border-[#FF4304] bg-[#FFF5F3]"
+                    : "border-[#E5E7EB] bg-white"
+                }`}
               >
-                <div className={`w-[18px] h-[18px] rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${paymentMethod === method.id ? 'border-[#FF4304]' : 'border-[#D1D5DB]'
-                  }`}>
+                <div
+                  className={`w-[18px] h-[18px] rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+                    paymentMethod === method.id
+                      ? "border-[#FF4304]"
+                      : "border-[#D1D5DB]"
+                  }`}
+                >
                   {paymentMethod === method.id && (
                     <div className="w-[8px] h-[8px] rounded-full bg-[#FF4304]" />
                   )}
@@ -90,9 +114,13 @@ const PaymentPage = () => {
                 <div className="flex items-center gap-2.5 flex-1">
                   {method.icon}
                   <div>
-                    <span className={`text-sm font-semibold text-text-primary`}>{method.label}</span>
+                    <span className={`text-sm font-semibold text-text-primary`}>
+                      {method.label}
+                    </span>
                     {method.subtitle && (
-                      <p className="text-[#4B5563] text-xs mt-0.5 font-light">{method.subtitle}</p>
+                      <p className="text-[#4B5563] text-xs mt-0.5 font-light">
+                        {method.subtitle}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -103,28 +131,38 @@ const PaymentPage = () => {
 
         {/* ── Payment Summary ── */}
         <div className="bg-white mx-4 rounded-2xl p-4 shadow-md mb-5">
-          <h2 className="text-text-primary text-sm font-bold mb-4">Payment Summary</h2>
+          <h2 className="text-text-primary text-sm font-bold mb-4">
+            Payment Summary
+          </h2>
 
           <div className="space-y-4 mb-4">
             <div className="flex items-center justify-between">
               <span className="text-text-secondary text-sm">Item Total</span>
-              <span className="text-text-primary text-sm font-semibold">{formatNaira(itemTotal)}</span>
+              <span className="text-text-primary text-sm font-semibold">
+                {formatNaira(itemTotal)}
+              </span>
             </div>
 
             <div className="flex items-center justify-between">
               <span className="text-text-secondary text-sm">Delivery Fee</span>
-              <span className="text-text-primary text-sm font-semibold">{formatNaira(deliveryFee)}</span>
+              <span className="text-text-primary text-sm font-semibold">
+                {formatNaira(deliveryFee)}
+              </span>
             </div>
 
             <div className="flex items-center justify-between">
               <span className="text-text-secondary text-sm">Platform Fee</span>
-              <span className="text-text-primary text-sm font-semibold">{formatNaira(platformFee)}</span>
+              <span className="text-text-primary text-sm font-semibold">
+                {formatNaira(platformFee)}
+              </span>
             </div>
 
             <div className="h-px bg-[#F0F1F5]" />
             <div className="flex items-center justify-between">
               <span className="text-text-primary font-bold">Total Amount</span>
-              <span className="text-text-primary font-bold">{formatNaira(totalAmount)}</span>
+              <span className="text-text-primary font-bold">
+                {formatNaira(totalAmount)}
+              </span>
             </div>
           </div>
 
@@ -132,7 +170,8 @@ const PaymentPage = () => {
           <div className="bg-[#FFE8E0] border border-[#FFB899] rounded-[12px] px-3.5 py-3 flex gap-2">
             <SecureIcon size={22} color="#FF4304" />
             <p className="text-[#C03000] text-[10px] leading-[1.5]">
-              Your payment will be held securely in escrow until you confirm delivery
+              Your payment will be held securely in escrow until you confirm
+              delivery
             </p>
           </div>
         </div>
@@ -142,26 +181,36 @@ const PaymentPage = () => {
           <div className="mt-0.5 flex-shrink-0">
             <Input
               checked={agreed}
-              onChange={e => setAgreed(e.target.checked)}
+              onChange={(e) => setAgreed(e.target.checked)}
               className="hidden"
-              type='checkbox'
+              type="checkbox"
             />
 
             <div
-              onClick={() => setAgreed(a => !a)}
-              className={`w-5 h-5 rounded-[5px] border-2 flex items-center justify-center transition-all ${agreed ? 'bg-[#FF4304] border-[#FF4304]' : 'border-[#D1D5DB] bg-white'
-                }`}
+              onClick={() => setAgreed((a) => !a)}
+              className={`w-5 h-5 rounded-[5px] border-2 flex items-center justify-center transition-all ${
+                agreed
+                  ? "bg-[#FF4304] border-[#FF4304]"
+                  : "border-[#D1D5DB] bg-white"
+              }`}
             >
               {agreed && (
                 <svg width="11" height="8" viewBox="0 0 11 8" fill="none">
-                  <path d="M1 4l3 3 6-6" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  <path
+                    d="M1 4l3 3 6-6"
+                    stroke="white"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               )}
             </div>
           </div>
 
           <p className="text-[#374151] text-xs leading-[1.6]">
-            I understand my payment will be held in escrow until I confirm delivery of the item in good condition.
+            I understand my payment will be held in escrow until I confirm
+            delivery of the item in good condition.
           </p>
         </div>
 
@@ -188,12 +237,12 @@ const PaymentPage = () => {
 
       <div className="px-5 py-4">
         <Button
-          onClick={canPay ? () => router.push('/payment-success') : undefined}
+          onClick={canPay ? () => router.push("/payment-success") : undefined}
           disabled={!canPay}
           fullWidth
-          className='font-bold'
+          className="font-bold"
         >
-          Pay ₦{totalAmount.toLocaleString('en-NG')} Securely
+          Pay ₦{totalAmount.toLocaleString("en-NG")} Securely
         </Button>
       </div>
     </div>
