@@ -1,8 +1,8 @@
 import { formatNaira } from "@/lib/utils";
 import React, { useState } from "react";
 import IphoneImage from "@/app/assets/images/IphoneImage.png";
-import Button from "../Button";
 import Image from "next/image";
+import ProgressBar from "../ProgressBar";
 
 interface OrderItem {
   id: number;
@@ -54,77 +54,114 @@ const OrdersComponent = () => {
       {/* Custom tabs */}
       <div className="flex bg-[#F5F6FA] p-1 rounded-xl mb-5 shadow-inner">
         {(["buying", "selling"] as const).map((tab) => (
-          <Button
-            // variant={"outlined"}
+          <button
             key={tab}
             onClick={() => setOrdersTab(tab)}
-            className={`flex-1 transition-all capitalize ${
+            className={`flex-1 text-center py-2.5 text-xs font-bold rounded-lg transition-all capitalize ${
               ordersTab === tab
-                ? "bg-primary text-white shadow-sm scale-[1.02]"
+                ? "bg-[#FF4304] text-white shadow-sm scale-[1.02]"
                 : "text-text-secondary hover:text-text-primary"
             }`}
           >
             {tab}
-          </Button>
+          </button>
         ))}
       </div>
 
       {/* Orders list */}
-      <div className="flex flex-col gap-3 flex-1">
+      <div className="flex flex-col gap-4 flex-1">
         {orders.filter((item) => item.type === ordersTab).length > 0 ? (
           orders
             .filter((item) => item.type === ordersTab)
             .map((item) => (
               <div
                 key={item.id}
-                className="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col gap-3 shadow-[0_2px_6px_rgba(0,0,0,0.01)]"
+                className="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col gap-4 shadow-[0_2px_6px_rgba(0,0,0,0.01)]"
               >
                 <div className="flex gap-4">
-                  <div className="relative w-[140px] h-[140px] rounded-xl bg-gray-50 border border-gray-100 overflow-hidden flex-shrink-0">
+                  <div className="relative w-[100px] h-[100px] rounded-xl bg-gray-50 border border-gray-100 overflow-hidden flex-shrink-0">
                     <Image
                       src={item.image}
                       alt={item.title}
-                      width={140}
-                      height={140}
+                      width={100}
+                      height={100}
                       className="w-full h-full object-cover"
                       unoptimized
                     />
                   </div>
 
-                  <div className="flex-1 flex flex-col justify-between py-0.5">
-                    <h4 className="text-md font-extrabold text-[#1D1E20] leading-snug tracking-tight">
-                      {item.title}
-                    </h4>
-                    <span className="text-primary text-md font-bold block">
-                      {formatNaira(item.price)}
-                    </span>
-                    <span className="text-xs text-gray-600 block">
-                      Seller: Hassan Saidu
-                    </span>
+                  <div className="flex-1 flex flex-col justify-between py-1">
+                    <div>
+                      <h4 className="text-sm font-extrabold text-[#1D1E20] leading-snug tracking-tight">
+                        {item.title}
+                      </h4>
+                      <span className="text-[#8F959E] text-[10px] font-medium block mt-1">
+                        Order #{2024000 + item.id}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-primary text-sm font-extrabold block">
+                        {formatNaira(item.price)}
+                      </span>
+                      <span className="text-[10px] text-gray-500 block mt-0.5">
+                        {item.type === "buying" ? "Seller" : "Buyer"}: Hassan Saidu
+                      </span>
+                    </div>
                   </div>
                 </div>
-                {/* Status indicators */}
-                <div className="flex justify-center items-center gap-1.5 mt-2">
-                  <span
-                    className={`w-1.5 h-1.5 rounded-full ${
+
+                {/* Progress & Status section */}
+                <div className="border-t border-gray-50 pt-4 flex flex-col gap-3">
+                  <ProgressBar
+                    title="Order Status"
+                    progress={
                       item.status === "Awaiting Payment"
-                        ? "bg-amber-500 animate-pulse"
-                        : "bg-green-500"
-                    }`}
+                        ? 25
+                        : item.status === "In Transit"
+                          ? 65
+                          : 100
+                    }
+                    comment={
+                      item.status === "Awaiting Payment"
+                        ? "Waiting for buyer's payment confirmation"
+                        : item.status === "In Transit"
+                          ? "Package is with the courier"
+                          : "Package delivered successfully"
+                    }
+                    color={
+                      item.status === "Awaiting Payment"
+                        ? "bg-amber-500"
+                        : item.status === "In Transit"
+                          ? "bg-blue-500"
+                          : "bg-green-500"
+                    }
                   />
-                  <span
-                    className={`text-[9px] font-bold ${
-                      item.status === "Awaiting Payment"
-                        ? "text-amber-600"
-                        : "text-green-600"
-                    }`}
-                  >
-                    {item.status}
-                  </span>
-                </div>
-                <div>
-                  <div></div>
-                  <span>jan 15 2026</span>
+
+                  <div className="flex justify-between items-center text-[10px] text-[#8F959E] font-semibold mt-1">
+                    <span>Ordered on: {item.date}</span>
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          item.status === "Awaiting Payment"
+                            ? "bg-amber-500 animate-pulse"
+                            : item.status === "In Transit"
+                              ? "bg-blue-500"
+                              : "bg-green-500"
+                        }`}
+                      />
+                      <span
+                        className={
+                          item.status === "Awaiting Payment"
+                            ? "text-amber-600"
+                            : item.status === "In Transit"
+                              ? "text-blue-600"
+                              : "text-green-600"
+                        }
+                      >
+                        {item.status}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))
@@ -132,8 +169,8 @@ const OrdersComponent = () => {
           <div className="flex-1 flex flex-col items-center justify-center text-center py-20 gap-4 bg-white/40 border border-dashed border-gray-150 rounded-2xl">
             <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-text-secondary">
               <svg
-                width="24"
-                height="24"
+                width="22"
+                height="22"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"

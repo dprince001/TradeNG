@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import BackIcon from "@/app/assets/svgs/home/BackIcon";
-import CartIcon from "@/app/assets/svgs/home/CartIcon";
+import CartIcon from "@/app/components/layout/CartIcon";
 import StarIcon from "@/app/assets/svgs/home/StarIcon";
 import LoveIcon from "@/app/assets/svgs/home/LoveIcon";
 import Button from "@/app/components/Button";
 import { useRouter } from "next/navigation";
 import avatarImg from "@/app/assets/images/seller_avatar.png";
+import TopNavbar from "@/app/components/layout/TopNavbar";
 
 const ItemDetailPage = () => {
   const [liked, setLiked] = useState(false);
@@ -16,23 +16,19 @@ const ItemDetailPage = () => {
   return (
     <div className="w-full min-h-screen flex flex-col">
       {/* ── Header ── */}
-      <div className="flex items-center justify-between px-5 pt-6 pb-3 bg-white">
-        <button
-          onClick={() => router.back()}
-          className="w-[38px] h-[38px] rounded-full bg-[#FF4304] flex items-center justify-center"
-        >
-          <BackIcon />
-        </button>
-
-        <span className="text-[#1D1E20] font-semibold">Item Details</span>
-
-        <button
-          id="item-detail-cart-btn"
-          className="w-[38px] h-[38px] rounded-full bg-[#FF4304] flex items-center justify-center"
-        >
-          <CartIcon />
-        </button>
-      </div>
+      <TopNavbar
+        title="Item Details"
+        onBack={() => router.back()}
+        rightElement={
+          <button
+            id="item-detail-cart-btn"
+            onClick={() => router.push("/confirm-order")}
+            className="w-[42px] h-[42px] rounded-full bg-[#F5F6FA] text-[#1D1E20] hover:bg-brand-orange hover:text-white flex items-center justify-center relative transition-all duration-200 active:scale-95"
+          >
+            <CartIcon count={1} />
+          </button>
+        }
+      />
 
       <div className="relative w-full bg-[#F0F1F5] h-[280px] overflow-hidden">
         {/* <Image src={IphoneImage} alt="iPhone" fill className="object-cover" />

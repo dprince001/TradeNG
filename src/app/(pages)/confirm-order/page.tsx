@@ -3,8 +3,8 @@
 import { use, useState } from "react";
 import Image from "next/image";
 import IphoneImage from "@/app/assets/images/IphoneImage.png";
-import BackIcon from "@/app/assets/svgs/home/BackIcon";
-import CartIcon from "@/app/assets/svgs/home/CartIcon";
+import CartIcon from "@/app/components/layout/CartIcon";
+import TopNavbar from "@/app/components/layout/TopNavbar";
 import LocationIcon from "@/app/assets/svgs/home/LocationIcon";
 import SecureIcon from "@/app/assets/svgs/home/SecureIcon";
 import InfoIcon from "@/app/assets/svgs/home/InfoIcon";
@@ -29,24 +29,18 @@ const ConfirmOrderPage = () => {
   return (
     <div className="w-full bg-[#F7F8FA] min-h-screen relative flex flex-col">
       {/* ── Header ── */}
-      <div className="flex items-center justify-between px-5 pt-6 pb-3 bg-white">
-        <button
-          id="confirm-order-back-btn"
-          onClick={() => router.back()}
-          className="w-[38px] h-[38px] rounded-full bg-[#FF4304] flex items-center justify-center"
-        >
-          <BackIcon />
-        </button>
-        <span className="text-[#1D1E20] text-[15px] font-semibold">
-          Confirm Order
-        </span>
-        <button
-          id="confirm-order-cart-btn"
-          className="w-[38px] h-[38px] rounded-full bg-[#FF4304] flex items-center justify-center"
-        >
-          <CartIcon />
-        </button>
-      </div>
+      <TopNavbar
+        title="Confirm Order"
+        onBack={() => router.back()}
+        rightElement={
+          <button
+            id="confirm-order-cart-btn"
+            className="w-[42px] h-[42px] rounded-full bg-[#F5F6FA] text-[#1D1E20] hover:bg-brand-orange hover:text-white flex items-center justify-center relative transition-all duration-200 active:scale-95"
+          >
+            <CartIcon count={1} />
+          </button>
+        }
+      />
 
       <div className="flex-1 overflow-y-auto pt-3">
         {/* ── Product Summary Card ── */}

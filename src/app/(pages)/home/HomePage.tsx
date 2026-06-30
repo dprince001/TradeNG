@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import MenuIcon from "@/app/assets/svgs/home/MenuIcon";
-import NotificationIcon from "@/app/assets/svgs/home/NotificationIcon";
-import CartIcon from "@/app/assets/svgs/home/CartIcon";
+import NotificationIcon from "@/app/components/layout/NotificationIconComponent";
+import CartIcon from "@/app/components/layout/CartIcon";
 import SearchIcon from "@/app/assets/svgs/home/SearchIcon";
 import FilterIcon from "@/app/assets/svgs/home/FilterIcon";
 import SecureIcon from "@/app/assets/svgs/home/SecureIcon";
@@ -12,10 +12,51 @@ import FilterOverlay from "@/app/(pages)/home/components/Filter";
 import ProductCard from "@/app/(pages)/home/components/ProductCard";
 import { useRouter } from "next/navigation";
 import BottomNavbar from "@/app/components/layout/BottomNavbar";
+import NotificationPanel, { NotificationItem } from "@/app/components/layout/NotificationPanel";
 
 const HomePage = () => {
   const [showFilter, setShowFilter] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const router = useRouter();
+
+  const [notifications, setNotifications] = useState<NotificationItem[]>([
+    {
+      id: 1,
+      title: "New Offer Received",
+      message: "You received a new offer of ₦420,000 on iPhone 13 Pro Max",
+      time: "2 mins ago",
+      unread: true,
+      type: "offer",
+    },
+    {
+      id: 2,
+      title: "Order Confirmed",
+      message: "Your payment for Nike Air Max was successfully processed.",
+      time: "1 hour ago",
+      unread: true,
+      type: "success",
+    },
+    {
+      id: 3,
+      title: "Get Verified",
+      message: "Verify your profile to unlock premium escrow protection badge.",
+      time: "2 days ago",
+      unread: false,
+      type: "info",
+    },
+  ]);
+
+  const handleMarkAsRead = (id: number) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, unread: false } : n))
+    );
+  };
+
+  const handleDeleteNotification = (id: number) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  };
+
+  const unreadCount = notifications.filter((n) => n.unread).length;
 
   const categories = [
     { label: "Phones", emoji: "📱" },
@@ -43,6 +84,13 @@ const HomePage = () => {
   return (
     <>
       {showFilter && <FilterOverlay onClose={() => setShowFilter(false)} />}
+      <NotificationPanel
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+        notifications={notifications}
+        onMarkAsRead={handleMarkAsRead}
+        onDelete={handleDeleteNotification}
+      />
 
       <div className="w-full min-h-screen relative flex flex-col py-6 pb-24">
         {/* ── Nav ── */}
@@ -51,11 +99,17 @@ const HomePage = () => {
             <MenuIcon />
           </button>
           <div className="flex items-center gap-2.5">
-            <button className="w-[42px] h-[42px] rounded-full bg-gray-100 flex items-center justify-center">
-              <NotificationIcon />
+            <button
+              onClick={() => setShowNotifications(true)}
+              className="w-[42px] h-[42px] rounded-full bg-gray-100 flex items-center justify-center relative hover:scale-105 active:scale-95 transition-transform"
+            >
+              <NotificationIcon color="#1D1E20" count={unreadCount} />
             </button>
-            <button className="w-[42px] h-[42px] rounded-full bg-gray-100 flex items-center justify-center">
-              <CartIcon />
+            <button
+              onClick={() => router.push("/confirm-order")}
+              className="w-[42px] h-[42px] rounded-full bg-gray-100 flex items-center justify-center relative hover:scale-105 active:scale-95 transition-transform"
+            >
+              <CartIcon color="#1D1E20" count={1} />
             </button>
           </div>
         </div>

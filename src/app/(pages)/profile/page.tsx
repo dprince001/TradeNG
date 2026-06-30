@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import TopNavbar from "@/app/components/layout/TopNavbar";
 import Button from "@/app/components/Button";
@@ -21,6 +21,14 @@ export default function ProfilePage() {
   const [view, setView] = useState<
     "main" | "edit" | "listings" | "orders" | "wallet" | "settings"
   >("main");
+
+  const [verificationStatus, setVerificationStatus] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setVerificationStatus(localStorage.getItem("verificationStatus"));
+    }
+  }, []);
 
   // Edit Profile fields
 
@@ -74,11 +82,16 @@ export default function ProfilePage() {
                 height={120}
                 className="w-40 h-40 rounded-full bg-gradient-to-tr from-[#FF4304] to-[#FF8C39] flex items-center justify-center text-white text-2xl font-extrabold shadow-md border-4 border-white"
               ></Image>
-              <h2 className="text-[#1D1E20] text-2xl font-semibold mt-3.5 tracking-tight">
+              <h2 className="text-[#1D1E20] text-2xl font-semibold mt-3.5 tracking-tight flex items-center justify-center gap-1.5">
                 Hassan Saidu
+                {verificationStatus === "verified" && (
+                  <span className="inline-flex items-center justify-center bg-[#D1FAE5] text-green-700 text-[8px] font-extrabold px-2 py-0.5 rounded-full ml-1">
+                    ✓ Verified
+                  </span>
+                )}
               </h2>
               <span className="text-[#8F959E] text-sm mt-0.5">
-                Verified Seller since 2023
+                {verificationStatus === "verified" ? "Verified Seller" : "Seller"} since 2023
               </span>
               <Button
                 onClick={() => setView("edit")}
@@ -125,36 +138,71 @@ export default function ProfilePage() {
             </div>
 
             {/* Payer Verification Banner */}
-            <div className="bg-[#FFF5F3] border border-primary/5 rounded-lg p-4 mt-5 flex items-center justify-between shadow-[0_2px_8px_rgba(255,67,4,0.02)]">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  >
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                  </svg>
+            {(!verificationStatus || verificationStatus === "none") && (
+              <div className="bg-[#FFF5F3] border border-primary/5 rounded-lg p-4 mt-5 flex items-center justify-between shadow-[0_2px_8px_rgba(255,67,4,0.02)]">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    >
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span className="text-xs font-extrabold text-[#1D1E20] block">
+                      Get Verified by TradeNG
+                    </span>
+                    <span className="text-[10px] text-[#8F959E] font-medium mt-0.5 block">
+                      Unlock escrow protection and badges
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-xs font-extrabold text-[#1D1E20] block">
-                    Get Verified by TradeNG
-                  </span>
-                  <span className="text-[10px] text-[#8F959E] font-medium mt-0.5 block">
-                    Unlock escrow protection and badges
-                  </span>
-                </div>
+                <Button
+                  onClick={() => router.push("/verify")}
+                  className="px-4 py-2 bg-primary text-white text-[10px] font-bold rounded-xl shadow-sm hover:bg-primary/95 transition-colors"
+                >
+                  Verify
+                </Button>
               </div>
-              <Button
-                onClick={() => toast.success("Verification flow initiated!")}
-                className="px-4 py-2 bg-primary text-white text-[10px] font-bold rounded-xl shadow-sm hover:bg-primary/95 transition-colors"
-              >
-                Verify
-              </Button>
-            </div>
+            )}
+
+            {verificationStatus === "pending" && (
+              <div className="bg-[#FFFDF5] border border-amber-200/50 rounded-lg p-4 mt-5 flex items-center justify-between shadow-[0_2px_8px_rgba(245,158,11,0.02)] border-dashed">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center flex-shrink-0">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span className="text-xs font-extrabold text-[#1D1E20] block">
+                      Verification Pending
+                    </span>
+                    <span className="text-[10px] text-[#8F959E] font-medium mt-0.5 block">
+                      TradeNG is reviewing your application.
+                    </span>
+                  </div>
+                </div>
+                <span className="px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-600 text-[9px] font-bold rounded-lg uppercase tracking-wider">
+                  Pending
+                </span>
+              </div>
+            )}
 
             {/* Quick Actions Title */}
             <h3 className="text-xs font-extrabold text-[#1D1E20] uppercase tracking-wider mt-6 mb-3">
@@ -241,7 +289,7 @@ export default function ProfilePage() {
                   ),
                 },
               ].map((action) => (
-                <Button
+                <button
                   key={action.label}
                   onClick={() => setView(action.view as any)}
                   className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white border border-gray-100 shadow-[0_2px_6px_rgba(0,0,0,0.01)] hover:scale-105 active:scale-95 transition-all group"
@@ -251,10 +299,10 @@ export default function ProfilePage() {
                   >
                     {action.icon}
                   </div>
-                  <span className="text-[9px] font-bold text-[#1D1E20] text-center mt-2 leading-tight">
+                  <span className="text-xs text-gray-600 text-center mt-2 leading-tight">
                     {action.label}
                   </span>
-                </Button>
+                </button>
               ))}
             </div>
 
