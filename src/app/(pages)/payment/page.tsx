@@ -13,12 +13,7 @@ import { useRouter } from 'next/navigation';
 
 type PaymentMethod = 'card' | 'wallet' | 'bank';
 
-interface PaymentPageProps {
-  onBack?: () => void;
-  onPaySuccess?: () => void;
-}
-
-const PaymentPage = ({ onBack, onPaySuccess }: PaymentPageProps) => {
+const PaymentPage = () => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
   const [agreed, setAgreed] = useState(false);
   const router = useRouter();
@@ -60,7 +55,7 @@ const PaymentPage = ({ onBack, onPaySuccess }: PaymentPageProps) => {
       <div className="flex items-center justify-between px-5 pt-6 pb-3 bg-white">
         <button
           id="payment-back-btn"
-          onClick={onBack}
+          onClick={() => router.back()}
           className="w-[38px] h-[38px] rounded-full bg-[#F5F6FA] flex items-center justify-center"
         >
           <BackIcon />

@@ -15,12 +15,7 @@ import { useRouter } from 'next/navigation';
 
 type DeliveryMethod = 'meetup' | 'delivery';
 
-interface ConfirmOrderPageProps {
-  onBack?: () => void;
-  onProceed?: () => void;
-}
-
-const ConfirmOrderPage = ({ onBack, onProceed }: ConfirmOrderPageProps) => {
+const ConfirmOrderPage = () => {
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('delivery');
   const router = useRouter();
 
@@ -37,7 +32,7 @@ const ConfirmOrderPage = ({ onBack, onProceed }: ConfirmOrderPageProps) => {
       <div className="flex items-center justify-between px-5 pt-6 pb-3 bg-white">
         <button
           id="confirm-order-back-btn"
-          onClick={onBack}
+          onClick={() => router.back()}
           className="w-[38px] h-[38px] rounded-full bg-[#F5F6FA] flex items-center justify-center"
         >
           <BackIcon />

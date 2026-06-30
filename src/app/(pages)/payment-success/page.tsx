@@ -9,21 +9,9 @@ import ShippingIcon from '@/app/assets/svgs/home/ShippingIcon';
 import DeliveryIcon from '@/app/assets/svgs/home/DeliveryIcon';
 import { useRouter } from 'next/navigation';
 
-interface PaymentSuccessPageProps {
-    onTrackOrder?: () => void;
-    onMessageSeller?: () => void;
-    onBackToHome?: () => void;
-    onConfirmDelivery?: () => void;
-}
-
 const totalAmount = 457250;
 
-const PaymentSuccessPage = ({
-    onTrackOrder,
-    onMessageSeller,
-    onBackToHome,
-    onConfirmDelivery,
-}: PaymentSuccessPageProps) => {
+const PaymentSuccessPage = () => {
     const router = useRouter();
 
     return (
@@ -127,7 +115,7 @@ const PaymentSuccessPage = ({
                     variant="outline"
                     fullWidth
                     className="border-primary text-primary"
-                    onClick={onMessageSeller}
+                    onClick={() => {}} // TODO: Message seller
                 >
                     Message Seller
                 </Button>
@@ -135,7 +123,7 @@ const PaymentSuccessPage = ({
                 <Button
                     variant='ghost'
                     fullWidth
-                    onClick={onBackToHome}
+                    onClick={() => router.push('/')}
                     className='text-text-tertiary'
                 >
                     Back to Home

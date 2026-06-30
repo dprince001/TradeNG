@@ -9,17 +9,10 @@ import InfoIcon from '@/app/assets/svgs/home/InfoIcon';
 import Button from '@/app/components/Button';
 import ConfirmReleaseModal from './ConfirmReleaseItem';
 
-interface ConfirmDeliveryPageProps {
-  onBack?: () => void;
-  onReleasePayment?: () => void;
-  onReportProblem?: () => void;
-}
+import { useRouter } from 'next/navigation';
 
-const ConfirmDeliveryPage = ({
-  onBack,
-  onReleasePayment,
-  onReportProblem,
-}: ConfirmDeliveryPageProps) => {
+const ConfirmDeliveryPage = () => {
+  const router = useRouter();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const totalAmount = 457250;
 
@@ -29,7 +22,7 @@ const ConfirmDeliveryPage = ({
       {/* ── Header ── */}
       <div className="flex items-center justify-between px-5 pt-6 pb-3 bg-white">
         <button
-          onClick={onBack}
+          onClick={() => router.back()}
           className="w-[38px] h-[38px] rounded-full bg-[#F5F6FA] flex items-center justify-center"
         >
           <BackIcon />
@@ -84,7 +77,7 @@ const ConfirmDeliveryPage = ({
             variant="outline"
             fullWidth
             className="border-primary text-primary"
-            onClick={onReportProblem}
+            onClick={() => {}} // TODO: Handle Report Problem
           >
             Report a Problem
           </Button>
@@ -126,12 +119,12 @@ const ConfirmDeliveryPage = ({
           amount={totalAmount}
           onConfirm={() => {
             setShowConfirmModal(false);
-            onReleasePayment?.();
+            router.push('/');
           }}
           onCancel={() => setShowConfirmModal(false)}
           onReportProblem={() => {
             setShowConfirmModal(false);
-            onReportProblem?.();
+            // onReportProblem?.(); // TODO: Handle Report Problem
           }}
         />
       )}

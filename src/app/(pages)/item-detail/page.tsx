@@ -8,12 +8,7 @@ import LoveIcon from '@/app/assets/svgs/home/LoveIcon';
 import Button from '@/app/components/Button';
 import { useRouter } from 'next/navigation';
 
-interface ItemDetailPageProps {
-  onBack?: () => void;
-  onBuyNow?: () => void;
-}
-
-const ItemDetailPage = ({ onBack, onBuyNow }: ItemDetailPageProps) => {
+const ItemDetailPage = () => {
   const [liked, setLiked] = useState(false);
   const router = useRouter();
 
@@ -22,7 +17,7 @@ const ItemDetailPage = ({ onBack, onBuyNow }: ItemDetailPageProps) => {
       {/* ── Header ── */}
       <div className="flex items-center justify-between px-5 pt-6 pb-3 bg-white">
         <button
-          onClick={onBack}
+          onClick={() => router.back()}
           className="w-[38px] h-[38px] rounded-full bg-[#F5F6FA] flex items-center justify-center"
         >
           <BackIcon />
