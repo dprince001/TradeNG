@@ -179,7 +179,7 @@ const ItemDetailPage = () => {
         onApplyOffer={(offerPrice, address) => {
           setIsOfferModalOpen(false);
           router.push(
-            `/confirm-order?name=${encodeURIComponent(item.name)}&price=${item.price}&offerPrice=${offerPrice}&address=${encodeURIComponent(address)}`
+            `/chat?name=${encodeURIComponent(item.name)}&price=${item.price}&offerPrice=${offerPrice}`
           );
         }}
       />
