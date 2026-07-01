@@ -130,7 +130,7 @@ export default function ProfilePage() {
               </div>
               <div>
                 <span className="text-xs font-black text-[#1D1E20] block">
-                  0
+                  15
                 </span>
                 <span className="text-[8px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
                   Items sold
@@ -202,44 +202,44 @@ export default function ProfilePage() {
             </h3>
 
             {/* Quick Actions Grid */}
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-4 gap-2.5">
               {[
                 {
                   label: "My Listings",
                   view: "listings",
                   color: "bg-primary/10 text-primary",
-                  icon: <LayoutGrid className="w-5 h-5" strokeWidth={2} />,
+                  icon: <LayoutGrid className="w-4 h-4" strokeWidth={1.5} />,
                 },
                 {
                   label: "My Orders",
                   view: "orders",
                   color: "bg-green-50 text-green-600",
-                  icon: <ShoppingBag className="w-5 h-5" strokeWidth={2} />,
+                  icon: <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />,
                 },
                 {
                   label: "Wallet",
                   view: "wallet",
                   color: "bg-amber-50 text-amber-600",
-                  icon: <Wallet className="w-5 h-5" strokeWidth={2} />,
+                  icon: <Wallet className="w-4 h-4" strokeWidth={1.5} />,
                 },
                 {
                   label: "Settings",
                   view: "settings",
                   color: "bg-purple-50 text-purple-600",
-                  icon: <Settings className="w-5 h-5" strokeWidth={2} />,
+                  icon: <Settings className="w-4 h-4" strokeWidth={1.5} />,
                 },
               ].map((action) => (
                 <button
                   key={action.label}
                   onClick={() => setView(action.view as any)}
-                  className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white border border-gray-100 shadow-[0_2px_6px_rgba(0,0,0,0.01)] hover:scale-105 active:scale-95 transition-all group"
+                  className="flex flex-col items-center justify-center py-2.5 px-2 rounded-xl bg-white border border-gray-50 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:scale-105 active:scale-95 transition-all group"
                 >
                   <div
-                    className={`w-11 h-11 rounded-full ${action.color} flex items-center justify-center shadow-inner group-hover:rotate-12 transition-transform`}
+                    className={`w-8 h-8 rounded-lg ${action.color} flex items-center justify-center group-hover:rotate-12 transition-transform`}
                   >
                     {action.icon}
                   </div>
-                  <span className="text-xs text-gray-600 text-center mt-2 leading-tight">
+                  <span className="text-[10px] font-bold text-gray-600 text-center mt-1.5 leading-tight">
                     {action.label}
                   </span>
                 </button>
