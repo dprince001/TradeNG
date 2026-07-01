@@ -156,7 +156,7 @@ const ItemDetailPage = () => {
       <div className="px-5 py-4 flex gap-3">
         <Button
           variant="outline"
-          onClick={() => setIsOfferModalOpen(true)}
+          onClick={() => router.push("/make-offer")}
           fullWidth
           className="text-primary border-primary"
         >
@@ -165,7 +165,11 @@ const ItemDetailPage = () => {
 
         <Button
           variant="primary"
-          onClick={() => router.push(`/confirm-order?name=${encodeURIComponent(item.name)}&price=${item.price}`)}
+          onClick={() =>
+            router.push(
+              `/confirm-order?name=${encodeURIComponent(item.name)}&price=${item.price}`,
+            )
+          }
           fullWidth
         >
           Buy Now
@@ -179,7 +183,7 @@ const ItemDetailPage = () => {
         onApplyOffer={(offerPrice, address) => {
           setIsOfferModalOpen(false);
           router.push(
-            `/chat?name=${encodeURIComponent(item.name)}&price=${item.price}&offerPrice=${offerPrice}`
+            `/chat?name=${encodeURIComponent(item.name)}&price=${item.price}&offerPrice=${offerPrice}`,
           );
         }}
       />

@@ -72,7 +72,7 @@ const PaymentContent = () => {
         <button
           id="payment-back-btn"
           onClick={() => router.back()}
-          className="w-[38px] h-[38px] rounded-full bg-[#FF4304] flex items-center justify-center"
+          className="w-[38px] h-[38px] rounded-full bg-[#F5F6FA] flex items-center justify-center"
         >
           <BackIcon />
         </button>
