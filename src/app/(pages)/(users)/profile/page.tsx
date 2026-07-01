@@ -119,36 +119,36 @@ export default function ProfilePage() {
             </div>
 
             {/* Stats row */}
-            <div className="grid grid-cols-4 divide-x divide-gray-100 border border-gray-100 rounded-lg py-4 bg-white shadow-sm mt-6 text-center">
+            <div className="grid grid-cols-4 divide-x divide-gray-100 border border-gray-50 rounded-lg py-2.5 bg-white shadow-sm mt-4 text-center">
               <div>
-                <span className="text-sm font-extrabold text-[#1D1E20] block">
+                <span className="text-xs font-black text-[#1D1E20] block">
                   10
                 </span>
-                <span className="text-[9px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
+                <span className="text-[8px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
                   Listings
                 </span>
               </div>
               <div>
-                <span className="text-sm font-extrabold text-[#1D1E20] block">
+                <span className="text-xs font-black text-[#1D1E20] block">
                   0
                 </span>
-                <span className="text-[9px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
+                <span className="text-[8px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
                   Items sold
                 </span>
               </div>
               <div className="flex flex-col items-center justify-center">
-                <div className="flex items-center gap-0.5 text-sm font-extrabold text-[#1D1E20]">
-                  <span>4.8</span>
-                </div>
-                <span className="text-[9px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
+                <span className="text-xs font-black text-[#1D1E20] block">
+                  4.8
+                </span>
+                <span className="text-[8px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
                   Avg rating
                 </span>
               </div>
               <div>
-                <span className="text-sm font-extrabold text-primary block">
+                <span className="text-xs font-black text-primary block">
                   {formatNaira(walletBalance).replace(/,000$/, "K")}
                 </span>
-                <span className="text-[9px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
+                <span className="text-[8px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
                   Earnings
                 </span>
               </div>
@@ -156,45 +156,41 @@ export default function ProfilePage() {
 
             {/* Payer Verification Banner */}
             {(!verificationStatus || verificationStatus === "none") && (
-              <div className="bg-[#FFF5F3] border border-primary/5 rounded-lg p-4 mt-5 flex items-center justify-between shadow-[0_2px_8px_rgba(255,67,4,0.02)]">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                    <Shield className="w-[18px] h-[18px]" strokeWidth={2.5} />
-                  </div>
+              <div className="bg-[#FFF5F3] border border-primary/10 rounded-xl px-3 py-2 mt-4 flex items-center justify-between shadow-[0_2px_8px_rgba(255,67,4,0.02)]">
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-primary" strokeWidth={1.5} />
                   <div>
-                    <span className="text-xs font-extrabold text-[#1D1E20] block">
-                      Get Verified by TradeNG
+                    <span className="text-[11px] font-bold text-[#1D1E20] block">
+                      Get Verified to sell faster
                     </span>
-                    <span className="text-[10px] text-[#8F959E] font-medium mt-0.5 block">
-                      Unlock escrow protection and badges
+                    <span className="text-[9px] text-[#8F959E] block">
+                      Build trust with buyers
                     </span>
                   </div>
                 </div>
-                <Button
+                <button
                   onClick={() => router.push("/verify")}
-                  className="px-4 py-2 bg-primary text-white text-[10px] font-bold rounded-xl shadow-sm hover:bg-primary/95 transition-colors"
+                  className="py-1 px-2.5 bg-primary text-white text-[10px] font-bold rounded-lg shadow-sm hover:bg-primary/95 transition-colors"
                 >
                   Verify
-                </Button>
+                </button>
               </div>
             )}
 
             {verificationStatus === "pending" && (
-              <div className="bg-[#FFFDF5] border border-amber-200/50 rounded-lg p-4 mt-5 flex items-center justify-between shadow-[0_2px_8px_rgba(245,158,11,0.02)] border-dashed">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-[18px] h-[18px]" strokeWidth={2.5} />
-                  </div>
+              <div className="bg-[#FFFDF5] border border-amber-200/50 rounded-xl px-3 py-2 mt-4 flex items-center justify-between shadow-sm border-dashed">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-amber-500" strokeWidth={1.5} />
                   <div>
-                    <span className="text-xs font-extrabold text-[#1D1E20] block">
-                      Verification Pending
+                    <span className="text-[11px] font-bold text-[#1D1E20] block">
+                      Verification under review
                     </span>
-                    <span className="text-[10px] text-[#8F959E] font-medium mt-0.5 block">
+                    <span className="text-[9px] text-[#8F959E] block">
                       TradeNG is reviewing your application.
                     </span>
                   </div>
                 </div>
-                <span className="px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-600 text-[9px] font-bold rounded-lg uppercase tracking-wider">
+                <span className="text-[10px] text-amber-600 font-extrabold uppercase tracking-wider">
                   Pending
                 </span>
               </div>
@@ -212,33 +208,25 @@ export default function ProfilePage() {
                   label: "My Listings",
                   view: "listings",
                   color: "bg-primary/10 text-primary",
-                  icon: (
-                    <LayoutGrid className="w-5 h-5" strokeWidth={2} />
-                  ),
+                  icon: <LayoutGrid className="w-5 h-5" strokeWidth={2} />,
                 },
                 {
                   label: "My Orders",
                   view: "orders",
                   color: "bg-green-50 text-green-600",
-                  icon: (
-                    <ShoppingBag className="w-5 h-5" strokeWidth={2} />
-                  ),
+                  icon: <ShoppingBag className="w-5 h-5" strokeWidth={2} />,
                 },
                 {
                   label: "Wallet",
                   view: "wallet",
                   color: "bg-amber-50 text-amber-600",
-                  icon: (
-                    <Wallet className="w-5 h-5" strokeWidth={2} />
-                  ),
+                  icon: <Wallet className="w-5 h-5" strokeWidth={2} />,
                 },
                 {
                   label: "Settings",
                   view: "settings",
                   color: "bg-purple-50 text-purple-600",
-                  icon: (
-                    <Settings className="w-5 h-5" strokeWidth={2} />
-                  ),
+                  icon: <Settings className="w-5 h-5" strokeWidth={2} />,
                 },
               ].map((action) => (
                 <button
@@ -285,7 +273,10 @@ export default function ProfilePage() {
                   date: "1 day ago",
                   icon: (
                     <div className="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
-                      <Activity className="w-[18px] h-[18px]" strokeWidth={2.5} />
+                      <Activity
+                        className="w-[18px] h-[18px]"
+                        strokeWidth={2.5}
+                      />
                     </div>
                   ),
                 },
@@ -296,7 +287,10 @@ export default function ProfilePage() {
                   date: "2 days ago",
                   icon: (
                     <div className="w-9 h-9 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
-                      <ArrowDown className="w-[18px] h-[18px]" strokeWidth={2.5} />
+                      <ArrowDown
+                        className="w-[18px] h-[18px]"
+                        strokeWidth={2.5}
+                      />
                     </div>
                   ),
                 },
