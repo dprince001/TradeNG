@@ -8,10 +8,20 @@ import Button from "@/app/components/Button";
 import { useRouter } from "next/navigation";
 import avatarImg from "@/app/assets/images/seller_avatar.png";
 import TopNavbar from "@/app/components/layout/TopNavbar";
+import MakeOfferModal from "@/app/components/MakeOfferModal";
 
 const ItemDetailPage = () => {
   const [liked, setLiked] = useState(false);
+  const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
   const router = useRouter();
+
+  const item = {
+    id: "iphone-11",
+    name: "iPhone 11 in Black",
+    price: 399000,
+    condition: "Like New",
+    location: "Lagos",
+  };
 
   return (
     <div className="w-full min-h-screen flex flex-col">
@@ -58,7 +68,9 @@ const ItemDetailPage = () => {
           </div>
 
           <div className="flex items-start gap-2 mb-1">
-            <span className="text-[#FF4304] text-xl font-bold">$399</span>
+            <span className="text-[#FF4304] text-xl font-bold">
+              ₦{item.price.toLocaleString("en-NG")}
+            </span>
 
             <span className="text-[#8E8E93] text-[8px] mt-1">Negotiable</span>
           </div>
@@ -144,7 +156,7 @@ const ItemDetailPage = () => {
       <div className="px-5 py-4 flex gap-3">
         <Button
           variant="outline"
-          onClick={() => {}}
+          onClick={() => setIsOfferModalOpen(true)}
           fullWidth
           className="text-primary border-primary"
         >
@@ -153,12 +165,24 @@ const ItemDetailPage = () => {
 
         <Button
           variant="primary"
-          onClick={() => router.push("/confirm-order")}
+          onClick={() => router.push(`/confirm-order?name=${encodeURIComponent(item.name)}&price=${item.price}`)}
           fullWidth
         >
           Buy Now
         </Button>
       </div>
+
+      <MakeOfferModal
+        isOpen={isOfferModalOpen}
+        onClose={() => setIsOfferModalOpen(false)}
+        initialPrice={item.price}
+        onApplyOffer={(offerPrice, address) => {
+          setIsOfferModalOpen(false);
+          router.push(
+            `/confirm-order?name=${encodeURIComponent(item.name)}&price=${item.price}&offerPrice=${offerPrice}&address=${encodeURIComponent(address)}`
+          );
+        }}
+      />
     </div>
   );
 };
