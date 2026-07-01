@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import BackIcon from "@/app/assets/svgs/home/BackIcon";
 import CardIcon from "@/app/assets/svgs/home/CardIcon";
 import WalletIcon from "@/app/assets/svgs/home/WalletIcon";
@@ -9,18 +9,20 @@ import SecureIcon from "@/app/assets/svgs/home/SecureIcon";
 import LockIcon from "@/app/assets/svgs/home/LockIcon";
 import Input from "@/app/components/Input";
 import Button from "@/app/components/Button";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type PaymentMethod = "card" | "wallet" | "bank";
 
-const PaymentPage = () => {
+const PaymentContent = () => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [agreed, setAgreed] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const itemTotal = 450000;
+  const itemName = searchParams.get("name") || "iPhone 13 Pro Max";
+  const itemTotal = parseFloat(searchParams.get("price") || "450000");
   const deliveryFee = 5000;
-  const platformFee = 2250;
+  const platformFee = Math.round(itemTotal * 0.005); // 0.5% platform fee
   const totalAmount = itemTotal + deliveryFee + platformFee;
 
   const formatNaira = (amount: number) => `₦${amount.toLocaleString("en-NG")}`;
@@ -95,19 +97,19 @@ const PaymentPage = () => {
                 onClick={() => setPaymentMethod(method.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[14px] border-2 text-left transition-all ${
                   paymentMethod === method.id
-                    ? "border-[#FF4304] bg-[#FFF5F3]"
+                    ? "border-primary bg-[#FFF5F3]"
                     : "border-[#E5E7EB] bg-white"
                 }`}
               >
                 <div
                   className={`w-[18px] h-[18px] rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
                     paymentMethod === method.id
-                      ? "border-[#FF4304]"
+                      ? "border-primary"
                       : "border-[#D1D5DB]"
                   }`}
                 >
                   {paymentMethod === method.id && (
-                    <div className="w-[8px] h-[8px] rounded-full bg-[#FF4304]" />
+                    <div className="w-[8px] h-[8px] rounded-full bg-primary" />
                   )}
                 </div>
 
@@ -208,7 +210,7 @@ const PaymentPage = () => {
             </div>
           </div>
 
-          <p className="text-[#374151] text-xs leading-[1.6]">
+          <p className="text-[#374151] text-xs">
             I understand my payment will be held in escrow until I confirm
             delivery of the item in good condition.
           </p>
@@ -237,15 +239,38 @@ const PaymentPage = () => {
 
       <div className="px-5 py-4">
         <Button
-          onClick={canPay ? () => router.push("/payment-success") : undefined}
+          onClick={
+            canPay
+              ? () =>
+                  router.push(
+                    `/payment-success?name=${encodeURIComponent(
+                      itemName,
+                    )}&total=${totalAmount}`,
+                  )
+              : undefined
+          }
           disabled={!canPay}
           fullWidth
-          className="font-bold"
+          className="font-bold bg-primary border-primary hover:bg-primary/95 text-white py-3.5 rounded-xl shadow-[0_4px_12px_rgba(255,67,4,0.15)]"
         >
-          Pay ₦{totalAmount.toLocaleString("en-NG")} Securely
+          Pay {formatNaira(totalAmount)} Securely
         </Button>
       </div>
     </div>
+  );
+};
+
+const PaymentPage = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-8 text-center text-sm text-text-secondary">
+          Loading payment details...
+        </div>
+      }
+    >
+      <PaymentContent />
+    </Suspense>
   );
 };
 

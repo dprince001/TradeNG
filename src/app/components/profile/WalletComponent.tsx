@@ -31,7 +31,7 @@ const WalletComponent = () => {
   const [transactions, setTransactions] = useState<TransactionItem[]>([
     {
       id: 1,
-      title: "Payment from Buyer (iPhone 13)",
+      title: "Payment from Buyer",
       reference: "TRN-1234567890",
       date: "Jul 12, 2026 • 2:30 PM",
       amount: 450000,
@@ -46,14 +46,14 @@ const WalletComponent = () => {
     },
     {
       id: 3,
-      title: "Payment to Seller (Sony Headset)",
+      title: "Payment to Seller",
       date: "Jul 08, 2026 • 4:45 PM",
       amount: 120000,
       type: "debit",
     },
     {
       id: 4,
-      title: "Payment from Buyer (Sneakers)",
+      title: "Payment from Buyer",
       date: "Jul 05, 2026 • 11:20 AM",
       amount: 35000,
       type: "credit",
@@ -110,47 +110,46 @@ const WalletComponent = () => {
         <div className="absolute right-0 top-0 w-32 h-32 bg-white/5 rounded-full -mr-8 -mt-8 pointer-events-none" />
         <div className="absolute left-0 bottom-0 w-24 h-24 bg-white/5 rounded-full -ml-8 -mb-8 pointer-events-none" />
 
-        <span className="text-[10px] font-bold uppercase tracking-wider text-white/70 block">
-          Wallet Balance
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-white/70 block">
+          Total Balance
         </span>
         <h2 className="text-3xl font-extrabold mt-1.5 tracking-tight">
           {formatNaira(walletBalance)}
         </h2>
 
-        {/* Sub status parameters */}
-        <div className="flex justify-center gap-4 mt-6 pt-5 border-t border-white/10">
-          <div className="bg-gray-50/10 py-8 px-14 rounded-md ">
-            <span className="text-[9px] font-semibold text-white/60 uppercase block">
-              Pending
-            </span>
-            <span className="text-xs font-bold mt-0.5 block">
-              {formatNaira(pendingWallet)}
-            </span>
+        <div className="">
+          <div className="grid grid-cols-2 gap-3 pt-4">
+            <div className="bg-gray-50/30 my-6 p-4 rounded-md ">
+              <span className="text-[9px] font-semibold text-white/60 uppercase block">
+                Pending
+              </span>
+              <span className="text-xs font-bold mt-0.5 block">
+                {formatNaira(pendingWallet)}
+              </span>
+            </div>
+            <div className="bg-gray-50/30 my-6 p-4 rounded-md ">
+              <span className="text-[9px] font-semibold text-white/60 uppercase block">
+                Total Spent
+              </span>
+              <span className="text-xs font-bold mt-0.5 block">
+                {formatNaira(totalSpent)}
+              </span>
+            </div>
           </div>
-          <div className="bg-gray-50/10 py-8 px-14 rounded-md ">
-            <span className="text-[9px] font-semibold text-white/60 uppercase block">
-              Total Spent
-            </span>
-            <span className="text-xs font-bold mt-0.5 block">
-              {formatNaira(totalSpent)}
-            </span>
+          <div className="flex gap-3">
+            <Button
+              onClick={() => setShowWalletModal("withdraw")}
+              className="flex-1 bg-gray-50/30 hover:bg-white/20 active:scale-95 text-xs  items-center justify-center gap-1.5"
+            >
+              Withdraw
+            </Button>
+            <Button
+              onClick={() => setShowWalletModal("deposit")}
+              className="flex-1 bg-gray-50/30 hover:bg-white/20 active:scale-95 text-xs  items-center justify-center gap-1.5"
+            >
+              Add funds
+            </Button>
           </div>
-        </div>
-
-        {/* Bottom Quick actions inside Card */}
-        <div className="flex gap-4 py-4 px-8">
-          <Button
-            onClick={() => setShowWalletModal("withdraw")}
-            className="flex-1 bg-white/10 hover:bg-white/20 active:scale-95 transition-all text-xs font-extrabold rounded-xl border border-white/20 flex items-center justify-center gap-1.5"
-          >
-            Withdraw
-          </Button>
-          <Button
-            onClick={() => setShowWalletModal("deposit")}
-            className="flex-1 bg-white text-brand-orange hover:bg-white/95 active:scale-95 transition-all text-xs font-extrabold  rounded-xl flex items-center justify-center gap-1.5 shadow-sm"
-          >
-            Add funds
-          </Button>
         </div>
       </div>
 
@@ -209,14 +208,12 @@ const WalletComponent = () => {
                   )}
                 </div>
 
-                <div>
-                  <span className="text-xs font-bold text-[#1D1E20] block leading-tight">
+                <div className="flex flex-col space-y-1">
+                  <span className="text-sm font-bold text-[#1D1E20] leading-tight">
                     {tx.title}
                   </span>
-                  <span className="text-xs mt-1 leading-tight">
-                    {tx.reference}
-                  </span>
-                  <span className="text-[9px] text-[#8F959E] font-medium mt-1 block">
+                  <span className="text-xs text-[#8F959E]">{tx.reference}</span>
+                  <span className="text-[11px] text-[#8F959E] font-medium">
                     {tx.date}
                   </span>
                 </div>
@@ -232,8 +229,8 @@ const WalletComponent = () => {
           );
         })}
       </div>
-      <Dialog 
-        open={showWalletModal !== null} 
+      <Dialog
+        open={showWalletModal !== null}
         onOpenChange={(open) => {
           if (!open) {
             setModalAmount("");

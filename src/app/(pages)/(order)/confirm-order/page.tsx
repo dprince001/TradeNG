@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { useState, Suspense } from "react";
 import Image from "next/image";
 import IphoneImage from "@/app/assets/images/IphoneImage.png";
 import CartIcon from "@/app/components/layout/CartIcon";
@@ -11,17 +11,34 @@ import InfoIcon from "@/app/assets/svgs/home/InfoIcon";
 import UserIcon from "@/app/assets/svgs/home/UserIcon";
 import VerifiedIcon from "@/app/assets/svgs/home/VerifiedIcon";
 import Button from "@/app/components/Button";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import MakeOfferModal from "@/app/components/MakeOfferModal";
 
 type DeliveryMethod = "meetup" | "delivery";
 
-const ConfirmOrderPage = () => {
+const ConfirmOrderContent = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const name = searchParams.get("name") || "iPhone 13 Pro Max";
+  const originalPrice = parseFloat(searchParams.get("price") || "450000");
+  const initialOfferPrice = searchParams.get("offerPrice")
+    ? parseFloat(searchParams.get("offerPrice")!)
+    : null;
+  const initialAddress =
+    searchParams.get("address") || "12 Broad Street, Lagos";
+
   const [deliveryMethod, setDeliveryMethod] =
     useState<DeliveryMethod>("delivery");
-  const router = useRouter();
+  const [offerPrice, setOfferPrice] = useState<number | null>(
+    initialOfferPrice,
+  );
+  const [address, setAddress] = useState<string>(initialAddress);
+  const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
 
-  const itemPrice = 450000;
-  const serviceFee = 2250;
+  const isOffer = offerPrice !== null;
+  const itemPrice = isOffer ? offerPrice : originalPrice;
+  const serviceFee = Math.round(itemPrice * 0.005);
   const grandTotal = itemPrice + serviceFee;
 
   const formatNaira = (amount: number) => `₦${amount.toLocaleString("en-NG")}`;
@@ -44,24 +61,31 @@ const ConfirmOrderPage = () => {
 
       <div className="flex-1 overflow-y-auto pt-3">
         {/* ── Product Summary Card ── */}
-        <div className="bg-white mx-4 rounded-2xl px-4 py-4 mb-5">
+        <div className="bg-white mx-4 rounded-2xl px-4 py-4 mb-5 shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-[70px] h-[70px] rounded-xl bg-[#F0F1F5] overflow-hidden flex-shrink-0 relative">
               <Image
                 src={IphoneImage}
-                alt="iPhone 13 Pro Max"
+                alt={name}
                 fill
                 className="object-contain"
               />
             </div>
 
             <div className="flex-1 min-w-0">
-              <p className="text-text-primary text-sm font-semibold mb-1">
-                iPhone 13 Pro Max
+              <p className="text-text-primary text-sm font-semibold mb-1 truncate">
+                {name}
               </p>
-              <p className="text-text-primary font-bold mb-1.5">
-                {formatNaira(itemPrice)}
-              </p>
+              <div className="flex items-baseline gap-2 mb-1.5">
+                <span className="text-text-primary font-extrabold text-base">
+                  {formatNaira(itemPrice)}
+                </span>
+                {isOffer && (
+                  <span className="text-[10px] text-primary bg-[#FFF5F3] border border-primary/10 px-2 py-0.5 rounded font-bold">
+                    Offer Applied
+                  </span>
+                )}
+              </div>
               <div className="flex items-center gap-1">
                 <div className="flex justify-center items-center w-4 h-4 rounded-full bg-[#D1FAE5]">
                   <UserIcon />
@@ -78,15 +102,16 @@ const ConfirmOrderPage = () => {
           <Button
             variant="outline"
             fullWidth
-            className="border-primary border-2 flex gap-2 text-primary"
+            onClick={() => setIsOfferModalOpen(true)}
+            className="border-primary border-2 flex items-center justify-center gap-2 text-primary font-bold hover:bg-[#FFF5F3]/50 transition-colors"
           >
             <span>💰</span>
-            Make an Offer
+            {isOffer ? "Adjust Offer Price" : "Make an Offer"}
           </Button>
         </div>
 
         {/* ── Delivery Method ── */}
-        <div className="bg-white mx-4 rounded-2xl px-4 py-4 mb-5">
+        <div className="bg-white mx-4 rounded-2xl px-4 py-4 mb-5 shadow-sm">
           <h2 className="text-text-primary text-sm font-bold mb-3">
             Delivery Method
           </h2>
@@ -96,19 +121,19 @@ const ConfirmOrderPage = () => {
             onClick={() => setDeliveryMethod("meetup")}
             className={`w-full flex items-start gap-3 p-3.5 rounded-[14px] border-2 mb-2.5 text-left transition-all ${
               deliveryMethod === "meetup"
-                ? "border-[#FF4304] bg-[#FFF5F3]"
+                ? "border-primary bg-[#FFF5F3]"
                 : "border-[#E5E7EB] bg-white"
             }`}
           >
             <div
               className={`w-[18px] h-[18px] rounded-full border-2 flex items-center justify-center mt-0.5 flex-shrink-0 transition-all ${
                 deliveryMethod === "meetup"
-                  ? "border-[#FF4304]"
+                  ? "border-primary"
                   : "border-[#D1D5DB]"
               }`}
             >
               {deliveryMethod === "meetup" && (
-                <div className="w-[8px] h-[8px] rounded-full bg-[#FF4304]" />
+                <div className="w-[8px] h-[8px] rounded-full bg-primary" />
               )}
             </div>
 
@@ -131,19 +156,19 @@ const ConfirmOrderPage = () => {
             onClick={() => setDeliveryMethod("delivery")}
             className={`w-full flex items-start gap-3 p-3.5 rounded-[14px] border-2 text-left transition-all ${
               deliveryMethod === "delivery"
-                ? "border-[#FF4304] bg-[#FFF5F3]"
+                ? "border-primary bg-[#FFF5F3]"
                 : "border-[#E5E7EB] bg-white"
             }`}
           >
             <div
               className={`w-[18px] h-[18px] rounded-full border-2 flex items-center justify-center mt-0.5 flex-shrink-0 transition-all ${
                 deliveryMethod === "delivery"
-                  ? "border-[#FF4304]"
+                  ? "border-primary"
                   : "border-[#D1D5DB]"
               }`}
             >
               {deliveryMethod === "delivery" && (
-                <div className="w-[8px] h-[8px] rounded-full bg-[#FF4304]" />
+                <div className="w-[8px] h-[8px] rounded-full bg-primary" />
               )}
             </div>
 
@@ -165,7 +190,7 @@ const ConfirmOrderPage = () => {
         {/* ── Escrow Protection ── */}
         <div className="mx-4 mb-7">
           <div className="bg-[#FFF0EC] border border-[#FFCAB7] rounded-2xl px-4 py-4 flex items-start gap-3">
-            <div className="w-[40px] h-[40px] rounded-full bg-[#FF4304] flex items-center justify-center flex-shrink-0">
+            <div className="w-[40px] h-[40px] rounded-full bg-primary flex items-center justify-center flex-shrink-0">
               <SecureIcon size={25} color="white" />
             </div>
 
@@ -186,7 +211,7 @@ const ConfirmOrderPage = () => {
         </div>
 
         {/* ── Total Cost ── */}
-        <div className="bg-white mx-4 rounded-2xl p-4 shadow-md mb-5">
+        <div className="bg-white mx-4 rounded-2xl p-4 shadow-sm mb-5">
           <h2 className="text-text-primary text-sm font-bold mb-4">
             Total Cost
           </h2>
@@ -218,11 +243,43 @@ const ConfirmOrderPage = () => {
       </div>
 
       <div className="px-5 py-4">
-        <Button fullWidth onClick={() => router.push("/payment")}>
+        <Button
+          fullWidth
+          onClick={() =>
+            router.push(
+              `/payment?name=${encodeURIComponent(name)}&price=${itemPrice}`,
+            )
+          }
+        >
           Proceed to Payment
         </Button>
       </div>
+
+      <MakeOfferModal
+        isOpen={isOfferModalOpen}
+        onClose={() => setIsOfferModalOpen(false)}
+        initialPrice={originalPrice}
+        onApplyOffer={(newOfferPrice, newAddress) => {
+          setOfferPrice(newOfferPrice);
+          setAddress(newAddress);
+          setIsOfferModalOpen(false);
+        }}
+      />
     </div>
+  );
+};
+
+const ConfirmOrderPage = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-8 text-center text-sm text-text-secondary">
+          Loading checkout details...
+        </div>
+      }
+    >
+      <ConfirmOrderContent />
+    </Suspense>
   );
 };
 

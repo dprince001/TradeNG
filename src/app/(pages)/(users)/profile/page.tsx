@@ -8,11 +8,23 @@ import Input from "@/app/components/Input";
 import BottomNavbar from "@/app/components/layout/BottomNavbar";
 import Image from "next/image";
 import AccountSettings from "@/app/components/profile/AccountSettings";
-import OrdersComponent from "../../components/profile/OrdersComponent";
-import WalletComponent from "../../components/profile/WalletComponent";
+import OrdersComponent from "../../../components/profile/OrdersComponent";
+import WalletComponent from "../../../components/profile/WalletComponent";
 import { toast } from "sonner";
-import ListingsComponent from "../../components/profile/ListingsComponent";
+import ListingsComponent from "../../../components/profile/ListingsComponent";
 import { formatNaira } from "@/lib/utils";
+import {
+  Shield,
+  Clock,
+  LayoutGrid,
+  ShoppingBag,
+  Wallet,
+  Settings,
+  Check,
+  Activity,
+  ArrowDown,
+  Pencil,
+} from "lucide-react";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -22,7 +34,9 @@ export default function ProfilePage() {
     "main" | "edit" | "listings" | "orders" | "wallet" | "settings"
   >("main");
 
-  const [verificationStatus, setVerificationStatus] = useState<string | null>(null);
+  const [verificationStatus, setVerificationStatus] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -91,7 +105,10 @@ export default function ProfilePage() {
                 )}
               </h2>
               <span className="text-[#8F959E] text-sm mt-0.5">
-                {verificationStatus === "verified" ? "Verified Seller" : "Seller"} since 2023
+                {verificationStatus === "verified"
+                  ? "Verified Seller"
+                  : "Seller"}{" "}
+                since 2023
               </span>
               <Button
                 onClick={() => setView("edit")}
@@ -102,36 +119,36 @@ export default function ProfilePage() {
             </div>
 
             {/* Stats row */}
-            <div className="grid grid-cols-4 divide-x divide-gray-100 border border-gray-100 rounded-lg py-4 bg-white shadow-sm mt-6 text-center">
+            <div className="grid grid-cols-4 divide-x divide-gray-100 border border-gray-50 rounded-lg py-2.5 bg-white shadow-sm mt-4 text-center">
               <div>
-                <span className="text-sm font-extrabold text-[#1D1E20] block">
+                <span className="text-xs font-black text-[#1D1E20] block">
                   10
                 </span>
-                <span className="text-[9px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
+                <span className="text-[8px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
                   Listings
                 </span>
               </div>
               <div>
-                <span className="text-sm font-extrabold text-[#1D1E20] block">
-                  0
+                <span className="text-xs font-black text-[#1D1E20] block">
+                  15
                 </span>
-                <span className="text-[9px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
+                <span className="text-[8px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
                   Items sold
                 </span>
               </div>
               <div className="flex flex-col items-center justify-center">
-                <div className="flex items-center gap-0.5 text-sm font-extrabold text-[#1D1E20]">
-                  <span>4.8</span>
-                </div>
-                <span className="text-[9px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
+                <span className="text-xs font-black text-[#1D1E20] block">
+                  4.8
+                </span>
+                <span className="text-[8px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
                   Avg rating
                 </span>
               </div>
               <div>
-                <span className="text-sm font-extrabold text-primary block">
+                <span className="text-xs font-black text-primary block">
                   {formatNaira(walletBalance).replace(/,000$/, "K")}
                 </span>
-                <span className="text-[9px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
+                <span className="text-[8px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
                   Earnings
                 </span>
               </div>
@@ -139,66 +156,41 @@ export default function ProfilePage() {
 
             {/* Payer Verification Banner */}
             {(!verificationStatus || verificationStatus === "none") && (
-              <div className="bg-[#FFF5F3] border border-primary/5 rounded-lg p-4 mt-5 flex items-center justify-between shadow-[0_2px_8px_rgba(255,67,4,0.02)]">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                    >
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                    </svg>
-                  </div>
+              <div className="bg-[#FFF5F3] border border-primary/10 rounded-xl px-3 py-2 mt-4 flex items-center justify-between shadow-[0_2px_8px_rgba(255,67,4,0.02)]">
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-primary" strokeWidth={1.5} />
                   <div>
-                    <span className="text-xs font-extrabold text-[#1D1E20] block">
-                      Get Verified by TradeNG
+                    <span className="text-[11px] font-bold text-[#1D1E20] block">
+                      Get Verified to sell faster
                     </span>
-                    <span className="text-[10px] text-[#8F959E] font-medium mt-0.5 block">
-                      Unlock escrow protection and badges
+                    <span className="text-[9px] text-[#8F959E] block">
+                      Build trust with buyers
                     </span>
                   </div>
                 </div>
-                <Button
+                <button
                   onClick={() => router.push("/verify")}
-                  className="px-4 py-2 bg-primary text-white text-[10px] font-bold rounded-xl shadow-sm hover:bg-primary/95 transition-colors"
+                  className="py-1 px-2.5 bg-primary text-white text-[10px] font-bold rounded-lg shadow-sm hover:bg-primary/95 transition-colors"
                 >
                   Verify
-                </Button>
+                </button>
               </div>
             )}
 
             {verificationStatus === "pending" && (
-              <div className="bg-[#FFFDF5] border border-amber-200/50 rounded-lg p-4 mt-5 flex items-center justify-between shadow-[0_2px_8px_rgba(245,158,11,0.02)] border-dashed">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center flex-shrink-0">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <polyline points="12 6 12 12 16 14" />
-                    </svg>
-                  </div>
+              <div className="bg-[#FFFDF5] border border-amber-200/50 rounded-xl px-3 py-2 mt-4 flex items-center justify-between shadow-sm border-dashed">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-amber-500" strokeWidth={1.5} />
                   <div>
-                    <span className="text-xs font-extrabold text-[#1D1E20] block">
-                      Verification Pending
+                    <span className="text-[11px] font-bold text-[#1D1E20] block">
+                      Verification under review
                     </span>
-                    <span className="text-[10px] text-[#8F959E] font-medium mt-0.5 block">
+                    <span className="text-[9px] text-[#8F959E] block">
                       TradeNG is reviewing your application.
                     </span>
                   </div>
                 </div>
-                <span className="px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-600 text-[9px] font-bold rounded-lg uppercase tracking-wider">
+                <span className="text-[10px] text-amber-600 font-extrabold uppercase tracking-wider">
                   Pending
                 </span>
               </div>
@@ -210,96 +202,44 @@ export default function ProfilePage() {
             </h3>
 
             {/* Quick Actions Grid */}
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-4 gap-2.5">
               {[
                 {
                   label: "My Listings",
                   view: "listings",
                   color: "bg-primary/10 text-primary",
-                  icon: (
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <rect x="3" y="3" width="7" height="7" />
-                      <rect x="14" y="3" width="7" height="7" />
-                      <rect x="14" y="14" width="7" height="7" />
-                      <rect x="3" y="14" width="7" height="7" />
-                    </svg>
-                  ),
+                  icon: <LayoutGrid className="w-4 h-4" strokeWidth={1.5} />,
                 },
                 {
                   label: "My Orders",
                   view: "orders",
                   color: "bg-green-50 text-green-600",
-                  icon: (
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                      <line x1="3" y1="6" x2="21" y2="6" />
-                      <path d="M16 10a4 4 0 0 1-8 0" />
-                    </svg>
-                  ),
+                  icon: <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />,
                 },
                 {
                   label: "Wallet",
                   view: "wallet",
                   color: "bg-amber-50 text-amber-600",
-                  icon: (
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <rect x="2" y="4" width="20" height="16" rx="2" />
-                      <line x1="12" y1="10" x2="12" y2="14" />
-                      <line x1="10" y1="12" x2="14" y2="12" />
-                    </svg>
-                  ),
+                  icon: <Wallet className="w-4 h-4" strokeWidth={1.5} />,
                 },
                 {
                   label: "Settings",
                   view: "settings",
                   color: "bg-purple-50 text-purple-600",
-                  icon: (
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <circle cx="12" cy="12" r="3" />
-                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                    </svg>
-                  ),
+                  icon: <Settings className="w-4 h-4" strokeWidth={1.5} />,
                 },
               ].map((action) => (
                 <button
                   key={action.label}
                   onClick={() => setView(action.view as any)}
-                  className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white border border-gray-100 shadow-[0_2px_6px_rgba(0,0,0,0.01)] hover:scale-105 active:scale-95 transition-all group"
+                  className="flex flex-col items-center justify-center py-2.5 px-2 rounded-xl bg-white border border-gray-50 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:scale-105 active:scale-95 transition-all group"
                 >
                   <div
-                    className={`w-11 h-11 rounded-full ${action.color} flex items-center justify-center shadow-inner group-hover:rotate-12 transition-transform`}
+                    className={`w-8 h-8 rounded-lg ${action.color} flex items-center justify-center group-hover:rotate-12 transition-transform`}
                   >
                     {action.icon}
                   </div>
-                  <span className="text-xs text-gray-600 text-center mt-2 leading-tight">
+                  <span className="text-[10px] font-bold text-gray-600 text-center mt-1.5 leading-tight">
                     {action.label}
                   </span>
                 </button>
@@ -322,16 +262,7 @@ export default function ProfilePage() {
                   date: "2 hours ago",
                   icon: (
                     <div className="w-9 h-9 rounded-full bg-green-50 text-green-600 flex items-center justify-center">
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                      >
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
+                      <Check className="w-[18px] h-[18px]" strokeWidth={2.5} />
                     </div>
                   ),
                 },
@@ -342,16 +273,10 @@ export default function ProfilePage() {
                   date: "1 day ago",
                   icon: (
                     <div className="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                      >
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-                      </svg>
+                      <Activity
+                        className="w-[18px] h-[18px]"
+                        strokeWidth={2.5}
+                      />
                     </div>
                   ),
                 },
@@ -362,17 +287,10 @@ export default function ProfilePage() {
                   date: "2 days ago",
                   icon: (
                     <div className="w-9 h-9 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                      >
-                        <line x1="12" y1="5" x2="12" y2="19" />
-                        <polyline points="19 12 12 19 5 12" />
-                      </svg>
+                      <ArrowDown
+                        className="w-[18px] h-[18px]"
+                        strokeWidth={2.5}
+                      />
                     </div>
                   ),
                 },
@@ -452,16 +370,7 @@ const ProfileComponent = ({
             OD
           </div>
           <div className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary border-2 border-white shadow-sm flex items-center justify-center text-white hover:scale-105 active:scale-95 transition-transform">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-            >
-              <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-            </svg>
+            <Pencil className="w-3.5 h-3.5" strokeWidth={2.5} />
           </div>
         </div>
         <span className="text-xs text-[#8F959E] font-semibold mt-2.5">
