@@ -210,7 +210,7 @@ const PaymentContent = () => {
             </div>
           </div>
 
-          <p className="text-[#374151] text-xs leading-[1.6]">
+          <p className="text-[#374151] text-xs">
             I understand my payment will be held in escrow until I confirm
             delivery of the item in good condition.
           </p>
@@ -244,8 +244,8 @@ const PaymentContent = () => {
               ? () =>
                   router.push(
                     `/payment-success?name=${encodeURIComponent(
-                      itemName
-                    )}&total=${totalAmount}`
+                      itemName,
+                    )}&total=${totalAmount}`,
                   )
               : undefined
           }
@@ -262,7 +262,13 @@ const PaymentContent = () => {
 
 const PaymentPage = () => {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-sm text-text-secondary">Loading payment details...</div>}>
+    <Suspense
+      fallback={
+        <div className="p-8 text-center text-sm text-text-secondary">
+          Loading payment details...
+        </div>
+      }
+    >
       <PaymentContent />
     </Suspense>
   );

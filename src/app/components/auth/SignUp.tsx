@@ -128,7 +128,7 @@ const SignUp = ({ setStep, setEmail }: SignUpProps) => {
             </Button>
           </form>
         </FormProvider>
-        <span className="text-text-secondary items-center justify-center text-xs font-medium">
+        <span className="text-text-secondary flex text-center items-center justify-center text-xs font-medium">
           Already have an account?{" "}
           <button
             onClick={() => setStep("signin")}

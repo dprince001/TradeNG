@@ -25,10 +25,14 @@ const ConfirmOrderContent = () => {
   const initialOfferPrice = searchParams.get("offerPrice")
     ? parseFloat(searchParams.get("offerPrice")!)
     : null;
-  const initialAddress = searchParams.get("address") || "12 Broad Street, Lagos";
+  const initialAddress =
+    searchParams.get("address") || "12 Broad Street, Lagos";
 
-  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("delivery");
-  const [offerPrice, setOfferPrice] = useState<number | null>(initialOfferPrice);
+  const [deliveryMethod, setDeliveryMethod] =
+    useState<DeliveryMethod>("delivery");
+  const [offerPrice, setOfferPrice] = useState<number | null>(
+    initialOfferPrice,
+  );
   const [address, setAddress] = useState<string>(initialAddress);
   const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
 
@@ -183,35 +187,6 @@ const ConfirmOrderContent = () => {
           </button>
         </div>
 
-        {/* ── Address Details ── */}
-        <div className="bg-white mx-4 rounded-2xl px-4 py-4 mb-5 shadow-sm">
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="text-text-primary text-sm font-bold">
-              {deliveryMethod === "delivery" ? "Delivery Address" : "Meetup Location"}
-            </h2>
-            {deliveryMethod === "delivery" && (
-              <button
-                onClick={() => setIsOfferModalOpen(true)}
-                className="text-primary text-xs font-bold hover:underline"
-              >
-                Change Address
-              </button>
-            )}
-          </div>
-
-          <div className="flex items-start gap-3 bg-[#F9FAFB] rounded-xl p-3 border border-gray-100">
-            <span className="text-lg mt-0.5">📍</span>
-            <div className="flex-1">
-              <p className="text-text-primary text-xs font-bold">
-                {deliveryMethod === "delivery" ? "Home / Office Address" : "Default Meetup Point"}
-              </p>
-              <p className="text-text-secondary text-xs mt-1 leading-relaxed">
-                {deliveryMethod === "delivery" ? address : "Lagos Central Mall, Food Court"}
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* ── Escrow Protection ── */}
         <div className="mx-4 mb-7">
           <div className="bg-[#FFF0EC] border border-[#FFCAB7] rounded-2xl px-4 py-4 flex items-start gap-3">
@@ -272,7 +247,7 @@ const ConfirmOrderContent = () => {
           fullWidth
           onClick={() =>
             router.push(
-              `/payment?name=${encodeURIComponent(name)}&price=${itemPrice}`
+              `/payment?name=${encodeURIComponent(name)}&price=${itemPrice}`,
             )
           }
         >
@@ -296,7 +271,13 @@ const ConfirmOrderContent = () => {
 
 const ConfirmOrderPage = () => {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-sm text-text-secondary">Loading checkout details...</div>}>
+    <Suspense
+      fallback={
+        <div className="p-8 text-center text-sm text-text-secondary">
+          Loading checkout details...
+        </div>
+      }
+    >
       <ConfirmOrderContent />
     </Suspense>
   );

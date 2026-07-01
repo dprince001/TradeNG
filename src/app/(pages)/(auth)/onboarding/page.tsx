@@ -62,15 +62,15 @@ const OnboardingPage = () => {
       )}
 
       {/* Illustration Area */}
-      <div className="flex-1 flex items-center justify-center min-h-[300px]">
-        <div className="text-[120px] filter drop-shadow-xl animate-bounce">
-          {current.illustration}
+      <div className="flex-1 flex items-center justify-center min-h-[280px]">
+        <div className="text-[120px] filter drop-shadow-ll animate-bounce">
+          {/* {current.illustration} */}
         </div>
       </div>
 
       {/* Text Info */}
       <div className="flex flex-col items-center text-center gap-3.5 mb-10 max-w-xs mx-auto">
-        <h2 className="text-[#1D1E20] text-2xl font-black leading-tight tracking-tight">
+        <h2 className="text-[#1D1E20] text-3xl font-bold leading-tight tracking-tight">
           {current.title}
         </h2>
         <p className="text-text-secondary text-sm leading-relaxed font-medium">
@@ -113,12 +113,20 @@ const OnboardingPage = () => {
                   <polyline points="15 18 9 12 15 6" />
                 </svg>
               </button>
-              <Button fullWidth onClick={handleNext} className="font-bold py-3.5 shadow-md">
+              <Button
+                fullWidth
+                onClick={handleNext}
+                className="font-bold py-3.5 shadow-md"
+              >
                 Next
               </Button>
             </>
           ) : activeSlide === 0 ? (
-            <Button fullWidth onClick={handleNext} className="font-bold py-3.5 shadow-md">
+            <Button
+              fullWidth
+              onClick={handleNext}
+              className="font-bold py-3.5 shadow-md"
+            >
               Next
             </Button>
           ) : (

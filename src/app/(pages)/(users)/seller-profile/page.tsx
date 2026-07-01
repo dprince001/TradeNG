@@ -9,7 +9,7 @@ import macbookImg from "@/app/assets/images/macbook.png";
 import headphonesImg from "@/app/assets/images/headphones.png";
 import iphoneImg from "@/app/assets/images/IphoneImage.png";
 import Image from "next/image";
-import ProductCard from "../home/components/ProductCard";
+import ProductCard from "../../home/components/ProductCard";
 import ProgressBar from "@/app/components/ProgressBar";
 
 const SellerProfilePage = () => {
