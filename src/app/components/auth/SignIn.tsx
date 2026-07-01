@@ -8,6 +8,12 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import FormInput from "../FormInput";
 import Button from "../Button";
+import Image from "next/image";
+import Google from "@/assets/icons/Google.svg";
+import Apple from "@/assets/icons/Apple.svg";
+import GoogleIcon from "@/app/assets/svgs/GoogleIcon";
+import AppleIcon from "@/app/assets/svgs/AppleIcon";
+import { toast } from "sonner";
 
 const signInSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email address"),
@@ -35,8 +41,7 @@ const SignIn = ({ setStep }: SignInProps) => {
   });
 
   const onSubmit = (data: SignInSchemaType) => {
-    console.log("Sign in data:", data);
-    // Simulate successful login
+    toast.success("Logged in successfully!");
     router.push("/");
   };
 
@@ -48,7 +53,10 @@ const SignIn = ({ setStep }: SignInProps) => {
         </h2>
 
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)} className="flex flex-col gap-5 pb-6">
+          <form
+            onSubmit={methods.handleSubmit(onSubmit)}
+            className="flex flex-col gap-5 pb-6"
+          >
             <FormInput
               name="email"
               label="Email address"
@@ -104,10 +112,10 @@ const SignIn = ({ setStep }: SignInProps) => {
           <span className="text-text-secondary text-xs font-bold">Or with</span>
           <div className="flex gap-4 w-full">
             <button className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-200 bg-white rounded-xl hover:bg-gray-50 transition-colors text-sm font-bold">
-              🍎 Apple
+              <AppleIcon /> Apple
             </button>
             <button className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-200 bg-white rounded-xl hover:bg-gray-50 transition-colors text-sm font-bold">
-              🌐 Google
+              <GoogleIcon /> Google
             </button>
           </div>
         </div>
