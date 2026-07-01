@@ -144,7 +144,7 @@ const ItemDetailPage = () => {
       <div className="px-5 py-4 flex gap-3">
         <Button
           variant="outline"
-          onClick={() => {}}
+          onClick={() => router.push("/make-offer")}
           fullWidth
           className="text-primary border-primary"
         >

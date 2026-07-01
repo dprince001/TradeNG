@@ -3,7 +3,7 @@ import BackIcon from "@/app/assets/svgs/home/BackIcon";
 import Button from "../Button";
 
 interface TopNavbarProps {
-  title: string;
+  title: React.ReactNode;
   onBack: () => void;
   rightElement?: React.ReactNode;
 }
@@ -18,13 +18,13 @@ const TopNavbar: React.FC<TopNavbarProps> = ({
       <Button
         onClick={onBack}
         variant="none"
-        className="w-[42px] h-[42px] rounded-full bg-[#F5F6FA] text-[#1D1E20] hover:bg-brand-orange hover:text-white transition-all duration-200 active:scale-95 flex items-center justify-center"
+        className="w-[42px] h-[42px] rounded-full bg-[#F5F6FA] text-text-primary hover:bg-brand-orange hover:text-white transition-all duration-200 active:scale-95 flex items-center justify-center"
         aria-label="Go back"
       >
         <BackIcon />
       </Button>
 
-      <span className="text-[#1D1E20] font-semibold text-base tracking-wide">
+      <span className="text-text-primary font-semibold text-base tracking-wide">
         {title}
       </span>
 
