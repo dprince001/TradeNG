@@ -6,6 +6,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   helperText?: string;
   className?: string;
+  rightElement?: any;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
