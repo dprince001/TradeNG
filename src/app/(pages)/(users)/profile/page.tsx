@@ -96,7 +96,7 @@ export default function ProfilePage() {
                 height={120}
                 className="w-40 h-40 rounded-full bg-gradient-to-tr from-[#FF4304] to-[#FF8C39] flex items-center justify-center text-white text-2xl font-extrabold shadow-md border-4 border-white"
               ></Image>
-              <h2 className="text-[#1D1E20] text-2xl font-semibold mt-3.5 tracking-tight flex items-center justify-center gap-1.5">
+              <h2 className="text-[#1D1E20] text-xl font-bold mt-3.5 tracking-tight flex items-center justify-center gap-1.5">
                 Hassan Saidu
                 {verificationStatus === "verified" && (
                   <span className="inline-flex items-center justify-center bg-[#D1FAE5] text-green-700 text-[8px] font-extrabold px-2 py-0.5 rounded-full ml-1">

@@ -52,48 +52,31 @@ const AddItemComponent = ({
           placeholder="Enter item name"
         />
 
-        {/* Category selector triggering step 2 */}
-        <div className="flex flex-col gap-1.5 w-full">
-          <label className="text-sm font-medium text-text-primary">
-            Category
-          </label>
-          <button
-            onClick={() => setStep(2)}
-            className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-text-primary bg-white text-left flex justify-between items-center transition-all hover:border-gray-300"
-          >
-            <span className={category ? "text-text-primary" : "text-gray-400"}>
-              {category || "Select Category"}
-            </span>
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#1D1E20"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </button>
-        </div>
+        <Input
+          type="select"
+          label="Category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          options={[
+            { label: "Gadgets", value: "Gadgets" },
+            { label: "Furniture", value: "Furniture" },
+            { label: "Fashion", value: "Fashion" },
+            { label: "Electronic", value: "Electronic" },
+          ]}
+        />
 
-        <div className="flex flex-col gap-1.5 w-full">
-          <label className="text-sm font-medium text-text-primary">
-            Condition
-          </label>
-          <select
-            value={condition}
-            onChange={(e) => setCondition(e.target.value)}
-            className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-text-primary bg-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
-          >
-            <option value="New">New</option>
-            <option value="Like New">Like New</option>
-            <option value="Used">Used</option>
-            <option value="For Parts">For Parts</option>
-          </select>
-        </div>
+        <Input
+          type="select"
+          label="Condition"
+          value={condition}
+          onChange={(e) => setCondition(e.target.value)}
+          options={[
+            { label: "New", value: "New" },
+            { label: "Like New", value: "Like New" },
+            { label: "Used", value: "Used" },
+            { label: "For Parts", value: "For Parts" },
+          ]}
+        />
 
         <Input
           label="Any defect? If yes, please state."
