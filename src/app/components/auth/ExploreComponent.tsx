@@ -1,7 +1,11 @@
 import React from "react";
 import Button from "../Button";
 
-const ExploreComponent = ({ setStep }: { setStep: (step: "explore" | "signin" | "signup" | "otp") => void }) => {
+const ExploreComponent = ({
+  setStep,
+}: {
+  setStep: (step: "explore" | "signin" | "signup" | "otp") => void;
+}) => {
   return (
     <div className="flex-1 flex flex-col justify-between w-full h-full animate-fadeIn">
       <div className="w-full mt-auto pb-20">
@@ -9,7 +13,7 @@ const ExploreComponent = ({ setStep }: { setStep: (step: "explore" | "signin" | 
           <h2 className="text-[#1D1E20] text-3xl font-black leading-tight tracking-tight">
             Explore the app
           </h2>
-          <p className="text-text-secondary text-md leading-relaxed font-semibold max-w-xs">
+          <p className="text-md max-w-xs">
             Now your finances are in one place and always under control
           </p>
         </div>

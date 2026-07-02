@@ -128,11 +128,12 @@ const SignUp = ({ setStep, setEmail }: SignUpProps) => {
             </Button>
           </form>
         </FormProvider>
-        <span className="text-text-secondary flex text-center items-center justify-center text-xs font-medium">
+
+        <span className="pt-2 text-text-secondary flex text-center items-center justify-center text-xs">
           Already have an account?{" "}
           <button
             onClick={() => setStep("signin")}
-            className="text-primary font-bold hover:underline"
+            className="text-primary ml-1 font-bold hover:underline"
           >
             Log in
           </button>

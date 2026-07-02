@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Rocket Sans", "sans-serif"],
+      },
       backgroundImage: {
       },
       colors: {

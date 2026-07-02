@@ -9,6 +9,7 @@ import Button from "@/app/components/Button";
 import ShippingIcon from "@/app/assets/svgs/home/ShippingIcon";
 import DeliveryIcon from "@/app/assets/svgs/home/DeliveryIcon";
 import { useRouter, useSearchParams } from "next/navigation";
+import ProductInEscrow from "../confirm-delivery/ProductInEscrow";
 
 const PaymentSuccessContent = () => {
   const router = useRouter();
@@ -28,81 +29,65 @@ const PaymentSuccessContent = () => {
           </div>
         </div>
 
-        <h2 className="text-xl font-bold my-2">Payment Successful!</h2>
+        <h2 className="text-2xl font-bold my-2">Payment Successful!</h2>
 
-        <p className="text-sm leading-[1.65] text-[#4B5563]">
+        <p className="text-sm px-10 leading-[1.65] text-[#4B5563]">
           Your payment is held safely in escrow. We will notify the seller to
           deliver your item.
         </p>
       </div>
 
-      <div className="mx-4 mt-4 bg-white rounded-2xl p-4 shadow-sm">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-[56px] h-[56px] rounded-xl bg-[#F0F1F5] overflow-hidden flex-shrink-0 relative">
-            <Image
-              src={IphoneImage}
-              alt={itemName}
-              fill
-              className="object-contain"
-            />
-          </div>
-
-          <div>
-            <p className="text-text-primary text-sm font-semibold mb-1">
-              {itemName}
-            </p>
-            <p className="text-text-tertiary text-xs">Order #DEC-2024-001</p>
-          </div>
-        </div>
-
-        {/* Escrow badge */}
-        <div className="flex items-center gap-2 bg-[#FFE8E0] border border-[#FFB899] rounded-xl px-3 py-2.5">
-          <SecureIcon size={16} color="#FF4304" />
-          <span className="text-[#C03000] text-[10px] font-bold">
-            {formatNaira(totalAmount)} held in escrow
-          </span>
-        </div>
-      </div>
+      <ProductInEscrow
+        itemName={itemName}
+        totalAmount={totalAmount}
+        formatNaira={formatNaira}
+      />
 
       {/* ── Order Timeline ── */}
       <div className="mx-4 my-4 bg-white rounded-2xl p-4 shadow-sm">
-        <h2 className="text-text-primary text-sm font-bold mb-4">Order Timeline</h2>
+        <h2 className="text-text-primary text-sm font-bold mb-4">
+          Order Timeline
+        </h2>
 
         <div className="relative pl-8">
           {/* Vertical connecting line */}
           <div className="absolute left-[15px] top-[22px] w-[2px] bg-[#E5E7EB] bottom-[22px]" />
 
           {/* Completed */}
-          <div className="relative flex flex-col mb-6">
+          <div className="relative flex flex-col mb-10">
             <div className="absolute -left-8 w-[30px] h-[30px] rounded-full bg-primary flex items-center justify-center flex-shrink-0">
               <SuccessIcon size={20} />
             </div>
 
             <div className="ml-2">
-              <p className="text-text-primary text-sm font-semibold">
+              <p className="text-text-primary text-md font-semibold">
                 Payment Held in Escrow
               </p>
-              <p className="text-text-tertiary text-xs my-1">
+              <p className="text-text-tertiary text-sm my-1">
                 Your payment is secured
               </p>
-              <span className="text-primary text-[10px] block font-bold">Completed</span>
+              <span className="text-primary text-[1smlock font-bold">
+                Completed
+              </span>
             </div>
           </div>
 
           {/* In Progress */}
-          <div className="relative flex flex-col mb-6">
+          <div className="relative flex flex-col mb-10">
             <div className="absolute -left-8 w-[30px] h-[30px] rounded-full bg-[#FEF3C7] border-2 border-[#F59E0B] flex items-center justify-center flex-shrink-0">
               <ShippingIcon size={16} color="#D97706" />
             </div>
 
             <div className="ml-2">
-              <p className="text-text-primary text-sm font-semibold">
+              <p className="text-text-primary text-md font-semibold">
                 Seller Ships Item
               </p>
-              <p className="text-text-tertiary text-xs my-1">
+              <p className="text-text-tertiary text-sm my-1">
                 Waiting for seller to dispatch
               </p>
-              <span className="text-[#D97706] text-[10px] block font-bold">In Progress</span>
+              <span className="text-[#D97706] text-sm block font-bold">
+                In Progress
+              </span>
             </div>
           </div>
 
@@ -113,13 +98,15 @@ const PaymentSuccessContent = () => {
             </div>
 
             <div className="ml-2">
-              <p className="text-text-primary text-sm font-semibold">
+              <p className="text-text-primary text-md font-semibold">
                 Confirm Delivery
               </p>
-              <p className="text-text-tertiary text-xs my-1">
+              <p className="text-text-tertiary text-sm my-1">
                 Release payment to seller
               </p>
-              <span className="text-[#6B7280] text-[10px] block font-bold">Pending</span>
+              <span className="text-[#6B7280] text-sm block font-bold">
+                Pending
+              </span>
             </div>
           </div>
         </div>
@@ -132,11 +119,11 @@ const PaymentSuccessContent = () => {
           onClick={() =>
             router.push(
               `/confirm-delivery?name=${encodeURIComponent(
-                itemName
-              )}&total=${totalAmount}`
+                itemName,
+              )}&total=${totalAmount}`,
             )
           }
-          className="font-bold shadow-[0_4px_12px_rgba(255,67,4,0.15)]"
+          className="font-bold text-md"
         >
           Track Order
         </Button>
@@ -144,7 +131,7 @@ const PaymentSuccessContent = () => {
         <Button
           variant="outline"
           fullWidth
-          className="border-primary text-primary font-bold hover:bg-[#FFF5F3]/50 transition-colors"
+          className="border-primary text-md text-primary font-bold hover:bg-[#FFF5F3]/50 transition-colors"
           onClick={() => {}} // TODO: Message seller
         >
           Message Seller
@@ -165,7 +152,13 @@ const PaymentSuccessContent = () => {
 
 const PaymentSuccessPage = () => {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-sm text-text-secondary">Loading payment confirmation...</div>}>
+    <Suspense
+      fallback={
+        <div className="p-8 text-center text-sm text-text-secondary">
+          Loading payment confirmation...
+        </div>
+      }
+    >
       <PaymentSuccessContent />
     </Suspense>
   );

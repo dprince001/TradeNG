@@ -13,6 +13,7 @@ import VerifiedIcon from "@/app/assets/svgs/home/VerifiedIcon";
 import Button from "@/app/components/Button";
 import { useRouter, useSearchParams } from "next/navigation";
 import MakeOfferModal from "@/app/components/MakeOfferModal";
+import Link from "next/link";
 
 type DeliveryMethod = "meetup" | "delivery";
 
@@ -99,14 +100,8 @@ const ConfirmOrderContent = () => {
           </div>
 
           {/* Make an Offer strip */}
-          <Button
-            variant="outline"
-            fullWidth
-            onClick={() => setIsOfferModalOpen(true)}
-            className="border-primary border-2 flex items-center justify-center gap-2 text-primary font-bold hover:bg-[#FFF5F3]/50 transition-colors"
-          >
-            <span>💰</span>
-            {isOffer ? "Adjust Offer Price" : "Make an Offer"}
+          <Button className="mb-2" variant="brand-outline" fullWidth>
+            <Link href={"/make-offer"}>Make an Offer</Link>
           </Button>
         </div>
 
@@ -145,7 +140,7 @@ const ConfirmOrderContent = () => {
                 </span>
               </div>
 
-              <p className="text-text-secondary text-xs">
+              <p className="text-text-secondary text-sm">
                 Arrange a safe meetup location with the seller
               </p>
             </div>
@@ -180,7 +175,7 @@ const ConfirmOrderContent = () => {
                 </span>
               </div>
 
-              <p className="text-text-secondary text-xs">
+              <p className="text-text-secondary text-sm">
                 Delivery via verified partners
               </p>
             </div>
@@ -254,17 +249,6 @@ const ConfirmOrderContent = () => {
           Proceed to Payment
         </Button>
       </div>
-
-      <MakeOfferModal
-        isOpen={isOfferModalOpen}
-        onClose={() => setIsOfferModalOpen(false)}
-        initialPrice={originalPrice}
-        onApplyOffer={(newOfferPrice, newAddress) => {
-          setOfferPrice(newOfferPrice);
-          setAddress(newAddress);
-          setIsOfferModalOpen(false);
-        }}
-      />
     </div>
   );
 };

@@ -11,16 +11,16 @@
     scrollbar-width: none;
   }
   .bg-brand-orange {
-    background-color: #FF4304;
+    background-color: #ff4304;
   }
   .text-brand-orange {
-    color: #FF4304;
+    color: #ff4304;
   }
   .border-brand-orange {
-    border-color: #FF4304;
+    border-color: #ff4304;
   }
   .bg-brand-gradient {
-    background: linear-gradient(135deg, #FF4304 0%, #FF8C39 100%);
+    background: linear-gradient(135deg, #ff4304 0%, #ff8c39 100%);
   }
 
   @keyframes slideUp {

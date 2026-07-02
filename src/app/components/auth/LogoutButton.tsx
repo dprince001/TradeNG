@@ -7,10 +7,11 @@ const LogoutButton = () => {
     <div>
       <div className="mt-auto pt-6 flex flex-col gap-4 text-center">
         <Button
+          variant="destructive-outline"
           onClick={() => {
             toast.success("Logged out successfully.");
           }}
-          className="w-full border border-red-500 rounded-xl py-3.5 text-xs font-bold text-red-500 hover:bg-red-50 transition-colors flex items-center justify-center gap-1.5"
+          className="w-full py-3.5 text-xs flex items-center justify-center gap-1.5"
         >
           <svg
             width="14"

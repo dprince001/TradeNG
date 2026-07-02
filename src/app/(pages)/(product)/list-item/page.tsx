@@ -67,6 +67,8 @@ export default function ListItemPage() {
       if (step === 4) {
         setShowDeliveryDropdown(false);
         setStep(3);
+      } else if (step === 3) {
+        setStep(1);
       } else {
         setStep((prev) => prev - 1);
       }
