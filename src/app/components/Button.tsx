@@ -14,6 +14,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     | "none";
   size?: "sm" | "md" | "lg" | "icon";
   fullWidth?: boolean;
+  loading?: boolean;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -24,6 +25,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       size = "md",
       fullWidth = false,
       className,
+      loading,
       ...props
     },
     ref,
@@ -53,16 +55,18 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
+        disabled={loading}
         className={cn(
           variant !== "none" && baseStyles,
           variants[variant],
           variant !== "none" && sizes[size],
           fullWidth && "w-full",
           className
+          
         )}
         {...props}
       >
-        {children}
+        {loading ? "Loading..." : children}
       </button>
     );
   },

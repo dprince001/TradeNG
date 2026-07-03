@@ -4,6 +4,10 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import Button from "../Button";
+import { useOtpVerificationMutation, useResendOTPMutation } from "@/app/redux/api/authApiSlice";
+import usePost from "@/app/hooks/usePost";
+import { useDispatch } from "react-redux";
+import { setUserInfo } from "@/app/redux/api/appSlice";
 
 interface OtpComponentProps {
   setStep: (step: "explore" | "signin" | "signup" | "otp") => void;
@@ -13,6 +17,11 @@ interface OtpComponentProps {
 const OtpComponent = ({ setStep, email }: OtpComponentProps) => {
   const router = useRouter();
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
+
+  const dispatch = useDispatch();
+
+  const { handlePost: verifyOtp, isLoading } = usePost(useOtpVerificationMutation);
+  const { handlePost: resendOtp, isLoading: resendOtpLoading } = usePost(useResendOTPMutation);
 
   const handleOtpChange = (index: number, val: string) => {
     if (isNaN(Number(val))) return;
@@ -36,15 +45,52 @@ const OtpComponent = ({ setStep, email }: OtpComponentProps) => {
       prevInput?.focus();
     }
   };
+  
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pasteData = e.clipboardData.getData("text");
+    if (!pasteData) return;
 
-  const handleOtpVerify = () => {
-    console.log("Verifying OTP:", otp.join(""));
-    // Complete verification and send to home
-    router.push("/");
+    // Extract digits up to length 6
+    const digits = pasteData.replace(/\D/g, "").substring(0, 6);
+    if (!digits) return;
+
+    const newOtp = [...otp];
+    for (let i = 0; i < digits.length; i++) {
+      newOtp[i] = digits[i];
+    }
+    setOtp(newOtp);
+
+    // Focus the last filled input
+    const targetIndex = Math.min(digits.length - 1, 5);
+    const targetInput = document.getElementById(`otp-${targetIndex}`);
+    targetInput?.focus();
+
+    e.preventDefault();
+  };
+
+  const handleOtpVerify = async () => {
+    const body = {
+      email,
+      otp: otp.join(""),
+    };
+
+    const res = await verifyOtp(body);
+    if (res?.success) {
+      dispatch(setUserInfo(res.data));
+      router.push("/home");
+    }
+  };
+
+  const handleResendOtp = async () => {
+    const res = await resendOtp({ email });
+
+    if (res?.success) {
+      setOtp(new Array(6).fill(""));
+    }
   };
 
   const maskEmail = (emailStr: string) => {
-    if (!emailStr) return "lakesol****@gmail.com";
+    if (!emailStr) return "user****@email.com";
     const [localPart, domain] = emailStr.split("@");
     if (!localPart || !domain) return emailStr;
     if (localPart.length <= 4) {
@@ -54,7 +100,7 @@ const OtpComponent = ({ setStep, email }: OtpComponentProps) => {
   };
 
   return (
-    <div className="flex-1 flex flex-col justify-between w-full animate-fadeIn pt-6">
+    <div className="flex-1 flex flex-col justify-between w-full animate-fadeIn p-5">
       <div>
         {/* Back button */}
         <button
@@ -84,14 +130,15 @@ const OtpComponent = ({ setStep, email }: OtpComponentProps) => {
               value={digit}
               onChange={(e) => handleOtpChange(i, e.target.value)}
               onKeyDown={(e) => handleOtpKeyDown(i, e)}
-              className="w-11 h-13 border border-gray-200 rounded-xl bg-white text-center text-lg font-black text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 shadow-sm"
+              onPaste={handlePaste}
+              className="w-[44px] h-[48px] border border-gray-200 rounded-xl bg-white text-center text-lg font-black text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 shadow-sm"
             />
           ))}
         </div>
 
         <div className="text-center mb-10">
-          <span className="text-text-secondary text-xs font-bold">
-            Send code again <span className="text-primary">00:20</span>
+          <span className="text-text-secondary text-xs font-bold" onClick={handleResendOtp}>
+           {resendOtpLoading ? "Resending OTP..." : "Send code again"}
           </span>
         </div>
 
@@ -100,6 +147,7 @@ const OtpComponent = ({ setStep, email }: OtpComponentProps) => {
           fullWidth
           variant="primary"
           className="py-3.5 font-bold shadow-md"
+          loading={isLoading}
         >
           Verify
         </Button>

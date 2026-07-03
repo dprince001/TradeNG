@@ -88,6 +88,10 @@ const Input = forwardRef<any, InputProps>(
               onChange={onChange}
               {...(props as any)}
             >
+              <option disabled value={""}>
+                Select {label || "Option"}
+              </option>
+
               {options?.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}

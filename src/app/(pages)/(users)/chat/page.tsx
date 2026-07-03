@@ -7,7 +7,6 @@ import TopNavbar from "@/app/components/layout/TopNavbar";
 import Button from "@/app/components/Button";
 import VerifiedIcon from "@/app/assets/svgs/home/VerifiedIcon";
 import avatarImg from "@/app/assets/images/seller_avatar.png";
-import MakeOfferModal from "@/app/components/MakeOfferModal";
 
 interface Message {
   id: string;
@@ -345,50 +344,6 @@ const ChatContent = () => {
           </svg>
         </button>
       </div>
-
-      {/* Counter Offer Modal */}
-      <MakeOfferModal
-        isOpen={isCounterModalOpen}
-        onClose={() => setIsCounterModalOpen(false)}
-        initialPrice={itemPrice}
-        onApplyOffer={(counterVal) => {
-          setIsCounterModalOpen(false);
-
-          // Disable previous counter actions
-          setMessages((prev) =>
-            prev.map((msg) => (msg.type === "counter" ? { ...msg, actions: false } : msg))
-          );
-
-          const timeStamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-          // Add user counter offer
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: Date.now().toString(),
-              sender: "system",
-              type: "offer",
-              amount: counterVal,
-              time: timeStamp,
-            },
-          ]);
-
-          // Simulate seller accepting this new offer in 1.5 seconds
-          setTimeout(() => {
-            const timeStamp2 = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            setMessages((prev) => [
-              ...prev,
-              {
-                id: Date.now().toString(),
-                sender: "system",
-                type: "accepted",
-                amount: counterVal,
-                time: timeStamp2,
-              },
-            ]);
-          }, 1500);
-        }}
-      />
     </div>
   );
 };
