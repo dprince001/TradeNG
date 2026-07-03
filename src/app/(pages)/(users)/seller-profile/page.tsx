@@ -335,7 +335,7 @@ const SellerProfilePage = () => {
                 {...product}
                 negotiable={product.negotiable}
                 onClick={() => {
-                  router.push("/item-detail");
+                  router.push(`/${product.id}`);
                 }}
               />
             ))}

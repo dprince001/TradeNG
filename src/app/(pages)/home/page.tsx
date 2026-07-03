@@ -13,11 +13,19 @@ import ProductCard from "@/app/(pages)/home/components/ProductCard";
 import { useRouter } from "next/navigation";
 import BottomNavbar from "@/app/components/layout/BottomNavbar";
 import NotificationPanel, { NotificationItem } from "@/app/components/layout/NotificationPanel";
+import useGet from "@/app/hooks/useGet";
+import { useGetCategoriesQuery } from "@/app/redux/api/categoriesApiSlice";
+import { useGetListingsQuery } from "@/app/redux/api/listingApiSlice";
+import Image from "next/image";
+import { CategorySkeleton, ListingSkeleton } from "@/app/components/Loader";
 
 const HomePage = () => {
   const [showFilter, setShowFilter] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const router = useRouter();
+  const { data: categoriesData, isFetching: categoriesLoading } = useGet(useGetCategoriesQuery, "");
+  const { data: listingsData, isFetching: listingsLoading } = useGet(useGetListingsQuery, "");
+
 
   const [notifications, setNotifications] = useState<NotificationItem[]>([
     {
@@ -58,28 +66,25 @@ const HomePage = () => {
 
   const unreadCount = notifications.filter((n) => n.unread).length;
 
-  const categories = [
+  const mockCategories = [
     { label: "Phones", emoji: "📱" },
+    { label: "Gadgets", emoji: "📱" },
     { label: "Fashion", emoji: "👕" },
     { label: "Home", emoji: "🏠" },
     { label: "Electronics", emoji: "💻" },
     { label: "Furniture", emoji: "🛋️" },
+    { label: "Others", emoji: "-" },
   ];
 
-  const products = [
-    {
-      title: "iPhone 13 Pro Max",
-      price: "₦450,000",
-      store: "TechHub Store",
-      negotiable: true,
-    },
-    {
-      title: "iPhone 13 Pro Max",
-      price: "₦450,000",
-      store: "TechHub Store",
-      negotiable: false,
-    },
-  ];
+  const categories = categoriesData?.categories?.map((cat: any) => {
+    return {
+      label: cat.name,
+      emoji: mockCategories.find((c: any) => c.label === cat.name)?.emoji || "",
+    };
+  });
+
+  console.log(categories);
+
 
   return (
     <>
@@ -140,19 +145,38 @@ const HomePage = () => {
 
         {/* ── Categories ── */}
         <div className="px-5 mb-5">
-          <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
-            {categories.map((cat) => (
-              <div
-                key={cat.label}
-                className="flex flex-col flex-shrink-0 w-[74px] h-[78px] rounded-[12px] border border-gray-200 items-center justify-center text-[30px]"
-              >
-                {cat.emoji}
-                <span className="text-[#374151] text-[10px] font-medium">
-                  {cat.label}
-                </span>
-              </div>
-            ))}
-          </div>
+          {categoriesLoading ? (
+            <CategorySkeleton />
+          ) : (
+            <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+              {/* {categoriesData?.categories?.map((cat: any) => (
+                <div
+                  key={cat.id}
+                  className="flex flex-col flex-shrink-0 w-[74px] h-[78px] rounded-[12px] border border-gray-200 items-center justify-center text-[30px]"
+                >
+                  <div className="max-h-[32px] max-w-[24px] relative">
+                    <img src={cat?.image} alt="category image" className="object-contain" />
+                  </div>
+
+                  <span className="text-[#374151] text-[10px] font-medium">
+                    {cat.name}
+                  </span>
+                </div>
+              ))} */}
+
+              {categories?.map((cat: any) => (
+                <div
+                  key={cat.id}
+                  className="flex flex-col flex-shrink-0 w-[74px] h-[78px] rounded-[12px] border border-gray-200 items-center justify-center text-[30px]"
+                >
+                  {cat.emoji}
+                  <span className="text-[#374151] text-[10px] font-medium">
+                    {cat.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* ── Safe Escrow Banner ── */}
@@ -184,18 +208,23 @@ const HomePage = () => {
             <h2 className="text-text-primary text-sm font-medium">
               Featured Item
             </h2>
+
             <button className="text-text-secondary text-xs">View All</button>
           </div>
 
-          <div className="flex gap-3">
-            {products.map((p, i) => (
-              <ProductCard
-                key={i}
-                {...p}
-                onClick={() => router.push("/item-detail")}
-              />
-            ))}
-          </div>
+          {listingsLoading ? (
+            <ListingSkeleton />
+          ) : (
+            <div className="flex gap-3">
+              {listingsData?.listings?.map((p: any, i: number) => (
+                <ProductCard
+                  key={i}
+                  {...p}
+                  onClick={() => router.push(`/${p.id}`)}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* ─Add Item Button ── */}
