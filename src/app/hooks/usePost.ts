@@ -21,7 +21,7 @@ const usePost = (mutation: any) => {
         toast.success(response?.message || "Successful");
       }
 
-      return { success: true, data: response };
+      return response;
     } catch (err: any) {
       const validationErrs = err?.data?.data?.map(
         (err: any) => err?.message

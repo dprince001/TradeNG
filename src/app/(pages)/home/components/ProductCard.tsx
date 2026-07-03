@@ -15,7 +15,7 @@ interface ProductCardProps {
     last_name: string;
     is_verified_seller: boolean;
   };
-  image?: string;
+  images?: string[];
   negotiable?: boolean;
   onClick?: () => void;
 }
@@ -25,7 +25,7 @@ const ProductCard = ({
   item_name,
   start_price,
   price,
-  image,
+  images,
   seller,
   negotiable = false,
   onClick,
@@ -38,7 +38,7 @@ const ProductCard = ({
       className={`flex-1 min-w-0 bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm ${onClick ? "cursor-pointer active:scale-[0.97] transition-transform" : ""}`}
     >
       <div className="relative w-full bg-[#EEF1F5] h-[170px]">
-        <Image src={image || ""} alt={title || "Product"} fill />
+        <Image src={images?.[0] || ""} alt={title || "Product"} fill />
 
         <button
           onClick={() => setLiked((l) => !l)}
