@@ -14,6 +14,7 @@ import { useParams } from "next/navigation";
 import ImageCarousel from "@/app/(pages)/(product)/component/ImageCarousel";
 import { Spinner } from "@/app/components/Loader";
 import { useGetReviewsForAUserQuery } from "@/app/redux/api/reviewsApiSlice";
+import { useSelector } from "react-redux";
 
 const CONDITION_LABELS: Record<string, string> = {
   NEW: "New",
@@ -27,6 +28,8 @@ const ItemDetailPage = () => {
   const [liked, setLiked] = useState(false);
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const router = useRouter();
+  const userId = useSelector((state: any) => state.app.userInfo?.user?.id);
+
 
   const { data: listingDetailData, isLoading: listingDetailLoading } = useGet(
     useGetListingDetailQuery,
@@ -196,8 +199,8 @@ const ItemDetailPage = () => {
         </div>
       </div>
 
-      <div className="px-5 py-4 flex gap-3">
-        <Button
+      {seller?.id !== userId && <div className="px-5 py-4 flex gap-3">
+        {negotiable && <Button
           variant="outline"
           onClick={() => {
             sessionStorage.setItem(
@@ -215,7 +218,7 @@ const ItemDetailPage = () => {
           className="text-primary border-primary"
         >
           Make Offer
-        </Button>
+        </Button>}
 
         <Button
           variant="primary"
@@ -228,7 +231,17 @@ const ItemDetailPage = () => {
         >
           Buy Now
         </Button>
-      </div>
+      </div>}
+
+      {seller?.id === userId && <div className="px-5 py-4 flex gap-3">
+        <Button variant="outline" onClick={() => router.push(`/${itemId}/offers`)} fullWidth className="text-primary border-primary">
+          View Offers
+        </Button>
+
+        <Button variant="primary" onClick={() => { }} fullWidth>
+          Edit Item
+        </Button>
+      </div>}
     </div>
   );
 };

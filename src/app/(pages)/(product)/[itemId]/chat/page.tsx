@@ -501,22 +501,22 @@ const ChatPage = () => {
 
       <div className="flex-1 overflow-y-auto px-5 pt-6 pb-4">
         {/* Welcome Messages */}
-        <div className="bg-primary text-white rounded-[16px] px-4 py-3 text-xs max-w-[80%] shadow-sm ml-auto mb-4">
+        {/* <div className="bg-primary text-white rounded-[16px] px-4 py-3 text-xs max-w-[80%] shadow-sm ml-auto mb-4">
           <p className="mb-2">
             Hi! Is this still available?
           </p>
           <span className="text-[10px] text-[#D1FAE5]">10:30 AM</span>
-        </div>
+        </div> */}
 
-        <div className="bg-white text-text-primary rounded-[16px] px-4 py-3 text-xs max-w-[80%] shadow-sm mr-auto mb-4">
+        {/* <div className="bg-white text-text-primary rounded-[16px] px-4 py-3 text-xs max-w-[80%] shadow-sm mr-auto mb-4">
           <p className="mb-2">
             Yes, it is! Would you like to make an offer?
           </p>
           <span className="text-[10px] text-[#6B7280]">10:32 AM</span>
-        </div>
+        </div> */}
 
         {/* Dynamically Loaded Offers */}
-        {offersList.map((offer: any) => {
+        {offersList?.map((offer: any) => {
           const formattedTime = new Date(offer.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
           if (offer.status === "ACCEPTED") {
@@ -554,7 +554,7 @@ const ChatPage = () => {
             );
           }
 
-          if (offer.parent_offer_id === null) {
+          if (userId === offer?.buyer?.id) {
             // Buyer Offer Card
             return (
               <div key={offer.id} className="flex flex-col items-end mb-4">
@@ -564,7 +564,7 @@ const ChatPage = () => {
                       💰
                     </div>
 
-                    <span className="text-xs font-semibold text-text-primary">Buyer offered</span>
+                    <span className="text-xs font-semibold text-text-primary">You offered</span>
                   </div>
 
                   <div className="text-[20px] font-bold text-primary mb-1">{formatNaira(offer.amount)}</div>

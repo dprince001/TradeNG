@@ -215,7 +215,7 @@ const HomePage = () => {
           {listingsLoading ? (
             <ListingSkeleton />
           ) : (
-            <div className="flex gap-3">
+            <div className="grid grid-cols-2 gap-3">
               {listingsData?.listings?.map((p: any, i: number) => (
                 <ProductCard
                   key={i}
