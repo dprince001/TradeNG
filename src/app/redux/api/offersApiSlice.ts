@@ -24,15 +24,16 @@ const offersApiSlice = generalApiSlice.injectEndpoints({
                 method: "POST",
                 body: offer,
             }),
-            invalidatesTags: ["Offer"],
+            invalidatesTags: ["Offer", "Chat"],
         }),
 
         counterAnOffer: builder.mutation({
-            query: (listingId) => ({
-                url: `/offers/${listingId}/counter`,
+            query: ({ offerId, amount, note }) => ({
+                url: `/offers/${offerId}/counter`,
                 method: "PATCH",
+                body: { amount, note },
             }),
-            invalidatesTags: ["Offer"],
+            invalidatesTags: ["Offer", "Chat"],
         }),
 
         declineAnOffer: builder.mutation({
@@ -40,7 +41,7 @@ const offersApiSlice = generalApiSlice.injectEndpoints({
                 url: `/offers/${listingId}/decline`,
                 method: "PATCH",
             }),
-            invalidatesTags: ["Offer"],
+            invalidatesTags: ["Offer", "Chat"],
         }),
 
         acceptAnOffer: builder.mutation({
@@ -48,7 +49,7 @@ const offersApiSlice = generalApiSlice.injectEndpoints({
                 url: `/offers/${listingId}/accept`,
                 method: "PATCH",
             }),
-            invalidatesTags: ["Offer"],
+            invalidatesTags: ["Offer", "Chat"],
         }),
     }),
     overrideExisting: false
