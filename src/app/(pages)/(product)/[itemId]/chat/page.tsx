@@ -17,6 +17,7 @@ import { useGetAllConversationsQuery, useGetMessageInAConversationQuery, useSend
 import { useSelector } from "react-redux";
 import usePost from "@/app/hooks/usePost";
 import { useSearchParams } from "next/navigation";
+import { Spinner } from "@/app/components/Loader";
 
 const ChatPage = () => {
   const router = useRouter();
@@ -121,7 +122,7 @@ const ChatPage = () => {
       </div>
 
       <div className="w-full flex-1 overflow-y-auto">
-        <div className="flex-1 overflow-y-auto px-5 pt-6 pb-4">
+        {offersLoading || conversationLoading ? <Spinner /> : <div className="flex-1 overflow-y-auto px-5 pt-6 pb-4">
           {messages?.map((message: any) => {
             const isMine = message.sender_id === userId;
 
@@ -270,7 +271,7 @@ const ChatPage = () => {
 
             return null;
           })}
-        </div>
+        </div>}
       </div>
 
 
