@@ -83,9 +83,6 @@ const HomePage = () => {
     };
   });
 
-  console.log(categories);
-
-
   return (
     <>
       {showFilter && <FilterOverlay onClose={() => setShowFilter(false)} />}
@@ -97,7 +94,7 @@ const HomePage = () => {
         onDelete={handleDeleteNotification}
       />
 
-      <div className="w-full min-h-screen relative flex flex-col py-6 pb-24">
+      <div className="w-full h-screen relative flex flex-col py-6">
         {/* ── Nav ── */}
         <div className="flex items-center justify-between px-5 pb-1">
           <button className="w-[42px] h-[42px] rounded-full bg-gray-100 flex items-center justify-center">
@@ -119,37 +116,38 @@ const HomePage = () => {
           </div>
         </div>
 
-        <div className="px-5 pt-5 mb-8">
-          <h1 className="text-text-primary text-2xl font-semibold leading-tight">
-            Olamilekan
-          </h1>
-          <p className="text-text-secondary text-sm mt-0.5">
-            Welcome to TradeNG.
-          </p>
-        </div>
-
-        {/* ── Search and filter ── */}
-        <div className="px-5 flex gap-3 mb-6">
-          <div className="flex-1 flex items-center gap-2.5 bg-[#F5F6FA] rounded-lg px-4 py-3.5">
-            <SearchIcon />
-            <span className="text-text-secondary">Search...</span>
+        <div className="overflow-y-auto pb-14">
+          <div className="px-5 pt-5 mb-8">
+            <h1 className="text-text-primary text-2xl font-semibold leading-tight">
+              Olamilekan
+            </h1>
+            <p className="text-text-secondary text-sm mt-0.5">
+              Welcome to TradeNG.
+            </p>
           </div>
 
-          <button
-            onClick={() => setShowFilter(true)}
-            className="w-[50px] h-[50px] rounded-xl flex items-center justify-center shadow-sm flex-shrink-0 bg-primary"
-          >
-            <FilterIcon />
-          </button>
-        </div>
+          {/* ── Search and filter ── */}
+          <div className="px-5 flex gap-3 mb-6">
+            <div className="flex-1 flex items-center gap-2.5 bg-[#F5F6FA] rounded-lg px-4 py-3.5">
+              <SearchIcon />
+              <span className="text-text-secondary">Search...</span>
+            </div>
 
-        {/* ── Categories ── */}
-        <div className="px-5 mb-5">
-          {categoriesLoading ? (
-            <CategorySkeleton />
-          ) : (
-            <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
-              {/* {categoriesData?.categories?.map((cat: any) => (
+            <button
+              onClick={() => setShowFilter(true)}
+              className="w-[50px] h-[50px] rounded-xl flex items-center justify-center shadow-sm flex-shrink-0 bg-primary"
+            >
+              <FilterIcon />
+            </button>
+          </div>
+
+          {/* ── Categories ── */}
+          <div className="px-5 mb-5">
+            {categoriesLoading ? (
+              <CategorySkeleton />
+            ) : (
+              <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+                {/* {categoriesData?.categories?.map((cat: any) => (
                 <div
                   key={cat.id}
                   className="flex flex-col flex-shrink-0 w-[74px] h-[78px] rounded-[12px] border border-gray-200 items-center justify-center text-[30px]"
@@ -164,71 +162,72 @@ const HomePage = () => {
                 </div>
               ))} */}
 
-              {categories?.map((cat: any) => (
-                <div
-                  key={cat.id}
-                  className="flex flex-col flex-shrink-0 w-[74px] h-[78px] rounded-[12px] border border-gray-200 items-center justify-center text-[30px]"
-                >
-                  {cat.emoji}
-                  <span className="text-[#374151] text-[10px] font-medium">
-                    {cat.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* ── Safe Escrow Banner ── */}
-        <div className="px-5 mb-5">
-          <div
-            className="w-full rounded-2xl overflow-hidden"
-            style={{
-              background:
-                "linear-gradient(100deg, #0D0500 0%, #7A1E00 45%, #C03300 100%)",
-            }}
-          >
-            <div className="flex items-center justify-between px-5 py-5">
-              <div>
-                <p className="text-white text-[15px] font-bold leading-snug">
-                  Buy Safely with Escrow
-                </p>
-                <p className="text-white/65 text-xs mt-1">
-                  Your money is protected until delivery
-                </p>
+                {categories?.map((cat: any) => (
+                  <div
+                    key={cat.id}
+                    className="flex flex-col flex-shrink-0 w-[74px] h-[78px] rounded-[12px] border border-gray-200 items-center justify-center text-[30px]"
+                  >
+                    {cat.emoji}
+                    <span className="text-[#374151] text-[10px] font-medium">
+                      {cat.label}
+                    </span>
+                  </div>
+                ))}
               </div>
-              <SecureIcon color="white" />
-            </div>
-          </div>
-        </div>
-
-        {/* ── Featured Items ── */}
-        <div className="px-5 mb-2">
-          <div className="flex items-center justify-between mb-3.5">
-            <h2 className="text-text-primary text-sm font-medium">
-              Featured Item
-            </h2>
-
-            <button className="text-text-secondary text-xs">View All</button>
+            )}
           </div>
 
-          {listingsLoading ? (
-            <ListingSkeleton />
-          ) : (
-            <div className="grid grid-cols-2 gap-3">
-              {listingsData?.listings?.map((p: any, i: number) => (
-                <ProductCard
-                  key={i}
-                  {...p}
-                  onClick={() => router.push(`/${p.id}`)}
-                />
-              ))}
+          {/* ── Safe Escrow Banner ── */}
+          <div className="px-5 mb-5">
+            <div
+              className="w-full rounded-2xl overflow-hidden"
+              style={{
+                background:
+                  "linear-gradient(100deg, #0D0500 0%, #7A1E00 45%, #C03300 100%)",
+              }}
+            >
+              <div className="flex items-center justify-between px-5 py-5">
+                <div>
+                  <p className="text-white text-[15px] font-bold leading-snug">
+                    Buy Safely with Escrow
+                  </p>
+                  <p className="text-white/65 text-xs mt-1">
+                    Your money is protected until delivery
+                  </p>
+                </div>
+                <SecureIcon color="white" />
+              </div>
             </div>
-          )}
+          </div>
+
+          {/* ── Featured Items ── */}
+          <div className="px-5 mb-2">
+            <div className="flex items-center justify-between mb-3.5">
+              <h2 className="text-text-primary text-sm font-medium">
+                Featured Item
+              </h2>
+
+              <button className="text-text-secondary text-xs">View All</button>
+            </div>
+
+            {listingsLoading ? (
+              <ListingSkeleton />
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                {listingsData?.listings?.map((p: any, i: number) => (
+                  <ProductCard
+                    key={i}
+                    {...p}
+                    onClick={() => router.push(`/${p.id}`)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* ─Add Item Button ── */}
-        <div className="absolute bottom-24 right-5 z-40">
+        <div className="absolute bottom-20 right-5 z-40">
           <button
             onClick={() => router.push("/list-item")}
             className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-transform"

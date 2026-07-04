@@ -2,7 +2,7 @@ import React from "react";
 
 export const Spinner = ({ className = "w-6 h-6 text-primary" }: { className?: string }) => {
   return (
-    <div className="w-screen h-screen flex items-center justify-center">
+    <div className="w-full h-full flex items-center justify-center">
       <svg
         className={`animate-spin ${className}`}
         xmlns="http://www.w3.org/2000/svg"
