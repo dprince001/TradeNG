@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import TopNavbar from "@/app/components/layout/TopNavbar";
 import PublishListing from "@/app/components/list-items/PublishListing";
 import PricingAndDelivery from "@/app/components/list-items/PricingAndDelivery";
@@ -12,13 +12,12 @@ import AddItemSuccess from "@/app/components/list-items/AddItemSuccess";
 import AddPhotosComponent from "@/app/components/list-items/AddPhotosComponent";
 import AddItemComponent from "@/app/components/list-items/AddItemComponent";
 import usePost from "@/app/hooks/usePost";
-import { useCreateListingMutation } from "@/app/redux/api/listingApiSlice";
+import { useCreateListingMutation, useUpdateListingMutation } from "@/app/redux/api/listingApiSlice";
 import { useUploadImagesMutation } from "@/app/redux/api/uploadsApiSlice";
 import useGet from "@/app/hooks/useGet";
 import { useGetCategoriesQuery } from "@/app/redux/api/categoriesApiSlice";
 import { Spinner } from "@/app/components/Loader";
 
-// ── Zod schema ──────────────────────────────────────────────────────────────
 const listingSchema = z.object({
   item_name: z.string().min(1, "Item name is required"),
   category_id: z.string().min(1, "Category is required"),
@@ -42,25 +41,28 @@ const listingSchema = z.object({
 
 export type ListingFormValues = z.infer<typeof listingSchema>;
 
-// ── Component ────────────────────────────────────────────────────────────────
 export default function ListItemPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("edit"); // present when editing
+  const isEditMode = !!editId;
+
   const { handlePost: createListing, isLoading: createListingLoading } = usePost(useCreateListingMutation);
+  const { handlePost: updateListing, isLoading: updateListingLoading } = usePost(useUpdateListingMutation);
   const { handlePost: uploadImages, isLoading: uploadingImages } = usePost(useUploadImagesMutation);
   const { data: categoriesData, isFetching: categoriesLoading } = useGet(useGetCategoriesQuery, "");
 
-  const isPublishing = uploadingImages || createListingLoading;
+  const isPublishing = uploadingImages || createListingLoading || updateListingLoading;
 
   const [step, setStep] = useState(1);
   const [showDeliveryDropdown, setShowDeliveryDropdown] = useState(false);
 
-  // Photos are files — not serialisable, kept outside the form
   const [photos, setPhotos] = useState<string[]>([]);
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]); // kept from edit
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // ── React Hook Form (FormProvider) ───────────────────────────────────────
   const methods = useForm<ListingFormValues>({
     resolver: zodResolver(listingSchema),
     defaultValues: {
@@ -78,6 +80,38 @@ export default function ListItemPage() {
     mode: "onChange",
   });
 
+  // ── Pre-fill form in edit ────────────────────────────────────────────
+  useEffect(() => {
+    if (!isEditMode || !editId) return;
+
+    const saved = sessionStorage.getItem(`edit-listing-${editId}`);
+    if (!saved) return;
+
+    try {
+      const data = JSON.parse(saved);
+      methods.reset({
+        item_name: data.item_name ?? "",
+        category_id: data.category_id ?? "",
+        condition: data.condition ?? "",
+        defect_description: data.defect_description ?? "",
+        description: data.description ?? "",
+        price: Number(data.price) || 0,
+        allow_price_negotiation: data.allow_price_negotiation ?? false,
+        delivery_options: data.delivery_options ?? "PICKUP",
+        pickup_address: data.pickup_address ?? "",
+        location: data.location ?? "",
+      });
+
+      // Pre-load existing images as preview URLs
+      if (Array.isArray(data.images) && data.images.length > 0) {
+        setPhotos(data.images);
+        setExistingImageUrls(data.images);
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }, [editId, isEditMode]);
+
   // ── Photo helpers ────────────────────────────────────────────────────────
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -91,51 +125,69 @@ export default function ListItemPage() {
   const removePhoto = (index: number) => {
     setPhotos((prev) => prev.filter((_, i) => i !== index));
     setPhotoFiles((prev) => prev.filter((_, i) => i !== index));
+    setExistingImageUrls((prev) => prev.filter((_, i) => i !== index));
     if (activePhotoIndex >= photos.length - 1 && activePhotoIndex > 0) {
       setActivePhotoIndex(photos.length - 2);
     }
   };
 
-  // ── Publish ──────────────────────────────────────────────────────────────
+  // ── Publish / Update ─────────────────────────────────────────────────────
   const handlePublish = async (status: "ACTIVE" | "DRAFT") => {
-    const formData = new FormData();
-    photoFiles.forEach((file) => formData.append("images", file));
-
-    const uploadRes = await uploadImages(formData, { showSuccessToast: false });
-    if (!uploadRes?.success) return;
-
-    const imageUrls: string[] =
-      uploadRes.data?.data?.images ?? uploadRes.data?.images ?? [];
-
     const values = methods.getValues();
+
+    // Upload any new photo files
+    let uploadedUrls: string[] = [];
+    if (photoFiles.length > 0) {
+      const formData = new FormData();
+      photoFiles.forEach((file) => formData.append("images", file));
+
+      const uploadRes = await uploadImages(formData, { showSuccessToast: false });
+      if (!uploadRes?.success) return;
+
+      uploadedUrls = uploadRes.data?.data?.images ?? uploadRes.data?.images ?? [];
+    }
+
+    // Merge existing image URLs with any newly uploaded ones
+    const finalImages = [
+      ...existingImageUrls.filter((url) => photos.includes(url)), // keep non-removed images
+      ...uploadedUrls,
+    ];
+
     const body = {
       ...values,
-      images: imageUrls,
+      images: finalImages,
       delivery_options: [values.delivery_options],
       status,
       price: Number(values.price),
     };
 
-    const res = await createListing(body);
-    if (res?.success) {
-      setStep(5);
+    if (isEditMode && editId) {
+      const res = await updateListing({ id: editId, ...body });
+      if (res?.success) {
+        sessionStorage.removeItem(`edit-listing-${editId}`);
+        setStep(5);
+      }
+    } else {
+      const res = await createListing(body);
+      if (res?.success) {
+        setStep(5);
+      }
     }
   };
 
   const handleDraft = () => handlePublish("DRAFT");
 
-  // ── Navigation helpers ───────────────────────────────────────────────────
   const handleBack = () => {
     if (step > 1) {
       setStep((prev) => prev - 1);
     } else {
-      router.push("/");
+      router.back();
     }
   };
 
   const getStepTitle = () => {
     switch (step) {
-      case 1: return "List Item";
+      case 1: return isEditMode ? "Edit Item" : "List Item";
       case 2: return "Pricing";
       case 3: return "Photos";
       case 4: return "Review & List";
@@ -143,11 +195,11 @@ export default function ListItemPage() {
     }
   };
 
-  // ── Reset ────────────────────────────────────────────────────────────────
   const handleReset = () => {
     methods.reset();
     setPhotos([]);
     setPhotoFiles([]);
+    setExistingImageUrls([]);
     setActivePhotoIndex(0);
     setShowDeliveryDropdown(false);
     setStep(1);

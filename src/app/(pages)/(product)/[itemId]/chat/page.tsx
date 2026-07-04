@@ -417,7 +417,7 @@ import Image from "next/image";
 import Input from "@/app/components/Input";
 import MessageIcon from "@/app/assets/svgs/home/MessageIcon";
 import useGet from "@/app/hooks/useGet";
-import { useGetOffersForAListingQuery, useAcceptAnOfferMutation, useDeclineAnOfferMutation, useCounterAnOfferMutation } from "@/app/redux/api/offersApiSlice";
+import { useGetOffersForAListingQuery, useAcceptAnOfferMutation, useDeclineAnOfferMutation, useCounterAnOfferMutation, useGetAllOffersReceivedQuery } from "@/app/redux/api/offersApiSlice";
 import { useSelector } from "react-redux";
 import usePost from "@/app/hooks/usePost";
 
@@ -430,6 +430,8 @@ const ChatPage = () => {
 
   const { data: offers, isLoading: offersLoading } = useGet(useGetOffersForAListingQuery, itemId, !!itemId);
 
+  // for the seller
+  // const { data: allOffers, isLoading: allOffersLoading } = useGet(useGetAllOffersReceivedQuery);
 
   const { handlePost: acceptAnOffer, isLoading: acceptAnOfferLoading } = usePost(useAcceptAnOfferMutation);
   const { handlePost: declineAnOffer, isLoading: declineAnOfferLoading } = usePost(useDeclineAnOfferMutation);
@@ -515,7 +517,6 @@ const ChatPage = () => {
           <span className="text-[10px] text-[#6B7280]">10:32 AM</span>
         </div> */}
 
-        {/* Dynamically Loaded Offers */}
         {offersList?.map((offer: any) => {
           const formattedTime = new Date(offer.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
