@@ -14,7 +14,7 @@ const ExploreComponent = ({
             Explore the app
           </h2>
           <p className="text-md max-w-xs">
-            Now your finances are in one place and always under control
+            Discover great deals on pre-owned items or turn your unused things into cash, all in one place.
           </p>
         </div>
 
