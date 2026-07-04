@@ -79,7 +79,7 @@ const ChatPage = () => {
   }, [itemId]);
 
   return (
-    <div className="w-full min-h-screen flex flex-col bg-[#FAFAFA] h-screen">
+    <div className="w-full flex flex-col bg-[#FAFAFA] h-dvh">
       {/* ── Header ── */}
       <TopNavbar
         onBack={() => router.back()}

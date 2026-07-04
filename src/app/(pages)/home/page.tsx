@@ -94,7 +94,7 @@ const HomePage = () => {
         onDelete={handleDeleteNotification}
       />
 
-      <div className="w-full h-screen relative flex flex-col py-6">
+      <div className="w-full h-dvh relative flex flex-col py-6">
         {/* ── Nav ── */}
         <div className="flex items-center justify-between px-5 pb-1">
           <button className="w-[42px] h-[42px] rounded-full bg-gray-100 flex items-center justify-center">

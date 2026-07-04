@@ -70,7 +70,7 @@ const ItemDetailPage = () => {
   }
 
   return (
-    <div className="w-full h-screen flex flex-col">
+    <div className="w-full h-dvh flex flex-col">
       {/* ── Header ── */}
       <TopNavbar
         title="Item Details"
