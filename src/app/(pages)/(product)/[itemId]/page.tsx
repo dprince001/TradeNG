@@ -9,12 +9,13 @@ import { useRouter } from "next/navigation";
 import avatarImg from "@/app/assets/images/seller_avatar.png";
 import TopNavbar from "@/app/components/layout/TopNavbar";
 import useGet from "@/app/hooks/useGet";
-import { useGetListingDetailQuery } from "@/app/redux/api/listingApiSlice";
+import { useGetListingDetailQuery, useDeleteListingMutation } from "@/app/redux/api/listingApiSlice";
 import { useParams } from "next/navigation";
 import ImageCarousel from "@/app/(pages)/(product)/component/ImageCarousel";
 import { Spinner } from "@/app/components/Loader";
 import { useGetReviewsForAUserQuery } from "@/app/redux/api/reviewsApiSlice";
 import { useSelector } from "react-redux";
+import usePost from "@/app/hooks/usePost";
 
 const CONDITION_LABELS: Record<string, string> = {
   NEW: "New",
@@ -35,6 +36,8 @@ const ItemDetailPage = () => {
     useGetListingDetailQuery,
     itemId,
   );
+
+  const { handlePost: deleteListing, isLoading: deleteListingLoading } = usePost(useDeleteListingMutation);
 
   const listing = listingDetailData?.listing ?? listingDetailData?.data ?? listingDetailData;
   const images: string[] = listing?.images ?? [];
@@ -57,6 +60,14 @@ const ItemDetailPage = () => {
 
   const reviews = reviewsData?.reviews ?? [];
   const rating = reviewsData?.rating ?? 0;
+
+  const handleDeleteListing = async () => {
+    const res = await deleteListing(itemId)
+
+    if (res?.success) {
+      router.push("/home");
+    }
+  }
 
   if (listingDetailLoading || reviewsLoading) return <Spinner />;
 
@@ -233,14 +244,43 @@ const ItemDetailPage = () => {
         </Button>
       </div>}
 
-      {seller?.id === userId && <div className="px-5 py-4 flex gap-3">
-        <Button variant="outline" onClick={() => router.push(`/${itemId}/offers`)} fullWidth className="text-primary border-primary">
-          View Offers
+      {seller?.id === userId && <div className="px-5 py-4 gap-3 flex">
+        <Button
+          variant="destructive"
+          onClick={handleDeleteListing}
+          fullWidth
+          loading={deleteListingLoading}
+        >
+          Delete Listing
         </Button>
 
-        <Button variant="primary" onClick={() => { }} fullWidth>
+        <Button
+          variant="outline"
+          className="text-primary border-primary"
+          onClick={() => {
+            sessionStorage.setItem(
+              `edit-listing-${itemId}`,
+              JSON.stringify({
+                item_name: itemName,
+                category_id: listing?.category_id ?? listing?.category?.id ?? "",
+                condition: condition,
+                defect_description: listing?.defect_description ?? "",
+                description: description,
+                price: price,
+                allow_price_negotiation: negotiable,
+                delivery_options: listing?.delivery_options?.[0] ?? listing?.delivery_options ?? "PICKUP",
+                pickup_address: listing?.pickup_address ?? "",
+                location: location,
+                images: images,
+              })
+            );
+            router.push(`/list-item?edit=${itemId}`);
+          }}
+          fullWidth
+        >
           Edit Item
         </Button>
+
       </div>}
     </div>
   );

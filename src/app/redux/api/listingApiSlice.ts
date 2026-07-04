@@ -36,7 +36,7 @@ const listingApiSlice = generalApiSlice.injectEndpoints({
         }),
 
         deleteListing: builder.mutation({
-            query: (id: string) => ({
+            query: (id) => ({
                 url: `/listings/${id}`,
                 method: "DELETE",
             }),
