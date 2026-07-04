@@ -113,6 +113,7 @@ export default function ListItemPage() {
       images: imageUrls,
       delivery_options: [values.delivery_options],
       status,
+      price: Number(values.price),
     };
 
     const res = await createListing(body);

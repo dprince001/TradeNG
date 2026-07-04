@@ -206,6 +206,7 @@ const ItemDetailPage = () => {
                 name: itemName,
                 price: price,
                 image: images[0] || "",
+                seller: seller
               })
             );
             router.push(`/${itemId}/make-offer`);
