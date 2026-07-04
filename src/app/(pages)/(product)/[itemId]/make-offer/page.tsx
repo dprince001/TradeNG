@@ -18,14 +18,15 @@ const MakeOfferPage = () => {
   const [offerAmount, setOfferAmount] = useState("");
   const [note, setNote] = useState("");
   const [mounted, setMounted] = useState(false);
-  const [itemDetails, setItemDetails] = useState<{ image?: string; name?: string; price?: number } | null>(null);
+  const [itemDetails, setItemDetails] = useState<{ image?: string; name?: string; price?: number, seller?: any } | null>(null);
 
   const {handlePost: makeAnOffer, isLoading: makeAnOfferLoading} = usePost(useMakeAnOfferMutation)
 
   const image = mounted ? itemDetails?.image || "" : "";
   const itemName = mounted ? itemDetails?.name || "" : "";
   const itemPrice = mounted ? Number(itemDetails?.price) || 0 : 0;
-  
+  const sellerDetails = mounted ? itemDetails?.seller || null : null;
+
   const formatNaira = (amount: number) => `₦${amount.toLocaleString("en-NG")}`;
   
   const isFormValid = offerAmount.trim() !== "";
@@ -54,7 +55,7 @@ const MakeOfferPage = () => {
     });
 
     if(res?.success) {
-      router.push('/chat')
+      router.push(`/${itemId}/chat`)
     }
 
   };
