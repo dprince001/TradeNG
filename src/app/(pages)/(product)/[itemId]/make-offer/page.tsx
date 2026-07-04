@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import TopNavbar from "@/app/components/layout/TopNavbar";
 import { useMakeAnOfferMutation } from "@/app/redux/api/offersApiSlice";
 import usePost from "@/app/hooks/usePost";
+import { useStartConversationMutation } from "@/app/redux/api/chatApiSlice";
 
 
 const MakeOfferPage = () => {
@@ -20,7 +21,8 @@ const MakeOfferPage = () => {
   const [mounted, setMounted] = useState(false);
   const [itemDetails, setItemDetails] = useState<{ image?: string; name?: string; price?: number, seller?: any } | null>(null);
 
-  const {handlePost: makeAnOffer, isLoading: makeAnOfferLoading} = usePost(useMakeAnOfferMutation)
+  const { handlePost: makeAnOffer, isLoading: makeAnOfferLoading } = usePost(useMakeAnOfferMutation)
+  const { handlePost: startConversation, isLoading: startConversationLoading } = usePost(useStartConversationMutation)
 
   const image = mounted ? itemDetails?.image || "" : "";
   const itemName = mounted ? itemDetails?.name || "" : "";
@@ -28,7 +30,7 @@ const MakeOfferPage = () => {
   const sellerDetails = mounted ? itemDetails?.seller || null : null;
 
   const formatNaira = (amount: number) => `₦${amount.toLocaleString("en-NG")}`;
-  
+
   const isFormValid = offerAmount.trim() !== "";
 
   useEffect(() => {
@@ -54,8 +56,15 @@ const MakeOfferPage = () => {
 
     });
 
-    if(res?.success) {
-      router.push(`/${itemId}/chat`)
+    if (res?.success) {
+      const response = await startConversation(
+        { listing_id: itemId },
+        {showSuccessToast: false}
+      )
+
+      if (response?.success) {
+        router.push(`/${itemId}/chat?c_id=${response?.data?.conversation?.id}`)
+      }
     }
 
   };
@@ -136,7 +145,7 @@ const MakeOfferPage = () => {
             ? "bg-[#D1D5DB] text-white border-none opacity-100"
             : "bg-[#FF4304] text-white"
             }`}
-            loading={makeAnOfferLoading}
+          loading={makeAnOfferLoading}
         >
           Send Offer
         </Button>
