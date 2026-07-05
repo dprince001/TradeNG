@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import BackIcon from "@/app/assets/svgs/home/BackIcon";
+import TopNavbar from "@/app/components/layout/TopNavbar";
+import Container from "@/app/components/layout/Container";
 import CardIcon from "@/app/assets/svgs/home/CardIcon";
 import WalletIcon from "@/app/assets/svgs/home/WalletIcon";
 import BankIcon from "@/app/assets/svgs/home/BankIcon";
@@ -68,23 +69,11 @@ const PaymentContent = () => {
   return (
     <div className="w-full bg-[#F7F8FA] min-h-screen relative flex flex-col">
       {/* ── Header ── */}
-      <div className="flex items-center justify-between px-5 pt-6 pb-3 bg-white">
-        <button
-          id="payment-back-btn"
-          onClick={() => router.back()}
-          className="w-[38px] h-[38px] rounded-full bg-[#F5F6FA] flex items-center justify-center"
-        >
-          <BackIcon />
-        </button>
-        <span className="text-[#1D1E20] text-[15px] font-semibold">
-          Payment
-        </span>
-        <div className="w-[38px]" />
-      </div>
+      <TopNavbar title="Payment" onBack={() => router.back()} />
 
-      <div className="flex-1 overflow-y-auto pt-3">
+      <Container className="max-w-2xl flex-1 overflow-y-auto pt-3">
         {/* ── Payment Method ── */}
-        <div className="bg-white mx-4 rounded-2xl px-4 py-4 mb-5">
+        <div className="bg-white rounded-2xl px-4 py-4 mb-5">
           <h2 className="text-[#1D1E20] text-sm font-bold mb-3">
             Payment Method
           </h2>
@@ -132,7 +121,7 @@ const PaymentContent = () => {
         </div>
 
         {/* ── Payment Summary ── */}
-        <div className="bg-white mx-4 rounded-2xl p-4 shadow-md mb-5">
+        <div className="bg-white rounded-2xl p-4 shadow-md mb-5">
           <h2 className="text-text-primary text-sm font-bold mb-4">
             Payment Summary
           </h2>
@@ -179,7 +168,7 @@ const PaymentContent = () => {
         </div>
 
         {/* ── Agreement ── */}
-        <div className="bg-white flex rounded-2xl p-4 gap-2 mx-4 mb-6">
+        <div className="bg-white flex rounded-2xl p-4 gap-2 mb-6">
           <div className="mt-0.5 flex-shrink-0">
             <Input
               checked={agreed}
@@ -217,7 +206,7 @@ const PaymentContent = () => {
         </div>
 
         {/* ── Trust Badges ── */}
-        <div className="mx-4 pb-2">
+        <div className="pb-2">
           <div className="flex items-center justify-center gap-6">
             <div className="flex flex-col items-center gap-1.5">
               <div className="w-11 h-11 rounded-full bg-[#FFE8E0] flex items-center justify-center">
@@ -235,9 +224,9 @@ const PaymentContent = () => {
             </div>
           </div>
         </div>
-      </div>
+      </Container>
 
-      <div className="px-5 py-4">
+      <Container className="max-w-2xl py-4">
         <Button
           onClick={
             canPay
@@ -255,7 +244,7 @@ const PaymentContent = () => {
         >
           Pay {formatNaira(totalAmount)} Securely
         </Button>
-      </div>
+      </Container>
     </div>
   );
 };

@@ -5,6 +5,7 @@ import Image from "next/image";
 import IphoneImage from "@/app/assets/images/IphoneImage.png";
 import CartIcon from "@/app/components/layout/CartIcon";
 import TopNavbar from "@/app/components/layout/TopNavbar";
+import Container from "@/app/components/layout/Container";
 import LocationIcon from "@/app/assets/svgs/home/LocationIcon";
 import SecureIcon from "@/app/assets/svgs/home/SecureIcon";
 import InfoIcon from "@/app/assets/svgs/home/InfoIcon";
@@ -59,9 +60,9 @@ const ConfirmOrderContent = () => {
         }
       />
 
-      <div className="flex-1 overflow-y-auto pt-3">
+      <Container className="max-w-2xl flex-1 overflow-y-auto pt-3">
         {/* ── Product Summary Card ── */}
-        <div className="bg-white mx-4 rounded-2xl px-4 py-4 mb-5 shadow-sm">
+        <div className="bg-white rounded-2xl px-4 py-4 mb-5 shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-[70px] h-[70px] rounded-xl bg-[#F0F1F5] overflow-hidden flex-shrink-0 relative">
               <Image
@@ -105,7 +106,7 @@ const ConfirmOrderContent = () => {
         </div>
 
         {/* ── Delivery Method ── */}
-        <div className="bg-white mx-4 rounded-2xl px-4 py-4 mb-5 shadow-sm">
+        <div className="bg-white rounded-2xl px-4 py-4 mb-5 shadow-sm">
           <h2 className="text-text-primary text-sm font-bold mb-3">
             Delivery Method
           </h2>
@@ -182,7 +183,7 @@ const ConfirmOrderContent = () => {
         </div>
 
         {/* ── Escrow Protection ── */}
-        <div className="mx-4 mb-7">
+        <div className="mb-7">
           <div className="bg-[#FFF0EC] border border-[#FFCAB7] rounded-2xl px-4 py-4 flex items-start gap-3">
             <div className="w-[40px] h-[40px] rounded-full bg-primary flex items-center justify-center flex-shrink-0">
               <SecureIcon size={25} color="white" />
@@ -205,7 +206,7 @@ const ConfirmOrderContent = () => {
         </div>
 
         {/* ── Total Cost ── */}
-        <div className="bg-white mx-4 rounded-2xl p-4 shadow-sm mb-5">
+        <div className="bg-white rounded-2xl p-4 shadow-sm mb-5">
           <h2 className="text-text-primary text-sm font-bold mb-4">
             Total Cost
           </h2>
@@ -234,9 +235,9 @@ const ConfirmOrderContent = () => {
             </div>
           </div>
         </div>
-      </div>
+      </Container>
 
-      <div className="px-5 py-4">
+      <Container className="max-w-2xl py-4">
         <Button
           fullWidth
           onClick={() =>
@@ -247,7 +248,7 @@ const ConfirmOrderContent = () => {
         >
           Proceed to Payment
         </Button>
-      </div>
+      </Container>
     </div>
   );
 };

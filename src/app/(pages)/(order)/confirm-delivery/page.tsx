@@ -10,6 +10,7 @@ import ConfirmReleaseModal from "./ConfirmReleaseItem";
 import { useRouter, useSearchParams } from "next/navigation";
 import ProductInEscrow from "./ProductInEscrow";
 import TopNavbar from "@/app/components/layout/TopNavbar";
+import Container from "@/app/components/layout/Container";
 
 const ConfirmDeliveryContent = () => {
   const router = useRouter();
@@ -27,7 +28,7 @@ const ConfirmDeliveryContent = () => {
       {/* ── Header ── */}
       <TopNavbar title="Confirm delivery" onBack={() => router.back()} />
 
-      <div className="flex-1 overflow-y-auto pt-4 pb-6">
+      <Container className="max-w-2xl flex-1 overflow-y-auto pt-4 pb-6">
         {/* ── Order Card ── */}
         <ProductInEscrow
           itemName={itemName}
@@ -36,7 +37,7 @@ const ConfirmDeliveryContent = () => {
         />
 
         {/* ── Have you received section ── */}
-        <div className="mx-4 mt-4 bg-white rounded-2xl p-5 m-4 flex flex-col items-center text-center shadow-sm">
+        <div className="mt-4 bg-white rounded-2xl p-5 flex flex-col items-center text-center shadow-sm">
           <div className="w-[64px] h-[64px] rounded-full bg-[#FFF0EC] flex items-center justify-center mb-4">
             <span className="text-[30px]">📦</span>
           </div>
@@ -68,7 +69,7 @@ const ConfirmDeliveryContent = () => {
         </div>
 
         {/* ── Escrow Protection Active ── */}
-        <div className="mx-4 bg-[#FFE8E0] border border-[#FFB899] rounded-2xl p-4 mb-4 flex items-start gap-3 shadow-sm">
+        <div className="mt-4 bg-[#FFE8E0] border border-[#FFB899] rounded-2xl p-4 flex items-start gap-3 shadow-sm">
           <div className="mt-0.5 flex-shrink-0">
             <SecureIcon size={18} color="#FF4304" />
           </div>
@@ -84,7 +85,7 @@ const ConfirmDeliveryContent = () => {
         </div>
 
         {/* ── Important Notice ── */}
-        <div className="mx-4 bg-[#F3F4F6] rounded-2xl p-4 flex items-start gap-3 shadow-sm">
+        <div className="mt-4 bg-[#F3F4F6] rounded-2xl p-4 flex items-start gap-3 shadow-sm">
           <div className="mt-0.5 flex-shrink-0">
             <InfoIcon color="#4B5563" />
           </div>
@@ -99,7 +100,7 @@ const ConfirmDeliveryContent = () => {
             </p>
           </div>
         </div>
-      </div>
+      </Container>
 
       {/* ── Confirm Release Modal ── */}
       {showConfirmModal && (

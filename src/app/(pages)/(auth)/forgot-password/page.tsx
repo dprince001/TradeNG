@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
+import AuthShell from "@/app/components/layout/AuthShell";
 
 type ForgotStep = "email" | "otp" | "reset" | "success";
 
@@ -57,7 +58,11 @@ const ForgotPasswordPage = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#F7F8FA] flex flex-col justify-between max-w-md mx-auto relative px-6 py-12 select-none overflow-y-auto">
+    <AuthShell
+      heading="Reset your password securely."
+      subheading="We'll send a verification code to your email so you can safely get back into your account."
+    >
+    <div className="w-full flex flex-col justify-between relative select-none">
       {/* Back button */}
       {step !== "success" && (
         <div className="flex justify-start w-full mb-6">
@@ -135,7 +140,7 @@ const ForgotPasswordPage = () => {
             </p>
 
             <form onSubmit={handleVerifyOtp} className="flex flex-col gap-6">
-              <div className="flex justify-center gap-4 mb-2">
+              <div className="flex justify-center gap-2 xsm:gap-3 sml:gap-4 mb-2">
                 {otp.map((digit, i) => (
                   <input
                     key={i}
@@ -145,7 +150,7 @@ const ForgotPasswordPage = () => {
                     value={digit}
                     onChange={(e) => handleOtpChange(i, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                    className="w-14 h-16 border border-gray-200 rounded-xl bg-white text-center text-xl font-black text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 shadow-sm"
+                    className="w-10 h-12 xsm:w-12 xsm:h-14 sml:w-14 sml:h-16 border border-gray-200 rounded-xl bg-white text-center text-lg sml:text-xl font-black text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 shadow-sm"
                   />
                 ))}
               </div>
@@ -263,6 +268,7 @@ const ForgotPasswordPage = () => {
         </div>
       )}
     </div>
+    </AuthShell>
   );
 };
 

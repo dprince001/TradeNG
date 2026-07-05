@@ -3,6 +3,7 @@
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import TopNavbar from "@/app/components/layout/TopNavbar";
+import Container from "@/app/components/layout/Container";
 import VerifiedIcon from "@/app/assets/svgs/home/VerifiedIcon";
 import SecureIcon from "@/app/assets/svgs/home/SecureIcon";
 import SuccessIcon from "@/app/assets/svgs/home/SuccessIcon";
@@ -108,28 +109,32 @@ const ChatPage = () => {
         }
       />
 
-      <div className="px-5 py-3 flex items-center gap-3 border-b border-gray-100 z-10 bg-white">
-        <div className="w-10 h-10 rounded flex-shrink-0 relative overflow-hidden bg-[#F0F1F5]">
-          {itemDetails?.listing?.images?.[0] ? (
-            <img src={itemDetails?.listing?.images[0]} alt="" className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full" />
-          )}
-        </div>
+      <div className="flex items-center gap-3 border-b border-gray-100 z-10 bg-white">
+        <Container className="max-w-2xl py-3 flex items-center gap-3">
+          <div className="w-10 h-10 rounded flex-shrink-0 relative overflow-hidden bg-[#F0F1F5]">
+            {itemDetails?.listing?.images?.[0] ? (
+              <img src={itemDetails?.listing?.images[0]} alt="" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full" />
+            )}
+          </div>
 
-        <span className="text-xs font-medium text-text-primary">{itemDetails?.listing?.item_name || "Item Details"}</span>
+          <span className="text-xs font-medium text-text-primary">{itemDetails?.listing?.item_name || "Item Details"}</span>
+        </Container>
       </div>
 
-      <div className="px-5 py-2.5 bg-[#F9E2DB] flex items-center gap-2 z-10 border-b border-[#F9E2DB]">
-        <SecureIcon size={10} />
+      <div className="bg-[#F9E2DB] z-10 border-b border-[#F9E2DB]">
+        <Container className="max-w-2xl py-2.5 flex items-center gap-2">
+          <SecureIcon size={10} />
 
-        <span className="text-[10px] text-primary">
-          Payments are held safely until delivery is confirmed
-        </span>
+          <span className="text-[10px] text-primary">
+            Payments are held safely until delivery is confirmed
+          </span>
+        </Container>
       </div>
 
       <div className="w-full flex-1 overflow-y-auto">
-        {conversationLoading || itemDetailsLoading ? <Spinner /> : <div className="flex-1 overflow-y-auto px-5 pt-6 pb-4">
+        {conversationLoading || itemDetailsLoading ? <Spinner /> : <Container className="max-w-2xl flex-1 overflow-y-auto pt-6 pb-4">
           {messages?.map((message: any) => {
             const isMine = message.sender_id === userId;
 
@@ -264,10 +269,10 @@ const ChatPage = () => {
 
             return null;
           })}
-        </div>}
+        </Container>}
 
         {latestAcceptedOffer && !isSeller && (
-          <div className="px-5 pb-4">
+          <Container className="max-w-2xl pb-4">
             <div className="bg-[#FDF3F0] border-2 border-primary rounded-2xl text-primary p-5 text-center shadow-sm">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <SuccessIcon color="#FF4304" size={20} />
@@ -290,18 +295,20 @@ const ChatPage = () => {
                 Your payment will be held securely until you confirm delivery
               </p>
             </div>
-          </div>
+          </Container>
         )}
       </div>
 
 
       {/* ── Input Area ── */}
-      <div className="p-4 bg-white border-t border-gray-100 flex items-center gap-3 mt-auto">
-        <Input placeholder="Type a message..." className="bg-[#F3F4F6] rounded-full" value={message} onChange={(e) => setMessage(e.target.value)} />
+      <div className="bg-white border-t border-gray-100 mt-auto">
+        <Container className="max-w-2xl py-4 flex items-center gap-3">
+          <Input placeholder="Type a message..." className="bg-[#F3F4F6] rounded-full" value={message} onChange={(e) => setMessage(e.target.value)} />
 
-        <button className="w-12 h-12 bg-[#FF4304] rounded-full flex items-center justify-center text-white flex-shrink-0 hover:bg-orange-600 transition-colors shadow-sm active:scale-95" onClick={handleSendMessage}>
-          <MessageIcon />
-        </button>
+          <button className="w-12 h-12 bg-[#FF4304] rounded-full flex items-center justify-center text-white flex-shrink-0 hover:bg-orange-600 transition-colors shadow-sm active:scale-95" onClick={handleSendMessage}>
+            <MessageIcon />
+          </button>
+        </Container>
       </div>
     </div >
   );

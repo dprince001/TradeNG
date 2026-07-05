@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import TopNavbar from "@/app/components/layout/TopNavbar";
+import Container from "@/app/components/layout/Container";
 import PublishListing from "@/app/components/list-items/PublishListing";
 import PricingAndDelivery from "@/app/components/list-items/PricingAndDelivery";
 import AddItemSuccess from "@/app/components/list-items/AddItemSuccess";
@@ -223,7 +224,7 @@ export default function ListItemPage() {
           />
         )}
 
-        <div className="flex-1 flex flex-col overflow-y-auto px-5 py-6">
+        <Container className="max-w-2xl flex-1 flex flex-col overflow-y-auto py-6">
           {/* STEP 1: Describe Item */}
           {step === 1 && (
             <AddItemComponent
@@ -275,7 +276,7 @@ export default function ListItemPage() {
               onReset={handleReset}
             />
           )}
-        </div>
+        </Container>
       </div>
     </FormProvider>
   );
