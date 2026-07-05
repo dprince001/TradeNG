@@ -38,7 +38,7 @@ const AddItemSuccess = ({ itemName, onReset }: AddItemSuccessProps) => {
       </div>
 
       <div className="w-full max-w-xs flex flex-col gap-3 mt-6">
-        <Button variant="primary" onClick={() => router.push("/")} fullWidth>
+        <Button variant="primary" onClick={() => router.push("/home")} fullWidth>
           Go to Homepage
         </Button>
 

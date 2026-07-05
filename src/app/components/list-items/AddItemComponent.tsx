@@ -1,38 +1,45 @@
+"use client";
+
 import React from "react";
 import Button from "../Button";
+import { Controller, useFormContext } from "react-hook-form";
+import { ListingFormValues } from "@/app/(pages)/(product)/list-item/page";
 import Input from "../Input";
 
 interface AddItemComponentProps {
-  itemName: string;
-  setItemName: (value: string) => void;
-  category: string;
-  setCategory: (value: string) => void;
-  condition: string;
-  setCondition: (value: string) => void;
-  defect: string;
-  setDefect: (value: string) => void;
-  brand: string;
-  setBrand: (value: string) => void;
-  description: string;
-  setDescription: (value: string) => void;
+  categoriesData: any;
   setStep: (value: number) => void;
 }
 
 const AddItemComponent = ({
-  itemName,
-  setItemName,
-  category,
-  condition,
-  defect,
-  brand,
-  description,
+  categoriesData,
   setStep,
-  setCategory,
-  setCondition,
-  setDefect,
-  setBrand,
-  setDescription,
 }: AddItemComponentProps) => {
+  const {
+    register,
+    control,
+    watch,
+    trigger,
+    formState: { errors },
+  } = useFormContext<ListingFormValues>();
+
+  const categoryOptions =
+    categoriesData?.categories?.map((item: any) => ({
+      label: item?.name,
+      value: item?._id ?? item?.id,
+    })) ?? [];
+
+  const handleNext = async () => {
+    // Validate only step 1 fields (defect_description is optional)
+    const valid = await trigger([
+      "item_name",
+      "category_id",
+      "condition",
+      "description",
+    ]);
+    if (valid) setStep(2);
+  };
+
   return (
     <div className="flex-1 flex flex-col gap-6">
       <div>
@@ -47,49 +54,51 @@ const AddItemComponent = ({
       <div className="flex flex-col gap-4">
         <Input
           label="Item Name"
-          value={itemName}
-          onChange={(e) => setItemName(e.target.value)}
           placeholder="Enter item name"
+          error={errors.item_name?.message}
+          {...register("item_name")}
         />
 
-        <Input
-          type="select"
-          label="Category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          options={[
-            { label: "Gadgets", value: "Gadgets" },
-            { label: "Furniture", value: "Furniture" },
-            { label: "Fashion", value: "Fashion" },
-            { label: "Electronic", value: "Electronic" },
-          ]}
+        <Controller
+          control={control}
+          name="category_id"
+          render={({ field }) => (
+            <Input
+              type="select"
+              label="Category"
+              value={field.value}
+              onChange={(e) => field.onChange(e.target.value)}
+              options={categoryOptions}
+              error={errors.category_id?.message}
+            />
+          )}
         />
 
-        <Input
-          type="select"
-          label="Condition"
-          value={condition}
-          onChange={(e) => setCondition(e.target.value)}
-          options={[
-            { label: "New", value: "New" },
-            { label: "Like New", value: "Like New" },
-            { label: "Used", value: "Used" },
-            { label: "For Parts", value: "For Parts" },
-          ]}
+        <Controller
+          control={control}
+          name="condition"
+          render={({ field }) => (
+            <Input
+              type="select"
+              label="Condition"
+              value={field.value}
+              onChange={(e) => field.onChange(e.target.value)}
+              options={[
+                { label: "New", value: "NEW" },
+                { label: "Like New", value: "LIKE_NEW" },
+                { label: "Used", value: "USED" },
+                { label: "For Parts", value: "FOR_PARTS" },
+              ]}
+              error={errors.condition?.message}
+            />
+          )}
         />
 
         <Input
           label="Any defect? If yes, please state."
-          value={defect}
-          onChange={(e) => setDefect(e.target.value)}
           placeholder="Describe any defects"
-        />
-
-        <Input
-          label="Brand"
-          value={brand}
-          onChange={(e) => setBrand(e.target.value)}
-          placeholder="Brand or manufacturer"
+          error={errors.defect_description?.message}
+          {...register("defect_description")}
         />
 
         <div className="flex flex-col gap-1.5 w-full">
@@ -98,17 +107,25 @@ const AddItemComponent = ({
             choice.
           </label>
           <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            {...register("description")}
             placeholder="Describe your item..."
             rows={4}
-            className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-text-primary placeholder-gray-400 bg-white transition-all focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 resize-none"
+            className={`w-full border rounded-lg px-4 py-3 text-sm text-text-primary placeholder-gray-400 bg-white transition-all focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 resize-none ${
+              errors.description
+                ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                : "border-gray-200"
+            }`}
           />
+          {errors.description && (
+            <span className="text-xs text-red-500 font-medium">
+              {errors.description.message}
+            </span>
+          )}
         </div>
       </div>
 
       <div className="mt-auto pt-6">
-        <Button onClick={() => setStep(3)} fullWidth variant="primary">
+        <Button type="button" onClick={handleNext} fullWidth variant="primary">
           Next
         </Button>
       </div>

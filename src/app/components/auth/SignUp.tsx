@@ -7,25 +7,22 @@ import * as z from "zod";
 import { Eye, EyeOff } from "lucide-react";
 import FormInput from "../FormInput";
 import Button from "../Button";
+import usePost from "@/app/hooks/usePost";
+import { useSignUpMutation } from "@/app/redux/api/authApiSlice";
 
 const signUpSchema = z
   .object({
+    first_name: z.string().min(1, "First name is required"),
+    last_name: z.string().min(1, "Last name is required"),
     email: z
       .string()
       .min(1, "Email is required")
       .email("Invalid email address"),
     password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z
-      .string()
-      .min(8, "Confirm password must be at least 8 characters"),
     acceptTerms: z.boolean().refine((val) => val === true, {
       message: "You must accept the terms and privacy policy",
     }),
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
 
 type SignUpSchemaType = z.infer<typeof signUpSchema>;
 
@@ -36,26 +33,34 @@ interface SignUpProps {
 
 const SignUp = ({ setStep, setEmail }: SignUpProps) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const { handlePost: signUp, isLoading: signUpLoading } = usePost(useSignUpMutation)
 
   const methods = useForm<SignUpSchemaType>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
+      first_name: "",
+      last_name: "",
       email: "",
       password: "",
-      confirmPassword: "",
       acceptTerms: false,
     },
   });
 
-  const onSubmit = (data: SignUpSchemaType) => {
+  const onSubmit = async (data: SignUpSchemaType) => {
     console.log("Sign up data:", data);
     setEmail(data.email);
-    setStep("otp");
+
+    const { acceptTerms, ...rest } = data;
+    const res = await signUp(rest);
+
+    if (res?.success) {
+      setStep("otp");
+    }
   };
 
   return (
-    <div className="flex-1 flex flex-col justify-between w-full animate-fadeIn pt-6">
+    <div className="flex-1 flex flex-col justify-between w-full animate-fadeIn p-5">
       <div>
         <h2 className="text-[#1D1E20] text-2xl font-black tracking-tight mb-8">
           Sign Up
@@ -66,6 +71,20 @@ const SignUp = ({ setStep, setEmail }: SignUpProps) => {
             onSubmit={methods.handleSubmit(onSubmit)}
             className="flex flex-col gap-5"
           >
+            <FormInput
+              name="first_name"
+              label="First Name"
+              placeholder="Your first name"
+              type="text"
+            />
+
+            <FormInput
+              name="last_name"
+              label="Last Name"
+              placeholder="Your last name"
+              type="text"
+            />
+
             <FormInput
               name="email"
               label="Email"
@@ -89,7 +108,7 @@ const SignUp = ({ setStep, setEmail }: SignUpProps) => {
               }
             />
 
-            <FormInput
+            {/* <FormInput
               name="confirmPassword"
               label="Confirm Password"
               placeholder="Confirm Password"
@@ -107,7 +126,7 @@ const SignUp = ({ setStep, setEmail }: SignUpProps) => {
                   )}
                 </button>
               }
-            />
+            /> */}
 
             <div className="flex flex-col gap-1 mt-1">
               <FormInput

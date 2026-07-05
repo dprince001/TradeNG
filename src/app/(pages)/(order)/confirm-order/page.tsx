@@ -12,7 +12,6 @@ import UserIcon from "@/app/assets/svgs/home/UserIcon";
 import VerifiedIcon from "@/app/assets/svgs/home/VerifiedIcon";
 import Button from "@/app/components/Button";
 import { useRouter, useSearchParams } from "next/navigation";
-import MakeOfferModal from "@/app/components/MakeOfferModal";
 import Link from "next/link";
 
 type DeliveryMethod = "meetup" | "delivery";

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "Trade NG",
@@ -20,11 +21,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className="font-sans min-h-screen bg-[#F9FAFB] flex items-start justify-center max-w-[540px] mx-auto w-full"
-      >
-        {children}
-        <Toaster richColors position="top-right" closeButton />
+      <body className="font-sans min-h-screen bg-[#F9FAFB] flex items-start justify-center max-w-[540px] mx-auto w-full">
+        <Providers>
+          <Toaster richColors position="top-right" closeButton />
+          {children}
+        </Providers>
       </body>
     </html>
   );

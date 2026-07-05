@@ -2,7 +2,7 @@ import { formatNaira } from "@/lib/utils";
 import React, { useState } from "react";
 import IphoneImage from "@/app/assets/images/IphoneImage.png";
 import Image from "next/image";
-import ProgressBar from "../ProgressBar";
+import { ChevronRight } from "lucide-react";
 
 interface OrderItem {
   id: number;
@@ -12,6 +12,7 @@ interface OrderItem {
   status: "Awaiting Payment" | "Delivered" | "In Transit";
   type: "buying" | "selling";
   image: string;
+  seller?: string;
 }
 
 const OrdersComponent = () => {
@@ -22,30 +23,33 @@ const OrdersComponent = () => {
       id: 1,
       title: "iPhone 13 Pro Max",
       price: 450000,
-      date: "Jul 15, 2026",
+      date: "Jan 15, 2025",
       status: "Awaiting Payment",
       type: "buying",
       image: IphoneImage.src,
+      seller: "TechHub Store",
     },
     {
       id: 2,
       title: "Sony WH-1000XM4",
       price: 120000,
-      date: "Jul 10, 2026",
+      date: "Jan 10, 2025",
       status: "Delivered",
       type: "buying",
       image:
         "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80",
+      seller: "AudioWorld",
     },
     {
       id: 3,
       title: "iPad Pro 11-inch",
       price: 380000,
-      date: "Jun 28, 2026",
+      date: "Dec 28, 2024",
       status: "Delivered",
       type: "selling",
       image:
         "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=200&q=80",
+      seller: "Hassan Saidu",
     },
   ]);
 
@@ -73,98 +77,132 @@ const OrdersComponent = () => {
         {orders.filter((item) => item.type === ordersTab).length > 0 ? (
           orders
             .filter((item) => item.type === ordersTab)
-            .map((item) => (
-              <div
-                key={item.id}
-                className="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col gap-4 shadow-[0_2px_6px_rgba(0,0,0,0.01)]"
-              >
-                <div className="flex gap-4">
-                  <div className="relative w-[100px] h-[100px] rounded-xl bg-gray-50 border border-gray-100 overflow-hidden flex-shrink-0">
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      width={100}
-                      height={100}
-                      className="w-full h-full object-cover"
-                      unoptimized
+            .map((item) => {
+              // Status configuration
+              const getStatusDetails = (status: OrderItem["status"]) => {
+                switch (status) {
+                  case "Awaiting Payment":
+                    return {
+                      badgeText: "Payment in Escrow",
+                      progress: 50,
+                      badgeBg: "bg-[#FFF2EC]",
+                      badgeColor: "text-[#E25C22]",
+                    };
+                  case "In Transit":
+                    return {
+                      badgeText: "In Transit",
+                      progress: 75,
+                      badgeBg: "bg-[#F0F5FF]",
+                      badgeColor: "text-[#2F80ED]",
+                    };
+                  case "Delivered":
+                    return {
+                      badgeText: "Delivered",
+                      progress: 100,
+                      badgeBg: "bg-[#E8F8F0]",
+                      badgeColor: "text-[#27AE60]",
+                    };
+                }
+              };
+
+              const details = getStatusDetails(item.status);
+
+              return (
+                <div
+                  key={item.id}
+                  className="bg-white border border-[#F2F2F7] rounded-[20px] p-4 flex flex-col gap-3.5 shadow-[0_2px_8px_rgba(0,0,0,0.01)]"
+                >
+                  <div className="flex justify-between items-center">
+                    <div className="flex gap-4">
+                      {/* Product Image */}
+                      <div className="relative w-[100px] h-[100px] rounded-2xl overflow-hidden bg-gray-50 flex-shrink-0 border border-gray-100/50">
+                        <Image
+                          src={item.image}
+                          alt={item.title}
+                          width={100}
+                          height={100}
+                          className="w-full h-full object-cover"
+                          unoptimized
+                        />
+                      </div>
+
+                      {/* Content Column */}
+                      <div className="flex flex-col justify-between py-0.5">
+                        <div>
+                          <h4 className="text-sm font-semibold text-[#1D1E20]">
+                            {item.title}
+                          </h4>
+                          <span className="text-base font-black text-[#1D1E20] block mt-0.5">
+                            {formatNaira(item.price)}
+                          </span>
+                          <span className="text-xs text-[#8F959E] block mt-0.5">
+                            {item.type === "buying" ? "Seller" : "Buyer"}:{" "}
+                            {item.seller || "TechHub Store"}
+                          </span>
+                        </div>
+
+                        {/* Status Badge */}
+                        <div
+                          className={`flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-medium w-fit mt-1.5 ${details.badgeBg} ${details.badgeColor}`}
+                        >
+                          {item.status === "Awaiting Payment" ||
+                          item.status === "In Transit" ? (
+                            <>
+                              <svg
+                                className="w-3 h-3 flex-shrink-0"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                              </svg>
+                              <span>{details.badgeText}</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg
+                                className="w-3 h-3 flex-shrink-0"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                              <span>{details.badgeText}</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Chevron Right */}
+                    <div className="flex-shrink-0 pr-1">
+                      <ChevronRight />
+                    </div>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="w-full bg-[#F5F6FA] h-1.5 rounded-full overflow-hidden mt-1">
+                    <div
+                      className="bg-[#FF4304] h-full rounded-full transition-all duration-300"
+                      style={{ width: `${details.progress}%` }}
                     />
                   </div>
 
-                  <div className="flex-1 flex flex-col justify-between py-1">
-                    <div>
-                      <h4 className="text-sm font-extrabold text-[#1D1E20] leading-snug tracking-tight">
-                        {item.title}
-                      </h4>
-                      <span className="text-[#8F959E] text-[10px] font-medium block mt-1">
-                        Order #{2024000 + item.id}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-primary text-sm font-extrabold block">
-                        {formatNaira(item.price)}
-                      </span>
-                      <span className="text-[10px] text-gray-500 block mt-0.5">
-                        {item.type === "buying" ? "Seller" : "Buyer"}: Hassan Saidu
-                      </span>
-                    </div>
+                  {/* Date */}
+                  <div className="text-[11px] text-[#8F959E] font-semibold">
+                    {item.date}
                   </div>
                 </div>
-
-                {/* Progress & Status section */}
-                <div className="border-t border-gray-50 pt-4 flex flex-col gap-3">
-                  <ProgressBar
-                    title="Order Status"
-                    progress={
-                      item.status === "Awaiting Payment"
-                        ? 25
-                        : item.status === "In Transit"
-                          ? 65
-                          : 100
-                    }
-                    comment={
-                      item.status === "Awaiting Payment"
-                        ? "Waiting for buyer's payment confirmation"
-                        : item.status === "In Transit"
-                          ? "Package is with the courier"
-                          : "Package delivered successfully"
-                    }
-                    color={
-                      item.status === "Awaiting Payment"
-                        ? "bg-amber-500"
-                        : item.status === "In Transit"
-                          ? "bg-blue-500"
-                          : "bg-green-500"
-                    }
-                  />
-
-                  <div className="flex justify-between items-center text-[10px] text-[#8F959E] font-semibold mt-1">
-                    <span>Ordered on: {item.date}</span>
-                    <div className="flex items-center gap-1.5">
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          item.status === "Awaiting Payment"
-                            ? "bg-amber-500 animate-pulse"
-                            : item.status === "In Transit"
-                              ? "bg-blue-500"
-                              : "bg-green-500"
-                        }`}
-                      />
-                      <span
-                        className={
-                          item.status === "Awaiting Payment"
-                            ? "text-amber-600"
-                            : item.status === "In Transit"
-                              ? "text-blue-600"
-                              : "text-green-600"
-                        }
-                      >
-                        {item.status}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))
+              );
+            })
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-center py-20 gap-4 bg-white/40 border border-dashed border-gray-150 rounded-2xl">
             <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-text-secondary">

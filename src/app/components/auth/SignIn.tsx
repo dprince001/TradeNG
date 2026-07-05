@@ -14,6 +14,10 @@ import Apple from "@/assets/icons/Apple.svg";
 import GoogleIcon from "@/app/assets/svgs/GoogleIcon";
 import AppleIcon from "@/app/assets/svgs/AppleIcon";
 import { toast } from "sonner";
+import { useSignInMutation } from "@/app/redux/api/authApiSlice";
+import usePost from "@/app/hooks/usePost";
+import { useDispatch } from "react-redux";
+import { setUserInfo } from "@/app/redux/api/appSlice";
 
 const signInSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email address"),
@@ -30,6 +34,10 @@ interface SignInProps {
 const SignIn = ({ setStep }: SignInProps) => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
+
+  const { handlePost: signIn, isLoading: signInLoading } =
+    usePost(useSignInMutation);
 
   const methods = useForm<SignInSchemaType>({
     resolver: zodResolver(signInSchema),
@@ -40,13 +48,17 @@ const SignIn = ({ setStep }: SignInProps) => {
     },
   });
 
-  const onSubmit = (data: SignInSchemaType) => {
-    toast.success("Logged in successfully!");
-    router.push("/");
+  const onSubmit = async (data: SignInSchemaType) => {
+    const res = await signIn(data);
+
+    if (res?.success) {
+      dispatch(setUserInfo(res.data));
+      router.push("/home");
+    }
   };
 
   return (
-    <div className="flex-1 flex flex-col justify-between w-full animate-fadeIn pt-6">
+    <div className="flex-1 flex flex-col justify-between w-full animate-fadeIn p-5">
       <div className="pt-20">
         <h2 className="text-[#1D1E20] text-4xl font-black tracking-tight mb-8">
           Hi, Welcome! 👋
@@ -100,9 +112,9 @@ const SignIn = ({ setStep }: SignInProps) => {
               fullWidth
               variant="primary"
               className="py-3.5 font-bold mt-4 shadow-md"
-              disabled={methods.formState.isSubmitting}
+              loading={signInLoading}
             >
-              {methods.formState.isSubmitting ? "Logging in..." : "Log in"}
+              Log in
             </Button>
           </form>
         </FormProvider>

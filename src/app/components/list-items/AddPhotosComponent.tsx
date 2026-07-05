@@ -137,7 +137,7 @@ const AddPhotosComponent = ({
 
       <div className="mt-auto pt-6">
         <Button
-          onClick={() => setStep(6)}
+          onClick={() => setStep(4)}
           disabled={photos.length === 0}
           fullWidth
           variant="primary"

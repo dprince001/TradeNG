@@ -9,6 +9,11 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import RecieveIcon from "@/app/assets/svgs/RecieveIcon";
+import SendIcon from "@/app/assets/svgs/SendIcon";
+import WithdrawIcon from "@/app/assets/svgs/WithdrawIcon";
+import DownloadIcon from "@/app/assets/svgs/DownloadIcon";
+import AddIconSvg from "@/app/assets/svgs/AddIconSvg";
 
 interface TransactionItem {
   id: number;
@@ -119,20 +124,20 @@ const WalletComponent = () => {
 
         <div className="">
           <div className="grid grid-cols-2 gap-3 pt-4">
-            <div className="bg-gray-50/30 my-6 p-4 rounded-md ">
-              <span className="text-[9px] font-semibold text-white/60 uppercase block">
-                Pending
-              </span>
-              <span className="text-xs font-bold mt-0.5 block">
+            <div className="bg-gray-50/30 text-center items-center my-6 p-4 rounded-md ">
+              <span className="text-xl font-bold mt-0.5 block">
                 {formatNaira(pendingWallet)}
               </span>
-            </div>
-            <div className="bg-gray-50/30 my-6 p-4 rounded-md ">
               <span className="text-[9px] font-semibold text-white/60 uppercase block">
-                Total Spent
+                Available
               </span>
-              <span className="text-xs font-bold mt-0.5 block">
+            </div>
+            <div className="bg-gray-50/30 text-center items-center my-6 p-4 rounded-md ">
+              <span className="text-xl font-bold mt-0.5 block">
                 {formatNaira(totalSpent)}
+              </span>
+              <span className="text-[9px] font-semibold text-white/60 uppercase block">
+                In Escrow
               </span>
             </div>
           </div>
@@ -141,12 +146,13 @@ const WalletComponent = () => {
               onClick={() => setShowWalletModal("withdraw")}
               className="flex-1 bg-gray-50/30 hover:bg-white/20 active:scale-95 text-xs  items-center justify-center gap-1.5"
             >
-              Withdraw
+              <DownloadIcon /> Withdraw
             </Button>
             <Button
               onClick={() => setShowWalletModal("deposit")}
               className="flex-1 bg-gray-50/30 hover:bg-white/20 active:scale-95 text-xs  items-center justify-center gap-1.5"
             >
+              <AddIconSvg />
               Add funds
             </Button>
           </div>
@@ -181,31 +187,7 @@ const WalletComponent = () => {
                       : "bg-red-50 text-red-500"
                   } flex items-center justify-center flex-shrink-0`}
                 >
-                  {isCredit ? (
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                    >
-                      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                      <polyline points="17 6 23 6 23 12" />
-                    </svg>
-                  ) : (
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                    >
-                      <polyline points="23 18 13.5 8.5 8.5 13.5 1 6" />
-                      <polyline points="17 18 23 18 23 12" />
-                    </svg>
-                  )}
+                  {isCredit ? <RecieveIcon /> : <WithdrawIcon />}
                 </div>
 
                 <div className="flex flex-col space-y-1">

@@ -6,7 +6,10 @@ export interface InputOption {
   value: string | number;
 }
 
-export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
+export interface InputProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "value" | "onChange"
+> {
   label?: string;
   error?: string;
   helperText?: string;
@@ -81,13 +84,18 @@ const Input = forwardRef<any, InputProps>(
               ref={ref}
               className={cn(
                 "w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-text-primary appearance-none bg-white transition-all focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 disabled:bg-gray-50 disabled:text-gray-400",
-                error && "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+                error &&
+                  "border-red-500 focus:border-red-500 focus:ring-red-500/20",
                 className,
               )}
               value={value}
               onChange={onChange}
               {...(props as any)}
             >
+              <option disabled value={""}>
+                Select {label || "Option"}
+              </option>
+
               {options?.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
@@ -127,8 +135,7 @@ const Input = forwardRef<any, InputProps>(
         className={cn(
           "w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-text-primary placeholder-gray-400 bg-white transition-all focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 disabled:bg-gray-50 disabled:text-gray-400",
           rightElement && "pr-10",
-          error &&
-            "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+          error && "border-red-500 focus:border-red-500 focus:ring-red-500/20",
           className,
         )}
         value={value}

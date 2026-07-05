@@ -25,6 +25,8 @@ import {
   ArrowDown,
   Pencil,
 } from "lucide-react";
+import EditPhotoIcon from "@/app/assets/svgs/EditPhotoIcon";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -108,7 +110,7 @@ export default function ProfilePage() {
                 {verificationStatus === "verified"
                   ? "Verified Seller"
                   : "Seller"}{" "}
-                since 2023
+                Trusted seller since 2023
               </span>
               <Button
                 onClick={() => setView("edit")}
@@ -365,12 +367,16 @@ const ProfileComponent = ({
     <div className="flex-1 flex flex-col px-5 pt-6 pb-24">
       {/* Edit Avatar */}
       <div className="flex flex-col items-center text-center mt-2 mb-6">
-        <div className="relative cursor-pointer group">
-          <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[#FF4304] to-[#FF8C39] flex items-center justify-center text-white text-2xl font-extrabold shadow-md border-4 border-white group-hover:brightness-95 transition-all">
-            OD
-          </div>
+        <div className="relative group">
+          <Avatar className="h-28 w-28">
+            <AvatarFallback className="bg-gradient-to-tr from-[#FF4304] to-[#FF8C39]"></AvatarFallback>
+            <AvatarImage
+              src="profileImage"
+              className="bg-gradient-to-tr from-[#FF4304] to-[#FF8C39]"
+            />
+          </Avatar>
           <div className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary border-2 border-white shadow-sm flex items-center justify-center text-white hover:scale-105 active:scale-95 transition-transform">
-            <Pencil className="w-3.5 h-3.5" strokeWidth={2.5} />
+            <EditPhotoIcon fill="white" />
           </div>
         </div>
         <span className="text-xs text-[#8F959E] font-semibold mt-2.5">

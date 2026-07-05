@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
+import TopNavbar from "@/app/components/layout/TopNavbar";
+import BackIcon from "@/app/assets/svgs/BackIcon";
+import { Eye, EyeOff } from "lucide-react";
 
 type ForgotStep = "email" | "otp" | "reset" | "success";
 
@@ -34,7 +37,10 @@ const ForgotPasswordPage = () => {
     }
   };
 
-  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleOtpKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       const prevInput = document.getElementById(`otp-${index - 1}`);
       prevInput?.focus();
@@ -56,44 +62,40 @@ const ForgotPasswordPage = () => {
     setStep("success");
   };
 
+  const handleBack = () => {
+    if (step === "otp") {
+      setStep("email");
+    } else if (step === "reset") {
+      setStep("otp");
+    } else if (step === "success") {
+      setStep("reset");
+    }
+  };
   return (
     <div className="w-full min-h-screen bg-[#F7F8FA] flex flex-col justify-between max-w-md mx-auto relative px-6 py-12 select-none overflow-y-auto">
       {/* Back button */}
       {step !== "success" && (
-        <div className="flex justify-start w-full mb-6">
-          <button
-            onClick={() => {
-              if (step === "email") router.push("/login");
-              else if (step === "otp") setStep("email");
-              else if (step === "reset") setStep("otp");
-            }}
-            className="w-8 h-8 rounded-full bg-white border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-text-primary transition-colors"
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </button>
-        </div>
+        <Button
+          onClick={handleBack}
+          type="button"
+          variant="none"
+          className="w-[42px] h-[42px] mb-10 rounded-full text-text-primary border transition-all duration-200 active:scale-95 flex items-center justify-center"
+          aria-label="Go back"
+        >
+          <BackIcon />
+        </Button>
       )}
 
       {/* ── STEP 1: Enter Email ── */}
       {step === "email" && (
         <div className="flex-1 flex flex-col justify-between animate-fadeIn">
           <div>
-            <h2 className="text-[#1D1E20] text-2xl font-black tracking-tight mb-2">
+            <h2 className="text-[#1D1E20] text-4xl font-black tracking-tight mb-2">
               Forgot password?
             </h2>
-            <p className="text-text-secondary text-xs font-semibold leading-relaxed mb-8">
-              Don't worry! It happens. Please enter the email associated with your account.
+            <p className="text-gray-600 mt-6 text-md mb-8">
+              Don't worry! It happens. Please enter the email associated with
+              your account.
             </p>
 
             <form onSubmit={handleSendCode} className="flex flex-col gap-6">
@@ -106,16 +108,24 @@ const ForgotPasswordPage = () => {
                 required
               />
 
-              <Button type="submit" fullWidth variant="primary" className="py-3.5 font-bold shadow-md mt-2">
+              <Button
+                type="submit"
+                fullWidth
+                variant="primary"
+                className="py-3.5 text-xl font-bold shadow-md mt-2"
+              >
                 Send code
               </Button>
             </form>
           </div>
 
           <div className="text-center mt-12">
-            <span className="text-text-secondary text-xs font-medium">
+            <span className="text-text-secondary text-sm font-medium">
               Remember password?{" "}
-              <button onClick={() => router.push("/login")} className="text-primary font-bold hover:underline">
+              <button
+                onClick={() => router.push("/login")}
+                className="text-primary font-bold hover:underline"
+              >
                 Log in
               </button>
             </span>
@@ -127,11 +137,14 @@ const ForgotPasswordPage = () => {
       {step === "otp" && (
         <div className="flex-1 flex flex-col justify-between animate-fadeIn">
           <div>
-            <h2 className="text-[#1D1E20] text-2xl font-black tracking-tight mb-2">
+            <h2 className="text-[#1D1E20] text-3xl font-black tracking-tight mb-2">
               Please check your email
             </h2>
-            <p className="text-text-secondary text-xs font-semibold leading-relaxed mb-8">
-              We've sent a code to <span className="text-text-primary font-bold">{email || "helloworld@gmail.com"}</span>
+            <p className="text-gray-600 text-md mb-8">
+              We've sent a code to{" "}
+              <span className="text-text-primary font-bold">
+                {email || "[EMAIL_ADDRESS]"}
+              </span>
             </p>
 
             <form onSubmit={handleVerifyOtp} className="flex flex-col gap-6">
@@ -145,20 +158,24 @@ const ForgotPasswordPage = () => {
                     value={digit}
                     onChange={(e) => handleOtpChange(i, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                    className="w-14 h-16 border border-gray-200 rounded-xl bg-white text-center text-xl font-black text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 shadow-sm"
+                    className="w-24 h-24 border border-gray-200 rounded-xl bg-white text-center text-xl font-black text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 shadow-sm"
                   />
                 ))}
               </div>
 
-              <div className="text-center mb-4">
-                <span className="text-text-secondary text-xs font-bold">
-                  Send code again <span className="text-primary">00:20</span>
-                </span>
-              </div>
-
-              <Button type="submit" fullWidth variant="primary" className="py-3.5 font-bold shadow-md">
+              <Button
+                type="submit"
+                fullWidth
+                variant="primary"
+                className="py-3.5 text-lg font-bold shadow-md"
+              >
                 Verify
               </Button>
+              <div className="text-center mb-4">
+                <p className="text-gray-600 text-sm font-semibold">
+                  Send code again <span className="text-primary">00:20</span>
+                </p>
+              </div>
             </form>
           </div>
         </div>
@@ -168,67 +185,75 @@ const ForgotPasswordPage = () => {
       {step === "reset" && (
         <div className="flex-1 flex flex-col justify-between animate-fadeIn">
           <div>
-            <h2 className="text-[#1D1E20] text-2xl font-black tracking-tight mb-2">
+            <h2 className="text-[#1D1E20] text-4xl font-black tracking-tight mb-2">
               Reset password
             </h2>
-            <p className="text-text-secondary text-xs font-semibold leading-relaxed mb-8">
+            <p className="text-gray-600 text-md mb-8">
               Please type something you'll remember
             </p>
 
-            <form onSubmit={handleResetPassword} className="flex flex-col gap-5">
-              <div className="flex flex-col gap-1.5 w-full relative">
-                <label className="text-sm font-medium text-text-primary">New password</label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="must be 8 characters"
-                    required
-                    minLength={8}
-                    className="w-full border border-gray-200 rounded-lg pl-4 pr-10 py-3 text-sm text-text-primary placeholder-gray-400 bg-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
-                  />
+            <form
+              onSubmit={handleResetPassword}
+              className="flex flex-col gap-5"
+            >
+              <Input
+                label="New Password"
+                placeholder="new password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                rightElement={
                   <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-text-primary"
+                    className="text-gray-400 hover:text-text-primary flex items-center justify-center"
                   >
-                    {showPassword ? "👁️" : "👁️‍🗨️"}
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
-                </div>
-              </div>
+                }
+              />
 
-              <div className="flex flex-col gap-1.5 w-full relative">
-                <label className="text-sm font-medium text-text-primary">Confirm new password</label>
-                <div className="relative">
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="repeat password"
-                    required
-                    className="w-full border border-gray-200 rounded-lg pl-4 pr-10 py-3 text-sm text-text-primary placeholder-gray-400 bg-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
-                  />
+              <Input
+                label="Confirm password"
+                placeholder="Confirm password"
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                rightElement={
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword((prev) => !prev)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-text-primary"
+                    className="text-gray-400 hover:text-text-primary flex items-center justify-center"
                   >
-                    {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
+                    {showConfirmPassword ? (
+                      <EyeOff size={20} />
+                    ) : (
+                      <Eye size={20} />
+                    )}
                   </button>
-                </div>
-              </div>
+                }
+              />
 
-              <Button type="submit" fullWidth variant="primary" className="py-3.5 font-bold shadow-md mt-4">
+              <Button
+                type="submit"
+                fullWidth
+                variant="primary"
+                className="py-3.5 text-xl font-bold shadow-md mt-4"
+              >
                 Reset password
               </Button>
             </form>
           </div>
 
           <div className="text-center mt-12">
-            <span className="text-text-secondary text-xs font-medium">
+            <span className="text-text-secondary text-sm font-medium">
               Already have an account?{" "}
-              <button onClick={() => router.push("/login")} className="text-primary font-bold hover:underline">
+              <button
+                onClick={() => router.push("/login")}
+                className="text-primary font-bold hover:underline"
+              >
                 Log in
               </button>
             </span>
@@ -238,25 +263,19 @@ const ForgotPasswordPage = () => {
 
       {/* ── STEP 4: Success Confirmation ── */}
       {step === "success" && (
-        <div className="flex-1 flex flex-col justify-between items-center text-center animate-fadeIn pt-10">
-          <div className="flex-1 flex flex-col items-center justify-center">
-            <div className="w-20 h-20 rounded-full bg-[#FFF0EC] flex items-center justify-center mb-6 text-primary text-4xl animate-bounce">
-              ✓
-            </div>
-
-            <h2 className="text-[#1D1E20] text-2xl font-black tracking-tight mb-2">
-              Password changed
-            </h2>
-            <p className="text-text-secondary text-xs font-semibold leading-relaxed max-w-xs">
-              Your password has been changed successfully
-            </p>
-          </div>
+        <div className="flex mt-[100%] flex-col items-center justify-center">
+          <h2 className="text-[#1D1E20] text-3xl font-black tracking-tight mb-2">
+            Password changed
+          </h2>
+          <p className="text-text-secondary mb-4 text-md ">
+            Your password has been changed succesfully{" "}
+          </p>
 
           <Button
             onClick={() => router.push("/login")}
             fullWidth
             variant="primary"
-            className="py-3.5 font-bold shadow-md w-full mt-auto"
+            className="py-3.5 text-xl font-bold shadow-md w-full mt-auto"
           >
             Back to login
           </Button>

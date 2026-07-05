@@ -1,236 +1,314 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useRouter, useSearchParams } from "next/navigation";
 import TopNavbar from "@/app/components/layout/TopNavbar";
-import IphoneImage from "@/app/assets/images/IphoneImage.png";
-import BottomNavbar from "@/app/components/layout/BottomNavbar";
 import PublishListing from "@/app/components/list-items/PublishListing";
 import PricingAndDelivery from "@/app/components/list-items/PricingAndDelivery";
 import AddItemSuccess from "@/app/components/list-items/AddItemSuccess";
-import ItemDetailsComponent from "@/app/components/list-items/ItemDetailsComponent";
 import AddPhotosComponent from "@/app/components/list-items/AddPhotosComponent";
 import AddItemComponent from "@/app/components/list-items/AddItemComponent";
+import usePost from "@/app/hooks/usePost";
+import {
+  useCreateListingMutation,
+  useUpdateListingMutation,
+} from "@/app/redux/api/listingApiSlice";
+import { useUploadImagesMutation } from "@/app/redux/api/uploadsApiSlice";
+import useGet from "@/app/hooks/useGet";
+import { useGetCategoriesQuery } from "@/app/redux/api/categoriesApiSlice";
+import { Spinner } from "@/app/components/Loader";
+
+const listingSchema = z
+  .object({
+    item_name: z.string().min(1, "Item name is required"),
+    category_id: z.string().min(1, "Category is required"),
+    condition: z.string().min(1, "Condition is required"),
+    defect_description: z.string().optional(),
+    description: z
+      .string()
+      .min(10, "Description must be at least 10 characters"),
+    price: z.number().min(1, "Price is required"),
+    allow_price_negotiation: z.boolean(),
+    delivery_options: z.enum(["PICKUP", "SELF_DELIVERY"]),
+    pickup_address: z.string().optional(),
+    location: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      data.delivery_options === "PICKUP" &&
+      (!data.pickup_address || data.pickup_address.trim() === "")
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Pickup address is required",
+        path: ["pickup_address"],
+      });
+    }
+  });
+
+export type ListingFormValues = z.infer<typeof listingSchema>;
 
 export default function ListItemPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("edit"); // present when editing
+  const isEditMode = !!editId;
 
-  const [step, setStep] = useState(1);
-
-  const [itemName, setItemName] = useState("Wall Console");
-  const [price, setPrice] = useState("380");
-  const [negotiable, setNegotiable] = useState(true);
-  const [deliveryOption, setDeliveryOption] = useState("Pickup");
-  const [pickupAddress, setPickupAddress] = useState("12 Broad Street, Lagos");
-
-  // Custom mock initial photos (matching step 5 mockups)
-  const [photos, setPhotos] = useState<string[]>([
-    IphoneImage.src,
-    IphoneImage.src,
-  ]);
-
-  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
-  const [showDeliveryDropdown, setShowDeliveryDropdown] = useState(false);
-
-  const [category, setCategory] = useState("Furniture");
-  const [condition, setCondition] = useState("Like New");
-  const [defect, setDefect] = useState("None");
-  const [brand, setBrand] = useState("Premium Woodcraft");
-  const [description, setDescription] = useState(
-    "Beautiful mid-century modern wall console. Perfect condition, made from solid walnut with brass accents. Mounting hardware included.",
+  const { handlePost: createListing, isLoading: createListingLoading } =
+    usePost(useCreateListingMutation);
+  const { handlePost: updateListing, isLoading: updateListingLoading } =
+    usePost(useUpdateListingMutation);
+  const { handlePost: uploadImages, isLoading: uploadingImages } = usePost(
+    useUploadImagesMutation,
+  );
+  const { data: categoriesData, isFetching: categoriesLoading } = useGet(
+    useGetCategoriesQuery,
+    "",
   );
 
-  // File input ref
+  const isPublishing =
+    uploadingImages || createListingLoading || updateListingLoading;
+
+  const [step, setStep] = useState(1);
+  const [showDeliveryDropdown, setShowDeliveryDropdown] = useState(false);
+
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]); // kept from edit
+  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Handle Photo Upload
+  const methods = useForm<ListingFormValues>({
+    resolver: zodResolver(listingSchema),
+    defaultValues: {
+      item_name: "",
+      category_id: "",
+      condition: "",
+      defect_description: "",
+      description: "",
+      price: 0,
+      allow_price_negotiation: false,
+      delivery_options: "PICKUP",
+      pickup_address: "",
+      location: "",
+    },
+    mode: "onChange",
+  });
+
+  // ── Pre-fill form in edit ────────────────────────────────────────────
+  useEffect(() => {
+    if (!isEditMode || !editId) return;
+
+    const saved = sessionStorage.getItem(`edit-listing-${editId}`);
+    if (!saved) return;
+
+    try {
+      const data = JSON.parse(saved);
+      methods.reset({
+        item_name: data.item_name ?? "",
+        category_id: data.category_id ?? "",
+        condition: data.condition ?? "",
+        defect_description: data.defect_description ?? "",
+        description: data.description ?? "",
+        price: Number(data.price) || 0,
+        allow_price_negotiation: data.allow_price_negotiation ?? false,
+        delivery_options: data.delivery_options ?? "PICKUP",
+        pickup_address: data.pickup_address ?? "",
+        location: data.location ?? "",
+      });
+
+      // Pre-load existing images as preview URLs
+      if (Array.isArray(data.images) && data.images.length > 0) {
+        setPhotos(data.images);
+        setExistingImageUrls(data.images);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, [editId, isEditMode]);
+
+  // ── Photo helpers ────────────────────────────────────────────────────────
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
       const newUrls = filesArray.map((file) => URL.createObjectURL(file));
       setPhotos((prev) => [...prev, ...newUrls]);
+      setPhotoFiles((prev) => [...prev, ...filesArray]);
     }
   };
 
-  // Remove Photo
   const removePhoto = (index: number) => {
     setPhotos((prev) => prev.filter((_, i) => i !== index));
+    setPhotoFiles((prev) => prev.filter((_, i) => i !== index));
+    setExistingImageUrls((prev) => prev.filter((_, i) => i !== index));
     if (activePhotoIndex >= photos.length - 1 && activePhotoIndex > 0) {
       setActivePhotoIndex(photos.length - 2);
     }
   };
 
-  // Top Nav Back Action
-  const handleBack = () => {
-    if (step > 1) {
-      // If we are in delivery expanded state (step 4), collapse it and stay on pricing step (step 3)
-      if (step === 4) {
-        setShowDeliveryDropdown(false);
-        setStep(3);
-      } else if (step === 3) {
-        setStep(1);
-      } else {
-        setStep((prev) => prev - 1);
+  // ── Publish / Update ─────────────────────────────────────────────────────
+  const handlePublish = async (status: "ACTIVE" | "DRAFT") => {
+    const values = methods.getValues();
+
+    // Upload any new photo files
+    let uploadedUrls: string[] = [];
+    if (photoFiles.length > 0) {
+      const formData = new FormData();
+      photoFiles.forEach((file) => formData.append("images", file));
+
+      const uploadRes = await uploadImages(formData, {
+        showSuccessToast: false,
+      });
+      if (!uploadRes?.success) return;
+
+      uploadedUrls =
+        uploadRes.data?.data?.images ?? uploadRes.data?.images ?? [];
+    }
+
+    // Merge existing image URLs with any newly uploaded ones
+    const finalImages = [
+      ...existingImageUrls.filter((url) => photos.includes(url)), // keep non-removed images
+      ...uploadedUrls,
+    ];
+
+    const body = {
+      ...values,
+      images: finalImages,
+      delivery_options: [values.delivery_options],
+      status,
+      price: Number(values.price),
+    };
+
+    if (isEditMode && editId) {
+      const res = await updateListing({ id: editId, ...body });
+      if (res?.success) {
+        sessionStorage.removeItem(`edit-listing-${editId}`);
+        setStep(5);
       }
     } else {
-      router.push("/");
+      const res = await createListing(body);
+      if (res?.success) {
+        setStep(5);
+      }
     }
   };
 
-  // Top Nav Titles
+  const handleDraft = () => handlePublish("DRAFT");
+
+  const handleBack = () => {
+    if (step > 1) {
+      setStep((prev) => prev - 1);
+    } else {
+      router.back();
+    }
+  };
+
   const getStepTitle = () => {
     switch (step) {
       case 1:
-        return "List Item";
+        return isEditMode ? "Edit Item" : "List Item";
       case 2:
-        return "Item details";
-      case 3:
-      case 4:
         return "Pricing";
-      case 5:
+      case 3:
         return "Photos";
-      case 6:
+      case 4:
         return "Review & List";
       default:
         return "Success";
     }
   };
 
+  const handleReset = () => {
+    methods.reset();
+    setPhotos([]);
+    setPhotoFiles([]);
+    setExistingImageUrls([]);
+    setActivePhotoIndex(0);
+    setShowDeliveryDropdown(false);
+    setStep(1);
+  };
+
+  if (categoriesLoading) return <Spinner />;
+
   return (
-    <div className="w-full min-h-screen bg-white flex flex-col relative select-none">
-      {/* ── Top Header Navigation ── */}
-      {step <= 6 && (
-        <TopNavbar
-          title={getStepTitle()}
-          onBack={handleBack}
-          rightElement={
-            <span className="text-xs text-text-secondary font-medium">
-              {step <= 2
-                ? "1/4"
-                : step <= 4
-                  ? "2/4"
-                  : step === 5
-                    ? "3/4"
-                    : "4/4"}
-            </span>
-          }
-        />
-      )}
-
-      {/* ── Main Step Container ── */}
-      <div className="flex-1 flex flex-col overflow-y-auto px-5 pt-6 pb-24">
-        {/* STEP 1: Describe Item */}
-        {step === 1 && (
-          <AddItemComponent
-            itemName={itemName}
-            setItemName={setItemName}
-            category={category}
-            setCategory={setCategory}
-            condition={condition}
-            setCondition={setCondition}
-            defect={defect}
-            setDefect={setDefect}
-            brand={brand}
-            setBrand={setBrand}
-            description={description}
-            setDescription={setDescription}
-            setStep={setStep}
+    <FormProvider {...methods}>
+      <div className="w-full min-h-screen bg-white flex flex-col relative select-none">
+        {/* ── Top Header Navigation ── */}
+        {step <= 6 && (
+          <TopNavbar
+            title={getStepTitle()}
+            onBack={handleBack}
+            rightElement={
+              <span className="text-xs text-text-secondary font-medium">
+                {step === 1
+                  ? "1/4"
+                  : step === 2
+                    ? "2/4"
+                    : step === 3
+                      ? "3/4"
+                      : "4/4"}
+              </span>
+            }
           />
         )}
 
-        {/* STEP 2: Item Details with Category pills */}
-        {step === 2 && (
-          <ItemDetailsComponent
-            itemName={itemName}
-            setItemName={setItemName}
-            category={category}
-            condition={condition}
-            defect={defect}
-            brand={brand}
-            description={description}
-            setStep={setStep}
-            setCategory={setCategory}
-            setCondition={setCondition}
-            setDefect={setDefect}
-            setBrand={setBrand}
-            setDescription={setDescription}
-          />
-        )}
+        <div className="flex-1 flex flex-col overflow-y-auto px-5 pt-6 pb-24">
+          {/* STEP 1: Describe Item */}
+          {step === 1 && (
+            <AddItemComponent
+              categoriesData={categoriesData}
+              setStep={setStep}
+            />
+          )}
 
-        {/* STEP 3 & 4: Pricing & Delivery details */}
-        {(step === 3 || step === 4) && (
-          <PricingAndDelivery
-            price={price}
-            setPrice={setPrice}
-            negotiable={negotiable}
-            setNegotiable={setNegotiable}
-            deliveryOption={deliveryOption}
-            setDeliveryOption={setDeliveryOption}
-            pickupAddress={pickupAddress}
-            setPickupAddress={setPickupAddress}
-            showDeliveryDropdown={showDeliveryDropdown}
-            setShowDeliveryDropdown={setShowDeliveryDropdown}
-            step={step}
-            setStep={setStep}
-          />
-        )}
+          {/* STEP 2: Pricing & Delivery */}
+          {step === 2 && (
+            <PricingAndDelivery
+              showDeliveryDropdown={showDeliveryDropdown}
+              setShowDeliveryDropdown={setShowDeliveryDropdown}
+              step={step}
+              setStep={setStep}
+            />
+          )}
 
-        {/* STEP 5: Add Photos */}
-        {step === 5 && (
-          <AddPhotosComponent
-            photos={photos}
-            removePhoto={removePhoto}
-            fileInputRef={fileInputRef}
-            handlePhotoUpload={handlePhotoUpload}
-            setStep={setStep}
-          />
-        )}
+          {/* STEP 3: Add Photos */}
+          {step === 3 && (
+            <AddPhotosComponent
+              photos={photos}
+              removePhoto={removePhoto}
+              fileInputRef={fileInputRef}
+              handlePhotoUpload={handlePhotoUpload}
+              setStep={setStep}
+            />
+          )}
 
-        {/* STEP 6: Review & Publish Your Listing */}
-        {step === 6 && (
-          <PublishListing
-            itemName={itemName}
-            condition={condition}
-            price={price}
-            negotiable={negotiable}
-            deliveryOption={deliveryOption}
-            description={description}
-            photos={photos}
-            setStep={setStep}
-            activePhotoIndex={activePhotoIndex}
-            setActivePhotoIndex={setActivePhotoIndex}
-            handlePhotoUpload={handlePhotoUpload}
-            removePhoto={removePhoto}
-          />
-        )}
+          {/* STEP 4: Review & Publish */}
+          {step === 4 && (
+            <PublishListing
+              photos={photos}
+              setStep={setStep}
+              activePhotoIndex={activePhotoIndex}
+              setActivePhotoIndex={setActivePhotoIndex}
+              handlePhotoUpload={handlePhotoUpload}
+              removePhoto={removePhoto}
+              onPublish={() => handlePublish("ACTIVE")}
+              onDraft={handleDraft}
+              isPublishing={isPublishing}
+            />
+          )}
 
-        {/* STEP 7: Success State */}
-        {step === 7 && (
-          <AddItemSuccess
-            itemName={itemName}
-            onReset={() => {
-              setItemName("Wall Console");
-              setCategory("Furniture");
-              setCondition("Like New");
-              setDefect("None");
-              setBrand("Premium Woodcraft");
-              setDescription(
-                "Beautiful mid-century modern wall console. Perfect condition, made from solid walnut with brass accents. Mounting hardware included.",
-              );
-              setPrice("380");
-              setNegotiable(true);
-              setDeliveryOption("Pickup");
-              setPickupAddress("12 Broad Street, Lagos");
-              setPhotos([IphoneImage.src, IphoneImage.src]);
-              setActivePhotoIndex(0);
-              setStep(1);
-            }}
-          />
-        )}
+          {/* STEP 5: Success */}
+          {step === 5 && (
+            <AddItemSuccess
+              itemName={methods.watch("item_name")}
+              onReset={handleReset}
+            />
+          )}
+        </div>
       </div>
-
-      {/* ── Bottom Navigation Bar (Visible in step 1, 2, 6) ── */}
-      {(step === 1 || step === 2 || step === 6) && <BottomNavbar />}
-    </div>
+    </FormProvider>
   );
 }
