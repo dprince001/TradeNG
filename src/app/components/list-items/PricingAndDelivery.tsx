@@ -54,10 +54,14 @@ const PricingAndDelivery = ({
             <input
               type="number"
               placeholder="0.00"
-              {...register("price")}
+              {...register("price", {
+                valueAsNumber: true,
+                setValueAs: (v) => (v === "" ? undefined : Number(v)),
+              })}
               className={`w-full border rounded-lg pl-10 pr-4 py-3 text-sm text-text-primary placeholder-gray-400 bg-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 ${errors.price ? "border-red-500 focus:border-red-500 focus:ring-red-500/20" : "border-gray-200"
                 }`}
             />
+
           </div>
           {errors.price && (
             <span className="text-xs text-red-500 font-medium">{errors.price.message}</span>
@@ -117,9 +121,29 @@ const PricingAndDelivery = ({
       </div>
 
       <div className="mt-auto pt-6">
+        {/* <Button
+          type="button"
+          // onClick={() => setStep(3)}
+
+          fullWidth
+          variant="primary"
+        >
+          Next
+        </Button> */}
+
         <Button
           type="button"
-          onClick={() => setStep(3)}
+          onClick={async () => {
+            const valid = await trigger([
+              "price",
+              "delivery_options",
+              "pickup_address",
+            ]);
+
+            if (valid) {
+              setStep(3);
+            }
+          }}
           fullWidth
           variant="primary"
         >
