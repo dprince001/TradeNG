@@ -7,6 +7,19 @@ const config: Config = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    screens: {
+      xs: "220px",
+      xsm: "320px",
+      xsl: "360px",
+      sm: "576px",
+      sml: "600px",
+      smx: "640px",
+      md: "768px",
+      mdl: "992px",
+      lg: "1024px",
+      xl: "1200px",
+      "2xl": "1400px",
+    },
     extend: {
       fontFamily: {
         sans: ["Rocket Sans", "sans-serif"],

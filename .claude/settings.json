@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sleep 5; tail -n 80 /tmp/nextdev.log)",
+      "Read(//tmp/**)",
+      "Bash(curl -s -o /tmp/home.html -w \"%{http_code}\\\\n\" http://localhost:3001/)",
+      "Bash(sleep 8; cat /tmp/home.html | head -c 2000; echo; echo \"---STATUS---\")",
+      "Bash(taskkill //F //IM node.exe //T)"
+    ]
+  }
+}

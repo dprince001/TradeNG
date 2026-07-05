@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import TopNavbar from "@/app/components/layout/TopNavbar";
+import Container from "@/app/components/layout/Container";
 import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
 import BottomNavbar from "@/app/components/layout/BottomNavbar";
@@ -12,6 +13,7 @@ import OrdersComponent from "../../../components/profile/OrdersComponent";
 import WalletComponent from "../../../components/profile/WalletComponent";
 import { toast } from "sonner";
 import ListingsComponent from "../../../components/profile/ListingsComponent";
+import ProfileSidebar, { ProfileView } from "@/app/components/profile/ProfileSidebar";
 import { formatNaira } from "@/lib/utils";
 import {
   Shield,
@@ -29,10 +31,7 @@ import {
 export default function ProfilePage() {
   const router = useRouter();
 
-  // Active view: 'main' | 'edit' | 'listings' | 'orders' | 'wallet' | 'settings'
-  const [view, setView] = useState<
-    "main" | "edit" | "listings" | "orders" | "wallet" | "settings"
-  >("main");
+  const [view, setView] = useState<ProfileView>("main");
 
   const [verificationStatus, setVerificationStatus] = useState<string | null>(
     null,
@@ -64,26 +63,31 @@ export default function ProfilePage() {
 
   return (
     <div className="w-full min-h-screen bg-[#F9FAFB] flex flex-col relative select-none">
-      {/* ── Top Header Navigation ── */}
+      {/* ── Top Header Navigation (mobile/tablet only — desktop uses the sidebar) ── */}
       {view !== "main" && (
-        <TopNavbar
-          title={
-            view === "edit"
-              ? "Edit Profile"
-              : view === "listings"
-                ? "My Listings"
-                : view === "orders"
-                  ? "My Orders"
-                  : view === "wallet"
-                    ? "My Wallet"
-                    : "Settings"
-          }
-          onBack={handleBack}
-        />
+        <div className="md:hidden">
+          <TopNavbar
+            title={
+              view === "edit"
+                ? "Edit Profile"
+                : view === "listings"
+                  ? "My Listings"
+                  : view === "orders"
+                    ? "My Orders"
+                    : view === "wallet"
+                      ? "My Wallet"
+                      : "Settings"
+            }
+            onBack={handleBack}
+          />
+        </div>
       )}
 
-      {/* ── View Renderers ── */}
-      <div className="flex-1 flex flex-col overflow-y-auto">
+      <Container className="max-w-screen-xl flex-1 flex flex-col md:flex-row md:gap-8 md:py-8">
+        <ProfileSidebar active={view} onSelect={setView} />
+
+        {/* ── View Renderers ── */}
+        <div className="flex-1 flex flex-col overflow-y-auto md:bg-white md:rounded-2xl md:border md:border-gray-100 md:shadow-sm">
         {/* VIEW 1: Main Profile View */}
         {view === "main" && (
           <div className="flex-1 flex flex-col px-5 pt-6 pb-24">
@@ -337,7 +341,8 @@ export default function ProfilePage() {
 
         {/* VIEW 6: Settings View */}
         {view === "settings" && <AccountSettings />}
-      </div>
+        </div>
+      </Container>
 
       <BottomNavbar />
     </div>

@@ -15,7 +15,7 @@ const ProductInEscrow = ({
   formatNaira,
 }: ProductInEscrowProps) => {
   return (
-    <div className="mx-4 mt-4 bg-white rounded-2xl p-4 shadow-sm">
+    <div className="mt-4 bg-white rounded-2xl p-4 shadow-sm">
       <div className="flex items-center gap-3 mb-3">
         <div className="w-[64px] h-[64px] rounded-xl bg-[#F0F1F5] overflow-hidden flex-shrink-0 relative">
           <Image

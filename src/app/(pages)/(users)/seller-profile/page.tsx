@@ -11,6 +11,7 @@ import iphoneImg from "@/app/assets/images/IphoneImage.png";
 import Image from "next/image";
 import ProductCard from "../../home/components/ProductCard";
 import ProgressBar from "@/app/components/ProgressBar";
+import Container from "@/app/components/layout/Container";
 
 const SellerProfilePage = () => {
   const router = useRouter();
@@ -165,7 +166,7 @@ const SellerProfilePage = () => {
       )}
 
       {/* ── Header Cover Image ── */}
-      <div className="relative w-full h-[160px] bg-gray-200">
+      <div className="relative w-full h-[160px] md:h-[220px] bg-gray-200">
         <Image
           height={10}
           width={10}
@@ -197,7 +198,8 @@ const SellerProfilePage = () => {
       </div>
 
       {/* ── Profile Details Overlapping Card ── */}
-      <div className="px-5 -mt-10 relative z-10 flex flex-col items-center">
+      <Container className="max-w-5xl -mt-10 relative z-10 md:grid md:grid-cols-3 md:gap-8 md:items-start">
+      <div className="flex flex-col items-center md:col-span-1">
         {/* Avatar */}
         <div className="w-[88px] h-[88px] rounded-full border-4 border-white shadow-md overflow-hidden bg-white">
           <Image
@@ -233,7 +235,7 @@ const SellerProfilePage = () => {
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-3 divide-x divide-gray-100 border border-gray-100 rounded-2xl py-4 bg-white shadow-sm mt-5 text-center w-full max-w-sm">
+        <div className="grid grid-cols-3 divide-x divide-gray-100 border border-gray-100 rounded-2xl py-4 bg-white shadow-sm mt-5 text-center w-full max-w-sm md:max-w-none">
           <div>
             <span className="text-sm font-extrabold text-[#1D1E20] block">
               32
@@ -261,7 +263,7 @@ const SellerProfilePage = () => {
         </div>
 
         {/* Action CTAs */}
-        <div className="flex gap-3 mt-5 w-full max-w-sm">
+        <div className="flex gap-3 mt-5 w-full max-w-sm md:max-w-none">
           <button
             onClick={() => triggerToast("Connecting chat with Sarah...")}
             className="flex-1 bg-primary text-white hover:bg-primary/95 active:scale-95 transition-all text-xs font-extrabold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md shadow-primary/10"
@@ -306,8 +308,9 @@ const SellerProfilePage = () => {
         </div>
       </div>
 
+      <div className="mt-6 md:mt-0 md:col-span-2">
       {/* ── Sub-tabs Navigation Bar ── */}
-      <div className="border-b border-gray-150 mt-6 bg-white w-full flex sticky top-0 z-20">
+      <div className="border-b border-gray-150 bg-white w-full flex sticky top-0 z-20">
         {(["listings", "reviews", "about"] as const).map((tab) => (
           <button
             key={tab}
@@ -325,10 +328,10 @@ const SellerProfilePage = () => {
       </div>
 
       {/* ── Tab Content Container ── */}
-      <div className="flex-1 w-full max-w-sm px-2 mx-auto py-5">
+      <div className="flex-1 w-full py-5">
         {/* TAB 1: LISTINGS */}
         {activeTab === "listings" && (
-          <div className="grid grid-cols-2 gap-3.5">
+          <div className="grid grid-cols-2 sml:grid-cols-3 gap-3.5">
             {sellerProducts.map((product) => (
               <ProductCard
                 key={product.id}
@@ -501,6 +504,8 @@ const SellerProfilePage = () => {
           </div>
         )}
       </div>
+      </div>
+      </Container>
     </div>
   );
 };

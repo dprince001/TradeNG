@@ -2,8 +2,9 @@ import { useState } from "react";
 import UserIcon from "@/app/assets/svgs/home/UserIcon";
 import VerifiedIcon from "@/app/assets/svgs/home/VerifiedIcon";
 import Image from "next/image";
-import IphoneImage from "@/app/assets/images/IphoneImage.png";
 import LoveIcon from "@/app/assets/svgs/home/LoveIcon";
+import useAuthGuard from "@/app/hooks/useAuthGuard";
+import LoginRequiredModal from "@/app/components/auth/LoginRequiredModal";
 
 interface ProductCardProps {
   title: string;
@@ -31,17 +32,25 @@ const ProductCard = ({
   onClick,
 }: ProductCardProps) => {
   const [liked, setLiked] = useState(false);
+  const { guard, promptOpen, closePrompt } = useAuthGuard(
+    "Sign in to save items to your favourites."
+  );
 
   return (
     <div
       onClick={onClick}
       className={`flex-1 min-w-0 bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm ${onClick ? "cursor-pointer active:scale-[0.97] transition-transform" : ""}`}
     >
-      <div className="relative w-full bg-[#EEF1F5] h-[170px]">
-        <Image src={images?.[0] || ""} alt={title || "Product"} fill />
+      {promptOpen && <LoginRequiredModal onClose={closePrompt} message="Sign in to save items to your favourites." />}
+
+      <div className="relative w-full bg-[#EEF1F5] h-[170px] sml:h-[190px] lg:h-[210px]">
+        <Image src={images?.[0] || ""} alt={title || "Product"} fill className="object-cover" />
 
         <button
-          onClick={() => setLiked((l) => !l)}
+          onClick={(e) => {
+            e.stopPropagation();
+            guard(() => setLiked((l) => !l));
+          }}
           className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-white shadow-sm flex items-center justify-center"
         >
           <LoveIcon liked={liked} />

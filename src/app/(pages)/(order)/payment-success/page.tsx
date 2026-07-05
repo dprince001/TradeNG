@@ -10,6 +10,7 @@ import ShippingIcon from "@/app/assets/svgs/home/ShippingIcon";
 import DeliveryIcon from "@/app/assets/svgs/home/DeliveryIcon";
 import { useRouter, useSearchParams } from "next/navigation";
 import ProductInEscrow from "../confirm-delivery/ProductInEscrow";
+import Container from "@/app/components/layout/Container";
 
 const PaymentSuccessContent = () => {
   const router = useRouter();
@@ -37,14 +38,15 @@ const PaymentSuccessContent = () => {
         </p>
       </div>
 
-      <ProductInEscrow
-        itemName={itemName}
-        totalAmount={totalAmount}
-        formatNaira={formatNaira}
-      />
+      <Container className="max-w-2xl">
+        <ProductInEscrow
+          itemName={itemName}
+          totalAmount={totalAmount}
+          formatNaira={formatNaira}
+        />
 
       {/* ── Order Timeline ── */}
-      <div className="mx-4 my-4 bg-white rounded-2xl p-4 shadow-sm">
+      <div className="my-4 bg-white rounded-2xl p-4 shadow-sm">
         <h2 className="text-text-primary text-sm font-bold mb-4">
           Order Timeline
         </h2>
@@ -111,9 +113,10 @@ const PaymentSuccessContent = () => {
           </div>
         </div>
       </div>
+      </Container>
 
       {/* ── CTAs ── */}
-      <div className="px-5 pt-6 pb-4 space-y-3 mt-auto">
+      <Container className="max-w-2xl pt-6 pb-4 space-y-3 mt-auto">
         <Button
           fullWidth
           onClick={() =>
@@ -145,7 +148,7 @@ const PaymentSuccessContent = () => {
         >
           Back to Home
         </Button>
-      </div>
+      </Container>
     </div>
   );
 };

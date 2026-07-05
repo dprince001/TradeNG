@@ -13,7 +13,7 @@ const BottomNavbar = () => {
   const isFavourite = pathname === "/favourite";
 
   return (
-    <div className="border-t border-gray-100 bg-white py-3 px-6 flex justify-between items-center w-full absolute bottom-0 left-0 z-20">
+    <div className="border-t border-gray-100 bg-white py-3 px-6 flex justify-between items-center w-full fixed bottom-0 left-0 z-20 mdl:hidden">
       <button
         onClick={() => router.push("/")}
         className="flex flex-col items-center gap-1 flex-1"

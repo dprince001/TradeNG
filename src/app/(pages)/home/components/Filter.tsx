@@ -14,16 +14,16 @@ const FilterOverlay = ({ onClose }: FilterOverlayProps) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 animate-fadeIn"
+      className="fixed inset-0 z-50 flex items-end md:items-stretch justify-center md:justify-end bg-black/50 animate-fadeIn"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm bg-white rounded-t-3xl px-4 pt-6 pb-8 shadow-2xl animate-slideUp"
+        className="w-full max-w-sm bg-white rounded-t-3xl md:rounded-none px-4 pt-6 pb-8 shadow-2xl animate-slideUp md:animate-slideLeft md:h-full md:overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-5">
-          <h2 className="text font-semibold">Filter Results</h2>
+          <h2 className="text-text-primary font-semibold">Filter Results</h2>
 
           <Button
             variant="ghost"

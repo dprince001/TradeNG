@@ -9,6 +9,7 @@ import { useParams } from "next/navigation";
 import useGet from "@/app/hooks/useGet";
 import { useGetListingDetailQuery } from "@/app/redux/api/listingApiSlice";
 import TopNavbar from "@/app/components/layout/TopNavbar";
+import Container from "@/app/components/layout/Container";
 import { useMakeAnOfferMutation, useCounterAnOfferMutation } from "@/app/redux/api/offersApiSlice";
 import usePost from "@/app/hooks/usePost";
 import { useStartConversationMutation } from "@/app/redux/api/chatApiSlice";
@@ -112,7 +113,7 @@ const MakeOfferPage = () => {
         }
       />
 
-      <div className="flex-1 overflow-y-auto px-5 pt-4 pb-8">
+      <Container className="max-w-xl flex-1 overflow-y-auto pt-4 pb-8">
         {/* Item summary card */}
         <div className="flex items-center gap-3 mb-4 bg-white rounded-2xl px-4 py-4 mb-8">
           <div className="w-[70px] h-[70px] rounded-xl bg-[#F0F1F5] overflow-hidden flex-shrink-0 relative">
@@ -173,9 +174,9 @@ const MakeOfferPage = () => {
             className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 bg-white transition-all focus:outline-none focus:border-[#FF4304] focus:ring-1 focus:ring-[#FF4304]/20 min-h-[140px] resize-none"
           />
         </div>
-      </div>
+      </Container>
 
-      <div className="px-5 py-6">
+      <Container className="max-w-xl py-6">
         <Button
           variant="primary"
           onClick={handleSubmit}
@@ -195,7 +196,7 @@ const MakeOfferPage = () => {
             ? "The buyer will see your counter and can accept, decline, or counter again."
             : "Sellers can accept, decline, or counter your offer."}
         </p>
-      </div>
+      </Container>
     </div>
   );
 };
