@@ -35,17 +35,24 @@ const ChatPage = () => {
 
   const { handlePost: acceptAnOffer, isLoading: acceptAnOfferLoading } = usePost(useAcceptAnOfferMutation);
   const { handlePost: declineAnOffer, isLoading: declineAnOfferLoading } = usePost(useDeclineAnOfferMutation);
-  const { handlePost: counterAnOffer, isLoading: counterAnOfferLoading } = usePost(useCounterAnOfferMutation);
   const { handlePost: sendMessage, isLoading: sendMessageLoading } = usePost(useSendMessageMutation);
 
   const formatNaira = (amount: number) => `₦${amount.toLocaleString("en-NG")}`;
-
+  
+  const sellerId = itemDetails?.listing?.seller?.id;
+  const isSeller = !!userId && !!sellerId && userId === sellerId;
+  
   const sellerName = itemDetails?.listing?.seller
-    ? `${itemDetails?.listing?.seller.first_name ?? ""} ${itemDetails?.listing?.seller.last_name ?? ""}`.trim()
-    : "Seller";
-
+  ? `${itemDetails?.listing?.seller.first_name ?? ""} ${itemDetails?.listing?.seller.last_name ?? ""}`.trim()
+  : "Seller";
+  
   // reverse messages
   const messages = [...(conversationData?.messages || [])].reverse();
+
+  const latestAcceptedOffer = [...messages]
+    .reverse()
+    .find((m) => m.message_type === "OFFER" && m.offer?.status === "ACCEPTED")?.offer;
+
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
@@ -63,6 +70,19 @@ const ChatPage = () => {
     if (res?.success) {
       setMessage("");
     }
+  };
+
+  const getOfferLabel = (message: any, isMine: boolean) => {
+    const senderIsSeller = message.sender_id === sellerId;
+    const sellerVerb = message?.offer?.status === "COUNTERED" ? "countered with" : message?.offer?.status === "ACCEPTED" ? "accepted" : "declined";
+    const buyerVerb = message?.offer?.status === "COUNTERED" ? "countered with" : "offered";
+
+    return senderIsSeller ? `Seller ${sellerVerb}` : `Buyer ${buyerVerb}`;
+  };
+
+  const canRespondToOffer = (message: any, isMine: boolean) => {
+    const status = message?.offer?.status;
+    return isSeller && !isMine && status !== "ACCEPTED" && status !== "DECLINED";
   };
 
   return (
@@ -119,8 +139,6 @@ const ChatPage = () => {
             });
 
             const offer = message?.offer;
-            const isCounterOffer = !!offer?.parent_offer_id; 
-            const isDeclinedOffer = offer?.status === "DECLINED"; 
             const note = message.body?.split(" — ")[1];
 
             // text messages
@@ -150,137 +168,31 @@ const ChatPage = () => {
               );
             }
 
-            // offer messages - buyer's own offer OR a seller counter shown to buyer
-            if (message.message_type === "OFFER" && isMine) {
-              return (
-                <div key={message.id} className="flex flex-col items-end mb-4">
-                  <div className="bg-white border-2 border-[#FF4304] rounded-[16px] p-5 shadow-sm">
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="w-6 h-6 rounded-full bg-[#FFF5F0] flex items-center justify-center text-[12px]">
-                        💰
-                      </div>
-
-                      <span className="text-xs font-semibold text-text-primary">
-                        {isDeclinedOffer ? "You declined" : isCounterOffer ? "You countered with" : "You offered"}
-                      </span>
-                    </div>
-
-                    <div className="text-[20px] font-bold text-primary mb-1">
-                      {formatNaira(offer?.amount ?? 0)}
-                    </div>
-
-
-                    <p className="text-[10px] text-[#6B7280] mt-1 text-center">
-                      {formattedTime}
-                    </p>
-                  </div>
-
-                  {note && (
-                    <div
-                      key={message.id}
-                      className="bg-primary text-white rounded-[16px] px-4 py-3 text-xs max-w-[80%] w-fit shadow-sm ml-auto mt-4"
-                    >
-                      <p className="mb-1">{note}</p>
-
-                      <span className="text-[10px] text-[#D1FAE5]">
-                        {formattedTime}
-                      </span>
-                    </div>
-                  )}
-
-
-                </div>
-              );
-            }
-
-            // seller counter shown to buyer (not mine, isCounterOffer)
-            if (message.message_type === "OFFER" && !isMine && isCounterOffer) {
-              return (
-                <div key={message.id} className="flex flex-col items-start mb-4">
-                  <div className="bg-white border-2 border-primary rounded-[16px] p-5 shadow-sm">
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="w-6 h-6 rounded-full bg-[#FFF5F0] flex items-center justify-center text-[12px]">
-                        🔄
-                      </div>
-
-                      <span className="text-xs font-semibold text-primary">
-                        Seller countered with
-                      </span>
-                    </div>
-
-                    <div className="text-[20px] font-bold text-primary mb-1">
-                      {formatNaira(offer?.amount ?? 0)}
-                    </div>
-
-                    {/* Buyer can Accept, Counter back, or Decline */}
-                    <div className="flex items-center gap-2 mb-3 mt-2">
-                      <Button
-                        variant="primary"
-                        fullWidth
-                        onClick={async () => await acceptAnOffer(offer.id)}
-                        loading={acceptAnOfferLoading}
-                        size="sm"
-                      >
-                        Accept
-                      </Button>
-
-                      <Button
-                        variant="outline"
-                        fullWidth
-                        size="sm"
-                        className="border-[#BBBBC8] text-[#BBBBC8]"
-                        onClick={() => {
-                          sessionStorage.setItem(
-                            `counter-offer-${itemId}`,
-                            JSON.stringify({ offerId: offer.id, conversationId })
-                          );
-                          router.push(`/${itemId}/make-offer?mode=counter&c_id=${conversationId}`);
-                        }}
-                      >
-                        Counter
-                      </Button>
-
-                      <Button
-                        variant="outline"
-                        fullWidth
-                        size="sm"
-                        className="border-[#BBBBC8] text-[#BBBBC8]"
-                        loading={declineAnOfferLoading}
-                        onClick={async () => await declineAnOffer(offer.id)}
-                      >
-                        Decline
-                      </Button>
-                    </div>
-
-                    <p className="text-[10px] text-[#6B7280] mt-1 text-center">
-                      {formattedTime}
-                    </p>
-                  </div>
-
-                  {note && (
-                    <div
-                      className="bg-white text-text-primary rounded-[16px] px-4 py-3 text-xs max-w-[80%] w-fit shadow-sm mr-auto mt-4"
-                    >
-                      <p className="mb-1">{note}</p>
-                      <span className="text-[10px] text-[#6B7280]">{formattedTime}</span>
-                    </div>
-                  )}
-                </div>
-              );
-            }
-
-            // offer messages - seller side
             if (message.message_type === "OFFER") {
+              const isCounterOffer = !!offer?.parent_offer_id;
+              const showActions = canRespondToOffer(message, isMine);
+              const borderColor = isCounterOffer ? "border-primary" : "border-[#FF4304]";
+              const label = getOfferLabel(message, isMine);
+              const statusColor =
+                offer?.status === "DECLINED"
+                  ? "text-red-500"
+                  : offer?.status === "ACCEPTED"
+                    ? "text-green-500"
+                    : "text-[#FF4304]";
+
               return (
-                <div key={message.id} className="flex flex-col items-start mb-4">
-                  <div className="bg-white border-2 border-[#FF4304] rounded-[16px] p-5 shadow-sm">
+                <div
+                  key={message.id}
+                  className={`flex flex-col mb-4 ${isMine ? "items-end" : "items-start"}`}
+                >
+                  <div className={`bg-white border-2 ${borderColor} rounded-[16px] p-5 shadow-sm`}>
                     <div className="flex items-center gap-2 mb-1">
                       <div className="w-6 h-6 rounded-full bg-[#FFF5F0] flex items-center justify-center text-[12px]">
-                        💰
+                        {isCounterOffer ? "🔄" : "💰"}
                       </div>
 
                       <span className="text-xs font-semibold text-text-primary">
-                        Buyer Offered
+                        {label}
                       </span>
                     </div>
 
@@ -288,44 +200,46 @@ const ChatPage = () => {
                       {formatNaira(offer?.amount ?? 0)}
                     </div>
 
-                    <div className="flex items-center gap-2 mb-4 mt-2">
-                      <Button
-                        variant="primary"
-                        fullWidth
-                        onClick={async () => await acceptAnOffer(offer.id)}
-                        loading={acceptAnOfferLoading}
-                        size="sm"
-                      >
-                        Accept
-                      </Button>
+                    {showActions && (
+                      <div className="flex items-center gap-2 mb-3 mt-2">
+                        <Button
+                          variant="primary"
+                          fullWidth
+                          onClick={async () => await acceptAnOffer(offer.id)}
+                          loading={acceptAnOfferLoading}
+                          size="sm"
+                        >
+                          Accept
+                        </Button>
 
-                      <Button
-                        variant="outline"
-                        fullWidth
-                        size="sm"
-                        className="border-[#BBBBC8] text-[#BBBBC8]"
-                        onClick={() => {
-                          sessionStorage.setItem(
-                            `counter-offer-${itemId}`,
-                            JSON.stringify({ offerId: offer.id, conversationId })
-                          );
-                          router.push(`/${itemId}/make-offer?mode=counter&c_id=${conversationId}`);
-                        }}
-                      >
-                        Counter
-                      </Button>
+                        <Button
+                          variant="outline"
+                          fullWidth
+                          size="sm"
+                          className="border-[#BBBBC8] text-[#BBBBC8]"
+                          onClick={() => {
+                            sessionStorage.setItem(
+                              `counter-offer-${itemId}`,
+                              JSON.stringify({ offerId: offer.id, conversationId })
+                            );
+                            router.push(`/${itemId}/make-offer?mode=counter&c_id=${conversationId}`);
+                          }}
+                        >
+                          Counter
+                        </Button>
 
-                      <Button
-                        variant="outline"
-                        fullWidth
-                        size="sm"
-                        className="border-[#BBBBC8] text-[#BBBBC8]"
-                        loading={declineAnOfferLoading}
-                        onClick={async () => await declineAnOffer(offer.id)}
-                      >
-                        Decline
-                      </Button>
-                    </div>
+                        <Button
+                          variant="outline"
+                          fullWidth
+                          size="sm"
+                          className="border-[#BBBBC8] text-[#BBBBC8]"
+                          loading={declineAnOfferLoading}
+                          onClick={async () => await declineAnOffer(offer.id)}
+                        >
+                          Decline
+                        </Button>
+                      </div>
+                    )}
 
                     <p className="text-[10px] text-[#6B7280] mt-1 text-center">
                       {formattedTime}
@@ -334,16 +248,16 @@ const ChatPage = () => {
 
                   {note && (
                     <div
-                      key={message.id}
-                      className="bg-white text-text-primary rounded-[16px] px-4 py-3 text-xs max-w-[80%] w-fit shadow-sm mr-auto mt-4"
+                      className={`rounded-[16px] px-4 py-3 text-xs max-w-[80%] w-fit shadow-sm mt-4 ${isMine ? "bg-primary text-white ml-auto" : "bg-white text-text-primary mr-auto"
+                        }`}
                     >
                       <p className="mb-1">{note}</p>
-
-                      <span className="text-[10px] text-[#6B7280]">
+                      <span className={`text-[10px] ${isMine ? "text-[#D1FAE5]" : "text-[#6B7280]"}`}>
                         {formattedTime}
                       </span>
                     </div>
                   )}
+
                 </div>
               );
             }
@@ -351,6 +265,33 @@ const ChatPage = () => {
             return null;
           })}
         </div>}
+
+        {latestAcceptedOffer && !isSeller && (
+          <div className="px-5 pb-4">
+            <div className="bg-[#FDF3F0] border-2 border-primary rounded-2xl text-primary p-5 text-center shadow-sm">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <SuccessIcon color="#FF4304" size={20} />
+                <span className="text-xs font-bold">Offer accepted at</span>
+              </div>
+
+              <p className="text-[20px] font-bold mb-3 tracking-tight">
+                {formatNaira(latestAcceptedOffer.amount ?? 0)}
+              </p>
+
+              <Button
+                variant="primary"
+                fullWidth
+                onClick={() => router.push(`/payment/${latestAcceptedOffer.id}`)}
+              >
+                Proceed to Secure Payment
+              </Button>
+
+              <p className="text-[10px] px-4 leading-relaxed mt-2 text-[#6B7280]">
+                Your payment will be held securely until you confirm delivery
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
 
@@ -362,7 +303,7 @@ const ChatPage = () => {
           <MessageIcon />
         </button>
       </div>
-    </div>
+    </div >
   );
 };
 

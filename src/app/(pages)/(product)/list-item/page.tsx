@@ -223,7 +223,7 @@ export default function ListItemPage() {
           />
         )}
 
-        <div className="flex-1 flex flex-col overflow-y-auto px-5 pt-6 pb-24">
+        <div className="flex-1 flex flex-col overflow-y-auto px-5 py-6">
           {/* STEP 1: Describe Item */}
           {step === 1 && (
             <AddItemComponent
