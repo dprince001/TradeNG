@@ -1,89 +1,67 @@
 "use client";
 
-import { useRouter, useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import TopNavbar from "@/app/components/layout/TopNavbar";
 import Container from "@/app/components/layout/Container";
 import VerifiedIcon from "@/app/assets/svgs/home/VerifiedIcon";
-import SecureIcon from "@/app/assets/svgs/home/SecureIcon";
-import SuccessIcon from "@/app/assets/svgs/home/SuccessIcon";
-import Button from "@/app/components/Button";
-import IphoneImage from "@/app/assets/images/IphoneImage.png";
-import Image from "next/image";
-import Input from "@/app/components/Input";
-import MessageIcon from "@/app/assets/svgs/home/MessageIcon";
 import useGet from "@/app/hooks/useGet";
-import { useGetOffersForAListingQuery, useAcceptAnOfferMutation, useDeclineAnOfferMutation, useCounterAnOfferMutation, useGetAllOffersReceivedQuery } from "@/app/redux/api/offersApiSlice";
-import { useGetAllConversationsQuery, useGetMessageInAConversationQuery, useSendMessageMutation, useMarkMessageAsReadMutation } from "@/app/redux/api/chatApiSlice";
+import usePost from "@/app/hooks/usePost";
+import { useAcceptAnOfferMutation, useDeclineAnOfferMutation, useCounterAnOfferMutation } from "@/app/redux/api/offersApiSlice";
+import { useGetMessageInAConversationQuery, useSendMessageMutation } from "@/app/redux/api/chatApiSlice";
 import { useGetListingDetailQuery } from "@/app/redux/api/listingApiSlice";
 import { useSelector } from "react-redux";
-import usePost from "@/app/hooks/usePost";
-import { useSearchParams } from "next/navigation";
 import { Spinner } from "@/app/components/Loader";
+import ChatMessageList from "@/app/components/chat/ChatMessageList";
+import ChatComposer from "@/app/components/chat/ChatComposer";
+import AcceptedOfferBanner from "@/app/components/chat/AcceptedOfferBanner";
+import EscrowNoticeBar from "@/app/components/chat/EscrowNoticeBar";
 
 const ChatPage = () => {
   const router = useRouter();
   const { itemId } = useParams();
   const searchParams = useSearchParams();
   const conversationId = searchParams.get("c_id");
-  const [mounted, setMounted] = useState(false);
   const [message, setMessage] = useState("");
   const userId = useSelector((state: any) => state.app.userInfo?.user?.id);
 
-  // const { data: offers, isLoading: offersLoading } = useGet(useGetOffersForAListingQuery, itemId, !!itemId);
   const { data: conversationData, isLoading: conversationLoading } = useGet(useGetMessageInAConversationQuery, conversationId, !!conversationId)
   const { data: itemDetails, isLoading: itemDetailsLoading } = useGet(useGetListingDetailQuery, itemId, !!itemId)
 
   const { handlePost: acceptAnOffer, isLoading: acceptAnOfferLoading } = usePost(useAcceptAnOfferMutation);
   const { handlePost: declineAnOffer, isLoading: declineAnOfferLoading } = usePost(useDeclineAnOfferMutation);
-  const { handlePost: sendMessage, isLoading: sendMessageLoading } = usePost(useSendMessageMutation);
+  const { handlePost: sendMessage } = usePost(useSendMessageMutation);
 
-  const formatNaira = (amount: number) => `₦${amount.toLocaleString("en-NG")}`;
-  
   const sellerId = itemDetails?.listing?.seller?.id;
   const isSeller = !!userId && !!sellerId && userId === sellerId;
-  
+
   const sellerName = itemDetails?.listing?.seller
-  ? `${itemDetails?.listing?.seller.first_name ?? ""} ${itemDetails?.listing?.seller.last_name ?? ""}`.trim()
-  : "Seller";
-  
-  // reverse messages
+    ? `${itemDetails?.listing?.seller.first_name ?? ""} ${itemDetails?.listing?.seller.last_name ?? ""}`.trim()
+    : "Seller";
+
   const messages = [...(conversationData?.messages || [])].reverse();
 
   const latestAcceptedOffer = [...messages]
     .reverse()
     .find((m) => m.message_type === "OFFER" && m.offer?.status === "ACCEPTED")?.offer;
 
-
   const handleSendMessage = async () => {
     if (!message.trim()) return;
 
     const res = await sendMessage(
-      {
-        id: conversationId,
-        data: {
-          body: message,
-        }
-      },
+      { id: conversationId, data: { body: message } },
       { showSuccessToast: false }
     );
 
-    if (res?.success) {
-      setMessage("");
-    }
+    if (res?.success) setMessage("");
   };
 
-  const getOfferLabel = (message: any, isMine: boolean) => {
-    const senderIsSeller = message.sender_id === sellerId;
-    const sellerVerb = message?.offer?.status === "COUNTERED" ? "countered with" : message?.offer?.status === "ACCEPTED" ? "accepted" : "declined";
-    const buyerVerb = message?.offer?.status === "COUNTERED" ? "countered with" : "offered";
-
-    return senderIsSeller ? `Seller ${sellerVerb}` : `Buyer ${buyerVerb}`;
-  };
-
-  const canRespondToOffer = (message: any, isMine: boolean) => {
-    const status = message?.offer?.status;
-    return isSeller && !isMine && status !== "ACCEPTED" && status !== "DECLINED";
+  const handleCounterOffer = (offer: any) => {
+    sessionStorage.setItem(
+      `counter-offer-${itemId}`,
+      JSON.stringify({ offerId: offer.id, conversationId })
+    );
+    router.push(`/${itemId}/make-offer?mode=counter&c_id=${conversationId}`);
   };
 
   return (
@@ -124,193 +102,43 @@ const ChatPage = () => {
       </div>
 
       <div className="bg-[#F9E2DB] z-10 border-b border-[#F9E2DB]">
-        <Container className="max-w-2xl py-2.5 flex items-center gap-2">
-          <SecureIcon size={10} />
-
-          <span className="text-[10px] text-primary">
-            Payments are held safely until delivery is confirmed
-          </span>
+        <Container className="max-w-2xl">
+          <EscrowNoticeBar className="px-0" />
         </Container>
       </div>
 
       <div className="w-full flex-1 overflow-y-auto">
         {conversationLoading || itemDetailsLoading ? <Spinner /> : <Container className="max-w-2xl flex-1 overflow-y-auto pt-6 pb-4">
-          {messages?.map((message: any) => {
-            const isMine = message.sender_id === userId;
-
-            const formattedTime = new Date(message.created_at).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            });
-
-            const offer = message?.offer;
-            const note = message.body?.split(" — ")[1];
-
-            // text messages
-            if (message.message_type === "TEXT") {
-              return isMine ? (
-                <div
-                  key={message.id}
-                  className="bg-primary text-white rounded-[16px] px-4 py-3 text-xs max-w-[80%] w-fit shadow-sm ml-auto mb-4"
-                >
-                  <p className="mb-1">{message.body}</p>
-
-                  <span className="text-[10px] text-[#D1FAE5]">
-                    {formattedTime}
-                  </span>
-                </div>
-              ) : (
-                <div
-                  key={message.id}
-                  className="bg-white text-text-primary rounded-[16px] px-4 py-3 text-xs max-w-[80%] w-fit shadow-sm mr-auto mb-4"
-                >
-                  <p className="mb-1">{message.body}</p>
-
-                  <span className="text-[10px] text-[#6B7280]">
-                    {formattedTime}
-                  </span>
-                </div>
-              );
-            }
-
-            if (message.message_type === "OFFER") {
-              const isCounterOffer = !!offer?.parent_offer_id;
-              const showActions = canRespondToOffer(message, isMine);
-              const borderColor = isCounterOffer ? "border-primary" : "border-[#FF4304]";
-              const label = getOfferLabel(message, isMine);
-              const statusColor =
-                offer?.status === "DECLINED"
-                  ? "text-red-500"
-                  : offer?.status === "ACCEPTED"
-                    ? "text-green-500"
-                    : "text-[#FF4304]";
-
-              return (
-                <div
-                  key={message.id}
-                  className={`flex flex-col mb-4 ${isMine ? "items-end" : "items-start"}`}
-                >
-                  <div className={`bg-white border-2 ${borderColor} rounded-[16px] p-5 shadow-sm`}>
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="w-6 h-6 rounded-full bg-[#FFF5F0] flex items-center justify-center text-[12px]">
-                        {isCounterOffer ? "🔄" : "💰"}
-                      </div>
-
-                      <span className="text-xs font-semibold text-text-primary">
-                        {label}
-                      </span>
-                    </div>
-
-                    <div className="text-[20px] font-bold text-primary mb-1">
-                      {formatNaira(offer?.amount ?? 0)}
-                    </div>
-
-                    {showActions && (
-                      <div className="flex items-center gap-2 mb-3 mt-2">
-                        <Button
-                          variant="primary"
-                          fullWidth
-                          onClick={async () => await acceptAnOffer(offer.id)}
-                          loading={acceptAnOfferLoading}
-                          size="sm"
-                        >
-                          Accept
-                        </Button>
-
-                        <Button
-                          variant="outline"
-                          fullWidth
-                          size="sm"
-                          className="border-[#BBBBC8] text-[#BBBBC8]"
-                          onClick={() => {
-                            sessionStorage.setItem(
-                              `counter-offer-${itemId}`,
-                              JSON.stringify({ offerId: offer.id, conversationId })
-                            );
-                            router.push(`/${itemId}/make-offer?mode=counter&c_id=${conversationId}`);
-                          }}
-                        >
-                          Counter
-                        </Button>
-
-                        <Button
-                          variant="outline"
-                          fullWidth
-                          size="sm"
-                          className="border-[#BBBBC8] text-[#BBBBC8]"
-                          loading={declineAnOfferLoading}
-                          onClick={async () => await declineAnOffer(offer.id)}
-                        >
-                          Decline
-                        </Button>
-                      </div>
-                    )}
-
-                    <p className="text-[10px] text-[#6B7280] mt-1 text-center">
-                      {formattedTime}
-                    </p>
-                  </div>
-
-                  {note && (
-                    <div
-                      className={`rounded-[16px] px-4 py-3 text-xs max-w-[80%] w-fit shadow-sm mt-4 ${isMine ? "bg-primary text-white ml-auto" : "bg-white text-text-primary mr-auto"
-                        }`}
-                    >
-                      <p className="mb-1">{note}</p>
-                      <span className={`text-[10px] ${isMine ? "text-[#D1FAE5]" : "text-[#6B7280]"}`}>
-                        {formattedTime}
-                      </span>
-                    </div>
-                  )}
-
-                </div>
-              );
-            }
-
-            return null;
-          })}
+          <ChatMessageList
+            messages={messages}
+            userId={userId}
+            sellerId={sellerId}
+            isSeller={isSeller}
+            acceptLoading={acceptAnOfferLoading}
+            declineLoading={declineAnOfferLoading}
+            onAcceptOffer={(offerId) => acceptAnOffer(offerId)}
+            onDeclineOffer={(offerId) => declineAnOffer(offerId)}
+            onCounterOffer={handleCounterOffer}
+          />
         </Container>}
 
         {latestAcceptedOffer && !isSeller && (
           <Container className="max-w-2xl pb-4">
-            <div className="bg-[#FDF3F0] border-2 border-primary rounded-2xl text-primary p-5 text-center shadow-sm">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <SuccessIcon color="#FF4304" size={20} />
-                <span className="text-xs font-bold">Offer accepted at</span>
-              </div>
-
-              <p className="text-[20px] font-bold mb-3 tracking-tight">
-                {formatNaira(latestAcceptedOffer.amount ?? 0)}
-              </p>
-
-              <Button
-                variant="primary"
-                fullWidth
-                onClick={() => router.push(`/payment/${latestAcceptedOffer.id}`)}
-              >
-                Proceed to Secure Payment
-              </Button>
-
-              <p className="text-[10px] px-4 leading-relaxed mt-2 text-[#6B7280]">
-                Your payment will be held securely until you confirm delivery
-              </p>
-            </div>
+            <AcceptedOfferBanner
+              amount={latestAcceptedOffer.amount ?? 0}
+              onProceed={() => router.push(`/payment/${latestAcceptedOffer.id}`)}
+            />
           </Container>
         )}
       </div>
 
-
       {/* ── Input Area ── */}
       <div className="bg-white border-t border-gray-100 mt-auto">
-        <Container className="max-w-2xl py-4 flex items-center gap-3">
-          <Input placeholder="Type a message..." className="bg-[#F3F4F6] rounded-full" value={message} onChange={(e) => setMessage(e.target.value)} />
-
-          <button className="w-12 h-12 bg-[#FF4304] rounded-full flex items-center justify-center text-white flex-shrink-0 hover:bg-orange-600 transition-colors shadow-sm active:scale-95" onClick={handleSendMessage}>
-            <MessageIcon />
-          </button>
+        <Container className="max-w-2xl py-4">
+          <ChatComposer value={message} onChange={setMessage} onSend={handleSendMessage} />
         </Container>
       </div>
-    </div >
+    </div>
   );
 };
 
