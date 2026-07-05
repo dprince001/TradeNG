@@ -10,6 +10,8 @@ interface AppShellProps {
   showBottomNav?: boolean;
   headerProps?: React.ComponentProps<typeof SiteHeader>;
   className?: string;
+  /** Locks the shell to the viewport height (no page scroll) so children can manage their own internal scroll areas — use for app-like screens such as chat. */
+  fixedHeight?: boolean;
 }
 
 const AppShell = ({
@@ -18,12 +20,20 @@ const AppShell = ({
   showBottomNav = true,
   headerProps,
   className,
+  fixedHeight = false,
 }: AppShellProps) => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className={cn("flex flex-col", fixedHeight ? "h-dvh overflow-hidden" : "min-h-screen")}>
       <SiteHeader {...headerProps} />
 
-      <main className={cn("flex-1 w-full", showBottomNav && "pb-16 mdl:pb-0", className)}>
+      <main
+        className={cn(
+          "flex-1 w-full min-h-0",
+          fixedHeight && "overflow-hidden",
+          showBottomNav && "pb-16 mdl:pb-0",
+          className
+        )}
+      >
         {children}
       </main>
 
