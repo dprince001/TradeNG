@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { MessagesSquare } from "lucide-react";
 import useGet from "@/app/hooks/useGet";
 import useCurrentUser from "@/app/hooks/useCurrentUser";
@@ -11,12 +11,26 @@ import ConversationThread from "@/app/components/chat/ConversationThread";
 const ChatInbox = () => {
   const { user } = useCurrentUser();
   const currentUserId = user?.user?.id;
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const { data, isFetching } = useGet(useGetAllConversationsQuery, "");
   const conversations = data?.conversations ?? [];
 
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selectedId = searchParams.get("c_id");
   const activeConversation = conversations.find((c: any) => c.id === selectedId) ?? null;
+
+  const selectConversation = (id: string | null) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (id) {
+      params.set("c_id", id);
+    } else {
+      params.delete("c_id");
+    }
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  };
 
   return (
     <div className="h-full flex min-h-0">
@@ -30,7 +44,7 @@ const ChatInbox = () => {
           isLoading={isFetching}
           selectedId={selectedId}
           currentUserId={currentUserId}
-          onSelect={setSelectedId}
+          onSelect={selectConversation}
         />
       </div>
 
@@ -40,7 +54,7 @@ const ChatInbox = () => {
             key={activeConversation.id}
             conversation={activeConversation}
             currentUserId={currentUserId}
-            onBack={() => setSelectedId(null)}
+            onBack={() => selectConversation(null)}
           />
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-center gap-3 text-text-secondary">

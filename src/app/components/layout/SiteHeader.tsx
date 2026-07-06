@@ -83,6 +83,24 @@ const SiteHeader = ({
 
         <div className="flex items-center gap-2.5">
           <button
+            onClick={() => guard(() => router.push("/favourites"))}
+            className="hidden mdl:flex w-10 h-10 rounded-full bg-gray-100 items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+            aria-label="Favourites"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D1E20" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+          </button>
+          <button
+            onClick={() => guard(() => router.push("/chat"))}
+            className="hidden mdl:flex w-10 h-10 rounded-full bg-gray-100 items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+            aria-label="Chat"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D1E20" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+          </button>
+          <button
             onClick={() => guard(() => onNotificationClick?.())}
             className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
             aria-label="Notifications"
@@ -90,7 +108,7 @@ const SiteHeader = ({
             <NotificationIcon color="#1D1E20" count={isLoggedIn ? notificationCount : 0} />
           </button>
           <button
-            onClick={() => guard(() => (onCartClick ? onCartClick() : router.push("/confirm-order")))}
+            onClick={() => guard(() => (onCartClick ? onCartClick() : router.push("/profile/orders")))}
             className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
             aria-label="Cart"
           >

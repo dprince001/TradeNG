@@ -5,27 +5,27 @@ const footerColumns = [
   {
     heading: "Marketplace",
     links: [
-      { label: "Browse Listings", href: "/" },
+      { label: "Browse Listings", href: "/#listings" },
       { label: "Categories", href: "/#categories" },
       { label: "Sell an Item", href: "/list-item" },
-      { label: "Top Sellers", href: "/" },
+      { label: "Top Sellers", href: "/#top-sellers" },
     ],
   },
   {
     heading: "Support",
     links: [
-      { label: "FAQs", href: "/profile" },
-      { label: "Contact Support", href: "/profile" },
-      { label: "Dispute Center", href: "/profile" },
-      { label: "Terms of Service", href: "/profile" },
+      { label: "FAQs", href: "/faqs" },
+      { label: "Contact Support", href: "/contact" },
+      { label: "Dispute Center", href: "/dispute-center" },
+      { label: "Terms of Service", href: "/terms" },
     ],
   },
   {
     heading: "Company",
     links: [
-      { label: "About TradeNG", href: "/" },
-      { label: "Escrow Protection", href: "/" },
-      { label: "Privacy Policy", href: "/profile" },
+      { label: "About TradeNG", href: "/about" },
+      { label: "Escrow Protection", href: "/escrow-protection" },
+      { label: "Privacy Policy", href: "/privacy" },
     ],
   },
 ];

@@ -124,6 +124,36 @@ const Input = forwardRef<any, InputProps>(
       );
     }
 
+    if (type === "textarea") {
+      return (
+        <div className="flex flex-col gap-1.5 w-full">
+          {label && (
+            <label className="text-sm font-medium text-text-primary">
+              {label}
+            </label>
+          )}
+          <textarea
+            ref={ref as any}
+            rows={5}
+            className={cn(
+              "w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-text-primary placeholder-gray-400 bg-white transition-all focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 disabled:bg-gray-50 disabled:text-gray-400 resize-none",
+              error && "border-red-500 focus:border-red-500 focus:ring-red-500/20",
+              className,
+            )}
+            value={value}
+            onChange={onChange}
+            {...(props as any)}
+          />
+          {error && (
+            <span className="text-xs text-red-500 font-medium">{error}</span>
+          )}
+          {helperText && !error && (
+            <span className="text-xs text-text-secondary">{helperText}</span>
+          )}
+        </div>
+      );
+    }
+
     const inputElement = (
       <input
         type={type}

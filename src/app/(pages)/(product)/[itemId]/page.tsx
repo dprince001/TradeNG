@@ -11,7 +11,7 @@ import TopNavbar from "@/app/components/layout/TopNavbar";
 import Container from "@/app/components/layout/Container";
 import AppShell from "@/app/components/layout/AppShell";
 import useGet from "@/app/hooks/useGet";
-import { useGetListingDetailQuery, useDeleteListingMutation } from "@/app/redux/api/listingApiSlice";
+import { useGetListingDetailQuery, useDeleteListingMutation, useBuyAListingDirectlyMutation } from "@/app/redux/api/listingApiSlice";
 import { useParams } from "next/navigation";
 import ImageCarousel from "@/app/(pages)/(product)/component/ImageCarousel";
 import { Spinner } from "@/app/components/Loader";
@@ -42,6 +42,7 @@ const ItemDetailPage = () => {
   );
 
   const { handlePost: deleteListing, isLoading: deleteListingLoading } = usePost(useDeleteListingMutation);
+  const { handlePost: buyListing, isLoading: buyListingLoading } = usePost(useBuyAListingDirectlyMutation);
   const { guard, promptOpen, closePrompt, promptMessage } = useAuthGuard(
     "Sign in to buy, make an offer, or save this item."
   );
@@ -75,6 +76,13 @@ const ItemDetailPage = () => {
       router.push("/home");
     }
   }
+
+  const handleBuyNow = async () => {
+    const response = await buyListing(itemId, { showSuccessToast: false });
+    if (response?.success !== false) {
+      router.push(`/confirm-order?transactionId=${response?.data?.transaction?.id}`);
+    }
+  };
 
   const handleMakeOffer = () => {
     sessionStorage.setItem(
@@ -121,7 +129,7 @@ const ItemDetailPage = () => {
         rightElement={
           <button
             id="item-detail-cart-btn"
-            onClick={() => guard(() => router.push("/confirm-order"))}
+            onClick={() => guard(() => router.push("/profile/orders"))}
             className="w-[42px] h-[42px] rounded-full bg-[#F5F6FA] text-[#1D1E20] hover:bg-brand-orange hover:text-white flex items-center justify-center relative transition-all duration-200 active:scale-95"
           >
             <CartIcon count={1} />
@@ -199,7 +207,7 @@ const ItemDetailPage = () => {
                   </div>
 
                   <button
-                    onClick={() => router.push("/seller-profile")}
+                    onClick={() => router.push(`/seller-profile?id=${seller?.id}`)}
                     className="flex items-center gap-1.5 text-primary text-xs font-semibold"
                   >
                     view seller
@@ -224,7 +232,7 @@ const ItemDetailPage = () => {
                           Make Offer
                         </Button>
                       )}
-                      <Button variant="primary" onClick={() => guard(() => router.push("/confirm-order"))} fullWidth>
+                      <Button variant="primary" onClick={() => guard(handleBuyNow)} loading={buyListingLoading} fullWidth>
                         Buy Now
                       </Button>
                     </div>
@@ -297,7 +305,7 @@ const ItemDetailPage = () => {
                     </div>
                     <div>
                       <span className="text-sm font-semibold block">{sellerName}</span>
-                      <button onClick={() => router.push("/seller-profile")} className="text-primary text-xs font-semibold">
+                      <button onClick={() => router.push(`/seller-profile?id=${seller?.id}`)} className="text-primary text-xs font-semibold">
                         View seller profile
                       </button>
                     </div>
@@ -305,7 +313,7 @@ const ItemDetailPage = () => {
 
                   {seller?.id !== userId && (
                     <div className="flex flex-col gap-2.5">
-                      <Button variant="primary" onClick={() => guard(() => router.push("/confirm-order"))} fullWidth>
+                      <Button variant="primary" onClick={() => guard(handleBuyNow)} loading={buyListingLoading} fullWidth>
                         Buy Now
                       </Button>
                       {negotiable && (

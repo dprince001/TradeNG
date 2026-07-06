@@ -6,7 +6,16 @@
       "Bash(curl -s -o /tmp/home.html -w \"%{http_code}\\\\n\" http://localhost:3001/)",
       "Bash(sleep 8; cat /tmp/home.html | head -c 2000; echo; echo \"---STATUS---\")",
       "Bash(taskkill //F //IM node.exe //T)",
-      "Bash(curl -s http://localhost:3000/profile/listings)"
+      "Bash(curl -s http://localhost:3000/profile/listings)",
+      "Bash(cat tailwind.config.ts)",
+      "Bash(cat tailwind.config.js)",
+      "WebFetch(domain:tradeng-api.onrender.com)",
+      "WebFetch(domain:www.figma.com)",
+      "Bash(curl -s https://tradeng-api.onrender.com/api/docs/v1/)",
+      "Bash(curl -s https://tradeng-api.onrender.com/api/docs/v1/swagger-ui-init.js)",
+      "Bash(timeout 60 bash -c 'until curl -sf http://localhost:3000 >/dev/null; do sleep 1; done')",
+      "Bash(command -v chromium-cli)",
+      "Bash(tail -n 100 /tmp/nextdev.log)"
     ]
   }
 }

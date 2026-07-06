@@ -59,8 +59,16 @@ const listingApiSlice = generalApiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Listing"],
         }),
+
+        publishListing: builder.mutation({
+            query: (id) => ({
+                url: `/listings/${id}/publish`,
+                method: "PATCH",
+            }),
+            invalidatesTags: ["Listing"],
+        }),
     }),
     overrideExisting: false
 });
 
-export const { useCreateListingMutation, useGetListingsQuery, useGetMyListingsQuery, useGetListingDetailQuery, useDeleteListingMutation, useUpdateListingMutation, useBuyAListingDirectlyMutation } = listingApiSlice;
+export const { useCreateListingMutation, useGetListingsQuery, useGetMyListingsQuery, useGetListingDetailQuery, useDeleteListingMutation, useUpdateListingMutation, useBuyAListingDirectlyMutation, usePublishListingMutation } = listingApiSlice;
