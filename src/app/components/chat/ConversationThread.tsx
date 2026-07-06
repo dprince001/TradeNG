@@ -7,8 +7,14 @@ import VerifiedIcon from "@/app/assets/svgs/home/VerifiedIcon";
 import { Spinner } from "@/app/components/Loader";
 import useGet from "@/app/hooks/useGet";
 import usePost from "@/app/hooks/usePost";
-import { useGetMessageInAConversationQuery, useSendMessageMutation } from "@/app/redux/api/chatApiSlice";
-import { useAcceptAnOfferMutation, useDeclineAnOfferMutation } from "@/app/redux/api/offersApiSlice";
+import {
+  useGetMessageInAConversationQuery,
+  useSendMessageMutation,
+} from "@/app/redux/api/chatApiSlice";
+import {
+  useAcceptAnOfferMutation,
+  useDeclineAnOfferMutation,
+} from "@/app/redux/api/offersApiSlice";
 import ChatMessageList from "@/app/components/chat/ChatMessageList";
 import ChatComposer from "@/app/components/chat/ChatComposer";
 import AcceptedOfferBanner from "@/app/components/chat/AcceptedOfferBanner";
@@ -25,7 +31,11 @@ interface ConversationThreadProps {
   onBack?: () => void;
 }
 
-const ConversationThread = ({ conversation, currentUserId, onBack }: ConversationThreadProps) => {
+const ConversationThread = ({
+  conversation,
+  currentUserId,
+  onBack,
+}: ConversationThreadProps) => {
   const router = useRouter();
   const [message, setMessage] = useState("");
 
@@ -41,32 +51,41 @@ const ConversationThread = ({ conversation, currentUserId, onBack }: Conversatio
   const { data: conversationData, isLoading: messagesLoading } = useGet(
     useGetMessageInAConversationQuery,
     conversationId,
-    !!conversationId
+    !!conversationId,
   );
 
-  const { handlePost: acceptAnOffer, isLoading: acceptAnOfferLoading } = usePost(useAcceptAnOfferMutation);
-  const { handlePost: declineAnOffer, isLoading: declineAnOfferLoading } = usePost(useDeclineAnOfferMutation);
+  const { handlePost: acceptAnOffer, isLoading: acceptAnOfferLoading } =
+    usePost(useAcceptAnOfferMutation);
+  const { handlePost: declineAnOffer, isLoading: declineAnOfferLoading } =
+    usePost(useDeclineAnOfferMutation);
   const { handlePost: sendMessage } = usePost(useSendMessageMutation);
 
   const messages = [...(conversationData?.messages || [])].reverse();
 
   const latestAcceptedOffer = [...messages]
     .reverse()
-    .find((m) => m.message_type === "OFFER" && m.offer?.status === "ACCEPTED")?.offer;
+    .find(
+      (m) => m.message_type === "OFFER" && m.offer?.status === "ACCEPTED",
+    )?.offer;
+
+  console.log(latestAcceptedOffer);
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
 
     const res = await sendMessage(
       { id: conversationId, data: { body: message } },
-      { showSuccessToast: false }
+      { showSuccessToast: false },
     );
 
     if (res?.success) setMessage("");
   };
 
   const handleCounterOffer = (offer: any) => {
-    sessionStorage.setItem(`counter-offer-${itemId}`, JSON.stringify({ offerId: offer.id, conversationId }));
+    sessionStorage.setItem(
+      `counter-offer-${itemId}`,
+      JSON.stringify({ offerId: offer.id, conversationId }),
+    );
     router.push(`/${itemId}/make-offer?mode=counter&c_id=${conversationId}`);
   };
 
@@ -80,13 +99,20 @@ const ConversationThread = ({ conversation, currentUserId, onBack }: Conversatio
             className="md:hidden w-8 h-8 rounded-full bg-[#F5F6FA] flex items-center justify-center flex-shrink-0"
             aria-label="Back to conversations"
           >
-            <ChevronLeft className="w-4 h-4 text-text-primary" strokeWidth={2.5} />
+            <ChevronLeft
+              className="w-4 h-4 text-text-primary"
+              strokeWidth={2.5}
+            />
           </button>
         )}
 
         <div className="w-9 h-9 rounded-full bg-[#E5FFF4] text-[#00E58F] flex items-center justify-center overflow-hidden flex-shrink-0">
           {counterpart?.avatar ? (
-            <img src={counterpart.avatar} alt="" className="w-full h-full object-cover" />
+            <img
+              src={counterpart.avatar}
+              alt=""
+              className="w-full h-full object-cover"
+            />
           ) : (
             "👤"
           )}
@@ -94,10 +120,16 @@ const ConversationThread = ({ conversation, currentUserId, onBack }: Conversatio
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <span className="text-text-primary font-semibold text-sm truncate">{counterpartName}</span>
-            {counterpart?.is_verified_seller && <VerifiedIcon color="#10B981" size="14" />}
+            <span className="text-text-primary font-semibold text-sm truncate">
+              {counterpartName}
+            </span>
+            {counterpart?.is_verified_seller && (
+              <VerifiedIcon color="#10B981" size="14" />
+            )}
           </div>
-          <span className="text-text-secondary text-xs truncate block">{listing?.item_name || "Item"}</span>
+          <span className="text-text-secondary text-xs truncate block">
+            {listing?.item_name || "Item"}
+          </span>
         </div>
       </div>
 
@@ -129,7 +161,11 @@ const ConversationThread = ({ conversation, currentUserId, onBack }: Conversatio
       </div>
 
       <div className="px-5 py-4 bg-white border-t border-gray-100 flex-shrink-0">
-        <ChatComposer value={message} onChange={setMessage} onSend={handleSendMessage} />
+        <ChatComposer
+          value={message}
+          onChange={setMessage}
+          onSend={handleSendMessage}
+        />
       </div>
     </div>
   );

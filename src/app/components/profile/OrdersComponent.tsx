@@ -1,57 +1,71 @@
-import { formatNaira } from "@/lib/utils";
-import React, { useState } from "react";
-import IphoneImage from "@/app/assets/images/IphoneImage.png";
-import Image from "next/image";
-import ProgressBar from "../ProgressBar";
+"use client";
 
-interface OrderItem {
-  id: number;
-  title: string;
-  price: number;
-  date: string;
-  status: "Awaiting Payment" | "Delivered" | "In Transit";
-  type: "buying" | "selling";
-  image: string;
-}
+import { formatNaira } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import ProgressBar from "../ProgressBar";
+import { OrderSkeleton } from "@/app/components/Loader";
+import { FadeInStagger, FadeInItem } from "@/app/components/Motion";
+import useGet from "@/app/hooks/useGet";
+import { useGetMyBuyingOrdersQuery, useGetMySellingOrdersQuery } from "@/app/redux/api/ordersApiSlice";
+
+const statusMeta: Record<string, { progress: number; comment: string; color: string; dot: string; text: string }> = {
+  PENDING_PAYMENT: {
+    progress: 15,
+    comment: "Waiting for payment to complete",
+    color: "bg-amber-500",
+    dot: "bg-amber-500 animate-pulse",
+    text: "text-amber-600",
+  },
+  PAID: {
+    progress: 45,
+    comment: "Payment secured in escrow, awaiting delivery",
+    color: "bg-blue-500",
+    dot: "bg-blue-500",
+    text: "text-blue-600",
+  },
+  RECEIPT_CONFIRMED: {
+    progress: 80,
+    comment: "Buyer confirmed receipt, payout in progress",
+    color: "bg-blue-500",
+    dot: "bg-blue-500",
+    text: "text-blue-600",
+  },
+  RELEASED: {
+    progress: 100,
+    comment: "Order complete, funds released",
+    color: "bg-green-500",
+    dot: "bg-green-500",
+    text: "text-green-600",
+  },
+  DISPUTED: {
+    progress: 60,
+    comment: "Under dispute review",
+    color: "bg-red-500",
+    dot: "bg-red-500 animate-pulse",
+    text: "text-red-600",
+  },
+  REFUNDED: {
+    progress: 100,
+    comment: "Order refunded to buyer",
+    color: "bg-gray-400",
+    dot: "bg-gray-400",
+    text: "text-gray-500",
+  },
+};
 
 const OrdersComponent = () => {
+  const router = useRouter();
   const [ordersTab, setOrdersTab] = useState<"buying" | "selling">("buying");
 
-  const [orders, setOrders] = useState<OrderItem[]>([
-    {
-      id: 1,
-      title: "iPhone 13 Pro Max",
-      price: 450000,
-      date: "Jul 15, 2026",
-      status: "Awaiting Payment",
-      type: "buying",
-      image: IphoneImage.src,
-    },
-    {
-      id: 2,
-      title: "Sony WH-1000XM4",
-      price: 120000,
-      date: "Jul 10, 2026",
-      status: "Delivered",
-      type: "buying",
-      image:
-        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80",
-    },
-    {
-      id: 3,
-      title: "iPad Pro 11-inch",
-      price: 380000,
-      date: "Jun 28, 2026",
-      status: "Delivered",
-      type: "selling",
-      image:
-        "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=200&q=80",
-    },
-  ]);
+  const { data: buyingData, isFetching: buyingLoading } = useGet(useGetMyBuyingOrdersQuery, "", ordersTab === "buying");
+  const { data: sellingData, isFetching: sellingLoading } = useGet(useGetMySellingOrdersQuery, "", ordersTab === "selling");
+
+  const orders = ordersTab === "buying" ? buyingData?.orders || [] : sellingData?.orders || [];
+  const isFetching = ordersTab === "buying" ? buyingLoading : sellingLoading;
 
   return (
     <div className="flex-1 flex flex-col px-5 pt-6 pb-24">
-      {/* Custom tabs */}
       <div className="flex bg-[#F5F6FA] p-1 rounded-xl mb-5 shadow-inner">
         {(["buying", "selling"] as const).map((tab) => (
           <button
@@ -68,125 +82,89 @@ const OrdersComponent = () => {
         ))}
       </div>
 
-      {/* Orders list */}
       <div className="flex flex-col gap-4 flex-1">
-        {orders.filter((item) => item.type === ordersTab).length > 0 ? (
-          orders
-            .filter((item) => item.type === ordersTab)
-            .map((item) => (
-              <div
-                key={item.id}
-                className="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col gap-4 shadow-[0_2px_6px_rgba(0,0,0,0.01)]"
-              >
-                <div className="flex gap-4">
-                  <div className="relative w-[100px] h-[100px] rounded-xl bg-gray-50 border border-gray-100 overflow-hidden flex-shrink-0">
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      width={100}
-                      height={100}
-                      className="w-full h-full object-cover"
-                      unoptimized
-                    />
-                  </div>
+        {isFetching ? (
+          <OrderSkeleton />
+        ) : orders.length > 0 ? (
+          <FadeInStagger className="flex flex-col gap-4">
+            {orders.map((item: any) => {
+              const meta = statusMeta[item.status] || statusMeta.PENDING_PAYMENT;
+              const counterparty = ordersTab === "buying" ? item.seller : item.buyer;
 
-                  <div className="flex-1 flex flex-col justify-between py-1">
-                    <div>
-                      <h4 className="text-sm font-extrabold text-[#1D1E20] leading-snug tracking-tight">
-                        {item.title}
-                      </h4>
-                      <span className="text-[#8F959E] text-[10px] font-medium block mt-1">
-                        Order #{2024000 + item.id}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-primary text-sm font-extrabold block">
-                        {formatNaira(item.price)}
-                      </span>
-                      <span className="text-[10px] text-gray-500 block mt-0.5">
-                        {item.type === "buying" ? "Seller" : "Buyer"}: Hassan Saidu
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Progress & Status section */}
-                <div className="border-t border-gray-50 pt-4 flex flex-col gap-3">
-                  <ProgressBar
-                    title="Order Status"
-                    progress={
-                      item.status === "Awaiting Payment"
-                        ? 25
-                        : item.status === "In Transit"
-                          ? 65
-                          : 100
-                    }
-                    comment={
-                      item.status === "Awaiting Payment"
-                        ? "Waiting for buyer's payment confirmation"
-                        : item.status === "In Transit"
-                          ? "Package is with the courier"
-                          : "Package delivered successfully"
-                    }
-                    color={
-                      item.status === "Awaiting Payment"
-                        ? "bg-amber-500"
-                        : item.status === "In Transit"
-                          ? "bg-blue-500"
-                          : "bg-green-500"
-                    }
-                  />
-
-                  <div className="flex justify-between items-center text-[10px] text-[#8F959E] font-semibold mt-1">
-                    <span>Ordered on: {item.date}</span>
-                    <div className="flex items-center gap-1.5">
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          item.status === "Awaiting Payment"
-                            ? "bg-amber-500 animate-pulse"
-                            : item.status === "In Transit"
-                              ? "bg-blue-500"
-                              : "bg-green-500"
-                        }`}
+              return (
+                <FadeInItem
+                  key={item.id}
+                  onClick={() =>
+                    router.push(
+                      item.status === "PENDING_PAYMENT"
+                        ? `/payment/${item.id}`
+                        : `/confirm-delivery?id=${item.id}`
+                    )
+                  }
+                  className="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col gap-4 shadow-[0_2px_6px_rgba(0,0,0,0.01)] cursor-pointer hover:border-primary/30 transition-colors"
+                >
+                  <div className="flex gap-4">
+                    <div className="relative w-[100px] h-[100px] rounded-xl bg-gray-50 border border-gray-100 overflow-hidden flex-shrink-0">
+                      <img
+                        src={item.listing?.images?.[0]}
+                        alt={item.listing?.item_name}
+                        className="w-full h-full object-cover"
                       />
-                      <span
-                        className={
-                          item.status === "Awaiting Payment"
-                            ? "text-amber-600"
-                            : item.status === "In Transit"
-                              ? "text-blue-600"
-                              : "text-green-600"
-                        }
-                      >
-                        {item.status}
-                      </span>
+                    </div>
+
+                    <div className="flex-1 flex flex-col justify-between py-1">
+                      <div>
+                        <h4 className="text-sm font-extrabold text-[#1D1E20] leading-snug tracking-tight">
+                          {item.listing?.item_name}
+                        </h4>
+                        <span className="text-[#8F959E] text-[10px] font-medium block mt-1">
+                          Order #{item.id?.slice(-8)}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-primary text-sm font-extrabold block">
+                          {formatNaira(item.amount)}
+                        </span>
+                        <span className="text-[10px] text-gray-500 block mt-0.5">
+                          {ordersTab === "buying" ? "Seller" : "Buyer"}: {counterparty?.first_name} {counterparty?.last_name}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            ))
+
+                  <div className="border-t border-gray-50 pt-4 flex flex-col gap-3">
+                    <ProgressBar
+                      title="Order Status"
+                      progress={meta.progress}
+                      comment={meta.comment}
+                      color={meta.color}
+                    />
+
+                    <div className="flex justify-between items-center text-[10px] text-[#8F959E] font-semibold mt-1">
+                      <span>Ordered on: {new Date(item.created_at).toLocaleDateString()}</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className={`w-1.5 h-1.5 rounded-full ${meta.dot}`} />
+                        <span className={meta.text}>{item.status?.replace(/_/g, " ")}</span>
+                      </div>
+                    </div>
+                  </div>
+                </FadeInItem>
+              );
+            })}
+          </FadeInStagger>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-center py-20 gap-4 bg-white/40 border border-dashed border-gray-150 rounded-2xl">
             <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-text-secondary">
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M6 2L3 6v14c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2V6l-3-4H6z" />
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
             </div>
             <div>
-              <span className="text-xs font-bold text-text-primary block">
-                No orders yet
-              </span>
+              <span className="text-xs font-bold text-text-primary block">No orders yet</span>
               <span className="text-[10px] text-text-secondary mt-1 block">
-                You haven&apos;t transactioned any orders.
+                You haven&apos;t transacted any orders.
               </span>
             </div>
           </div>

@@ -106,7 +106,7 @@ const MakeOfferPage = () => {
         rightElement={
           !isCounter ? (
             <button
-              onClick={() => router.push("/confirm-order")}
+              onClick={() => router.push("/profile/orders")}
               className="w-10 h-10 rounded-full bg-[#F5F6FA] text-[#1D1E20] hover:bg-brand-orange hover:text-white flex items-center justify-center relative transition-all duration-200"
             >
               <CartIcon />

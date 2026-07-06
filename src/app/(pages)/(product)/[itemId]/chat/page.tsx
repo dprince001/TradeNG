@@ -128,7 +128,7 @@ const ChatPage = () => {
           <Container className="max-w-2xl pb-4">
             <AcceptedOfferBanner
               amount={latestAcceptedOffer.amount ?? 0}
-              onProceed={() => router.push(`/payment/${latestAcceptedOffer.id}`)}
+              onProceed={() => router.push("/profile/orders")}
             />
           </Container>
         )}

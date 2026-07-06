@@ -8,6 +8,7 @@ interface ConfirmReleaseModalProps {
   onConfirm: () => void;
   onCancel: () => void;
   onReportProblem?: () => void;
+  isLoading?: boolean;
 }
 
 const ConfirmReleaseModal = ({
@@ -15,6 +16,7 @@ const ConfirmReleaseModal = ({
   onConfirm,
   onCancel,
   onReportProblem,
+  isLoading,
 }: ConfirmReleaseModalProps) => {
   return (
     <Modal onClose={onCancel} className="flex flex-col items-center text-center">
@@ -30,6 +32,7 @@ const ConfirmReleaseModal = ({
       <Button
         fullWidth
         onClick={onConfirm}
+        loading={isLoading}
         className="mb-3"
       >
         Yes, Release Payment

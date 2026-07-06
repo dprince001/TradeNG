@@ -1,44 +1,35 @@
 "use client";
 
-import { Suspense } from "react";
 import TopNavbar from "@/app/components/layout/TopNavbar";
 import Container from "@/app/components/layout/Container";
 import AppShell from "@/app/components/layout/AppShell";
 import SecureIcon from "@/app/assets/svgs/home/SecureIcon";
 import LockIcon from "@/app/assets/svgs/home/LockIcon";
 import Button from "@/app/components/Button";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { formatNaira } from "@/lib/utils";
 import { OrderSkeleton } from "@/app/components/Loader";
 import { PageTransition } from "@/app/components/Motion";
 import useGet from "@/app/hooks/useGet";
 import usePost from "@/app/hooks/usePost";
-import {
-  useGetTransactionDetailQuery,
-  useStartCheckoutMutation,
-} from "@/app/redux/api/transactionsApiSlice";
+import { useGetTransactionDetailQuery, useStartCheckoutMutation } from "@/app/redux/api/transactionsApiSlice";
 
-const PaymentContent = () => {
+const PaymentPage = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const transactionId = searchParams.get("transactionId");
+  const { transactionId } = useParams<{ transactionId: string }>();
 
   const { data: transactionData, isFetching } = useGet(
     useGetTransactionDetailQuery,
     transactionId,
-    Boolean(transactionId),
+    Boolean(transactionId)
   );
-  const { handlePost: startCheckout, isLoading: checkingOut } = usePost(
-    useStartCheckoutMutation,
-  );
+  const { handlePost: startCheckout, isLoading: checkingOut } = usePost(useStartCheckoutMutation);
 
   const transaction = transactionData?.transaction;
 
   const handlePay = async () => {
     if (!transactionId) return;
-    const response = await startCheckout(transactionId, {
-      showSuccessToast: false,
-    });
+    const response = await startCheckout(transactionId, { showSuccessToast: false });
     const checkoutLink = response?.data?.checkout_link;
     if (checkoutLink) {
       window.location.href = checkoutLink;
@@ -56,26 +47,18 @@ const PaymentContent = () => {
           ) : (
             <PageTransition>
               <div className="bg-white rounded-2xl p-4 shadow-md mb-5">
-                <h2 className="text-text-primary text-sm font-bold mb-4">
-                  Payment Summary
-                </h2>
+                <h2 className="text-text-primary text-sm font-bold mb-4">Payment Summary</h2>
 
                 <div className="space-y-4 mb-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-text-secondary text-sm">
-                      Item Total
-                    </span>
+                    <span className="text-text-secondary text-sm">Item Total</span>
                     <span className="text-text-primary text-sm font-semibold">
-                      {formatNaira(
-                        transaction.amount - transaction.platform_fee,
-                      )}
+                      {formatNaira(transaction.amount - transaction.platform_fee)}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-text-secondary text-sm">
-                      Platform Fee
-                    </span>
+                    <span className="text-text-secondary text-sm">Platform Fee</span>
                     <span className="text-text-primary text-sm font-semibold">
                       {formatNaira(transaction.platform_fee)}
                     </span>
@@ -83,9 +66,7 @@ const PaymentContent = () => {
 
                   <div className="h-px bg-[#F0F1F5]" />
                   <div className="flex items-center justify-between">
-                    <span className="text-text-primary font-bold">
-                      Total Amount
-                    </span>
+                    <span className="text-text-primary font-bold">Total Amount</span>
                     <span className="text-text-primary font-bold">
                       {formatNaira(transaction.amount)}
                     </span>
@@ -95,8 +76,7 @@ const PaymentContent = () => {
                 <div className="bg-[#FFE8E0] border border-[#FFB899] rounded-[12px] px-3.5 py-3 flex gap-2">
                   <SecureIcon size={22} color="#FF4304" />
                   <p className="text-[#C03000] text-[10px] leading-[1.5]">
-                    Your payment will be held securely in escrow until you
-                    confirm delivery
+                    Your payment will be held securely in escrow until you confirm delivery
                   </p>
                 </div>
               </div>
@@ -114,9 +94,7 @@ const PaymentContent = () => {
                     <div className="w-11 h-11 rounded-full bg-[#FFE8E0] flex items-center justify-center">
                       <SecureIcon size={20} color="#FF4304" />
                     </div>
-                    <span className="text-[#4B5563] text-[10px]">
-                      Protected
-                    </span>
+                    <span className="text-[#4B5563] text-[10px]">Protected</span>
                   </div>
                 </div>
               </div>
@@ -137,20 +115,6 @@ const PaymentContent = () => {
         </Container>
       </div>
     </AppShell>
-  );
-};
-
-const PaymentPage = () => {
-  return (
-    <Suspense
-      fallback={
-        <div className="p-8 text-center text-sm text-text-secondary">
-          Loading payment details...
-        </div>
-      }
-    >
-      <PaymentContent />
-    </Suspense>
   );
 };
 

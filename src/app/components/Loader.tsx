@@ -65,3 +65,80 @@ export const ListingSkeleton = () => {
     </div>
   );
 };
+
+export const ProfileSkeleton = () => {
+  return (
+    <div className="w-full animate-pulse flex flex-col gap-6">
+      <div className="flex items-center gap-4">
+        <div className="w-20 h-20 rounded-full bg-gray-200" />
+        <div className="flex-1 flex flex-col gap-2">
+          <div className="w-1/3 h-4 bg-gray-200 rounded" />
+          <div className="w-1/4 h-3 bg-gray-150 rounded" />
+        </div>
+      </div>
+      <div className="grid grid-cols-3 gap-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-16 bg-gray-150 rounded-xl" />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export const WalletSkeleton = () => {
+  return (
+    <div className="w-full animate-pulse flex flex-col gap-4">
+      <div className="h-32 bg-gray-150 rounded-2xl" />
+      <div className="flex flex-col gap-3">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-14 bg-gray-150 rounded-xl" />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export const OrderSkeleton = () => {
+  return (
+    <div className="w-full flex flex-col gap-3 animate-pulse">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div
+          key={i}
+          className="flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-100"
+        >
+          <div className="w-14 h-14 rounded-lg bg-gray-150 flex-shrink-0" />
+          <div className="flex-1 flex flex-col gap-2">
+            <div className="w-2/3 h-3.5 bg-gray-200 rounded" />
+            <div className="w-1/3 h-3 bg-gray-150 rounded" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export const NotificationSkeleton = () => {
+  return (
+    <div className="w-full flex flex-col gap-2 animate-pulse">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div key={i} className="flex items-start gap-3 p-3">
+          <div className="w-9 h-9 rounded-full bg-gray-200 flex-shrink-0" />
+          <div className="flex-1 flex flex-col gap-2">
+            <div className="w-4/5 h-3 bg-gray-200 rounded" />
+            <div className="w-1/3 h-2.5 bg-gray-150 rounded" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export const TableRowSkeleton = ({ rows = 4 }: { rows?: number }) => {
+  return (
+    <div className="w-full flex flex-col gap-2 animate-pulse">
+      {Array.from({ length: rows }).map((_, i) => (
+        <div key={i} className="h-11 bg-gray-150 rounded-lg" />
+      ))}
+    </div>
+  );
+};
