@@ -9,13 +9,21 @@ import NotificationPanel from "@/app/components/layout/NotificationPanel";
 import HeroSection from "@/app/(pages)/home/components/HeroSection";
 import CategoryRail from "@/app/(pages)/home/components/CategoryRail";
 import EscrowBanner from "@/app/(pages)/home/components/EscrowBanner";
-import FeaturedListings from "@/app/(pages)/home/components/FeaturedListings";
+import DiscoverySection from "@/app/(pages)/home/components/DiscoverySection";
+import PlatformStats from "@/app/(pages)/home/components/PlatformStats";
 import TopSellers from "@/app/(pages)/home/components/TopSellers";
 import useAuthGuard from "@/app/hooks/useAuthGuard";
 import useCurrentUser from "@/app/hooks/useCurrentUser";
 import LoginRequiredModal from "@/app/components/auth/LoginRequiredModal";
 import useGet from "@/app/hooks/useGet";
 import { useGetUnreadNotificationCountQuery } from "@/app/redux/api/notificationsApiSlice";
+import {
+  useGetBestSellingListingsQuery,
+  useGetFeaturedListingsQuery,
+  useGetRecentFromVerifiedSellersQuery,
+} from "@/app/redux/api/discoveryApiSlice";
+
+const DISCOVERY_PREVIEW_LIMIT = 10;
 
 const HomePage = () => {
   const router = useRouter();
@@ -41,9 +49,30 @@ const HomePage = () => {
         }}
       >
         <HeroSection />
+        <PlatformStats />
         <CategoryRail />
         <EscrowBanner />
-        <FeaturedListings />
+        <DiscoverySection
+          id="best-selling"
+          title="Best Selling"
+          slug="best-selling"
+          useQuery={useGetBestSellingListingsQuery}
+          queryArg={{ page: 1, limit: DISCOVERY_PREVIEW_LIMIT }}
+        />
+        <DiscoverySection
+          id="listings"
+          title="Featured Listings"
+          slug="featured-listings"
+          useQuery={useGetFeaturedListingsQuery}
+          queryArg={{ pagination_type: "page", page: 1, limit: DISCOVERY_PREVIEW_LIMIT }}
+        />
+        <DiscoverySection
+          id="verified-sellers"
+          title="Listings From Verified Sellers"
+          slug="verified-sellers"
+          useQuery={useGetRecentFromVerifiedSellersQuery}
+          queryArg={{ pagination_type: "page", page: 1, limit: DISCOVERY_PREVIEW_LIMIT }}
+        />
         <TopSellers />
       </AppShell>
 

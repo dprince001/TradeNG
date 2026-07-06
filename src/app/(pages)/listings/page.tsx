@@ -2,13 +2,11 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { SlidersHorizontal, ChevronLeft, ChevronRight, SearchX } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import AppShell from "@/app/components/layout/AppShell";
 import Container from "@/app/components/layout/Container";
-import ProductCard from "@/app/(pages)/home/components/ProductCard";
 import SearchIcon from "@/app/assets/svgs/home/SearchIcon";
-import { ListingSkeleton } from "@/app/components/Loader";
-import { FadeInStagger, FadeInItem, PageTransition } from "@/app/components/Motion";
+import { PageTransition } from "@/app/components/Motion";
 import useGet from "@/app/hooks/useGet";
 import { useGetListingsQuery } from "@/app/redux/api/listingApiSlice";
 import { useGetCategoriesQuery } from "@/app/redux/api/categoriesApiSlice";
@@ -17,6 +15,7 @@ import ListingsFilterPanel, {
   emptyListingsFilters,
 } from "@/app/(pages)/listings/components/ListingsFilterPanel";
 import ListingsFilterDrawer from "@/app/(pages)/listings/components/ListingsFilterDrawer";
+import ListingsResults from "@/app/(pages)/listings/components/ListingsResults";
 
 const PAGE_SIZE = 20;
 
@@ -161,67 +160,22 @@ const ListingsContent = () => {
           </aside>
 
           <div className="flex-1 min-w-0">
-            {isFetching ? (
-              <div className="flex flex-col gap-3 md:gap-4">
-                <ListingSkeleton />
-                <ListingSkeleton />
-                <ListingSkeleton />
-              </div>
-            ) : listings.length === 0 ? (
-              <div className="flex flex-col items-center justify-center text-center py-24 gap-3">
-                <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center">
-                  <SearchX className="w-7 h-7 text-text-secondary" strokeWidth={1.5} />
-                </div>
-                <p className="text-text-primary font-semibold text-sm">No listings found</p>
-                <p className="text-text-secondary text-xs max-w-xs">
-                  {hasActiveFilters
-                    ? "Try adjusting or clearing your filters to see more results."
-                    : "Check back soon — new listings are added all the time."}
-                </p>
-                {hasActiveFilters && (
-                  <button
-                    onClick={handleResetFilters}
-                    className="text-primary text-xs font-semibold hover:underline mt-1"
-                  >
-                    Clear all filters
-                  </button>
-                )}
-              </div>
-            ) : (
-              <>
-                <FadeInStagger className="grid grid-cols-2 sml:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-                  {listings.map((listing: any) => (
-                    <FadeInItem key={listing.id}>
-                      <ProductCard {...listing} onClick={() => router.push(`/${listing.id}`)} />
-                    </FadeInItem>
-                  ))}
-                </FadeInStagger>
-
-                {paginationData?.total_pages > 1 && (
-                  <div className="flex items-center justify-center gap-4 mt-8">
-                    <button
-                      onClick={() => goToPage(page - 1)}
-                      disabled={!paginationData?.has_prev}
-                      className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-text-primary disabled:opacity-40 disabled:cursor-not-allowed hover:border-primary transition-colors"
-                      aria-label="Previous page"
-                    >
-                      <ChevronLeft className="w-4 h-4" strokeWidth={2} />
-                    </button>
-                    <span className="text-text-secondary text-sm">
-                      Page {page} of {paginationData.total_pages}
-                    </span>
-                    <button
-                      onClick={() => goToPage(page + 1)}
-                      disabled={!paginationData?.has_next}
-                      className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-text-primary disabled:opacity-40 disabled:cursor-not-allowed hover:border-primary transition-colors"
-                      aria-label="Next page"
-                    >
-                      <ChevronRight className="w-4 h-4" strokeWidth={2} />
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
+            <ListingsResults
+              listings={listings}
+              isFetching={isFetching}
+              page={page}
+              totalPages={paginationData?.total_pages}
+              hasPrev={paginationData?.has_prev}
+              hasNext={paginationData?.has_next}
+              onPageChange={goToPage}
+              emptyMessage={
+                hasActiveFilters
+                  ? "Try adjusting or clearing your filters to see more results."
+                  : "Check back soon — new listings are added all the time."
+              }
+              showClearFilters={hasActiveFilters}
+              onClearFilters={handleResetFilters}
+            />
           </div>
         </div>
       </Container>

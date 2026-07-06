@@ -4,20 +4,31 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Container from "@/app/components/layout/Container";
 import Button from "@/app/components/Button";
-import { Search, ShieldCheck, Users, Star, ArrowRight, Lock, PackageCheck, BadgeCheck } from "lucide-react";
+import {
+  Search,
+  ShieldCheck,
+  Users,
+  Star,
+  ArrowRight,
+  Lock,
+  PackageCheck,
+  BadgeCheck,
+} from "lucide-react";
 
-const trustStats = [
-  { icon: ShieldCheck, label: "Escrow Protected" },
-  { icon: Users, label: "10k+ Active Users" },
-  { icon: Star, label: "4.8 Avg. Rating" },
-];
+// const trustStats = [
+//   { icon: ShieldCheck, label: "Escrow Protected" },
+//   { icon: Users, label: "10k+ Active Users" },
+//   { icon: Star, label: "4.8 Avg. Rating" },
+// ];
 
 const HeroSection = () => {
   const router = useRouter();
   const [query, setQuery] = useState("");
 
   const handleSearch = () => {
-    router.push(query ? `/listings?q=${encodeURIComponent(query)}` : "/listings");
+    router.push(
+      query ? `/listings?q=${encodeURIComponent(query)}` : "/listings",
+    );
   };
 
   return (
@@ -71,18 +82,17 @@ const HeroSection = () => {
             <Button
               variant="none"
               className="text-white font-medium text-sm hover:underline inline-flex items-center gap-1.5 group"
-              onClick={() =>
-                document
-                  .getElementById("listings")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
+              onClick={() => router.push("/listings")}
             >
               Browse Listings
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
+              <ArrowRight
+                className="w-4 h-4 transition-transform group-hover:translate-x-0.5"
+                strokeWidth={2}
+              />
             </Button>
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-3">
+          {/* <div className="mt-8 flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-3">
             {trustStats.map(({ icon: Icon, label }) => (
               <div key={label} className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
@@ -93,11 +103,14 @@ const HeroSection = () => {
                 </span>
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
 
         <div className="hidden md:flex flex-1 justify-center relative">
-          <div className="absolute w-72 h-72 bg-white/10 rounded-full blur-3xl" aria-hidden />
+          <div
+            className="absolute w-72 h-72 bg-white/10 rounded-full blur-3xl"
+            aria-hidden
+          />
 
           <div className="relative w-full max-w-sm">
             {/* Order preview card */}
@@ -110,7 +123,10 @@ const HeroSection = () => {
               </div>
 
               <div className="w-full h-36 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mb-4">
-                <PackageCheck className="w-10 h-10 text-gray-300" strokeWidth={1.5} />
+                <PackageCheck
+                  className="w-10 h-10 text-gray-300"
+                  strokeWidth={1.5}
+                />
               </div>
 
               <div className="flex items-center justify-between">
@@ -118,13 +134,20 @@ const HeroSection = () => {
                   <p className="text-text-primary font-bold text-[15px]">
                     iPhone 13 Pro Max
                   </p>
-                  <p className="text-text-secondary text-xs mt-0.5">TechHub Store</p>
+                  <p className="text-text-secondary text-xs mt-0.5">
+                    TechHub Store
+                  </p>
                 </div>
-                <span className="text-primary font-bold text-[15px]">₦450,000</span>
+                <span className="text-primary font-bold text-[15px]">
+                  ₦450,000
+                </span>
               </div>
 
               <div className="mt-4 flex items-center gap-2 bg-[#FFF5F3] rounded-xl px-3 py-2.5">
-                <Lock className="w-4 h-4 text-primary flex-shrink-0" strokeWidth={2} />
+                <Lock
+                  className="w-4 h-4 text-primary flex-shrink-0"
+                  strokeWidth={2}
+                />
                 <span className="text-primary text-xs font-medium">
                   Held securely in escrow
                 </span>
@@ -134,22 +157,36 @@ const HeroSection = () => {
             {/* Floating badge: payment secured */}
             <div className="hidden lg:flex absolute -top-5 -right-6 bg-white rounded-2xl shadow-lg px-3 py-2.5 items-center gap-2.5 animate-fadeIn">
               <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0">
-                <ShieldCheck className="w-4 h-4 text-green-600" strokeWidth={2} />
+                <ShieldCheck
+                  className="w-4 h-4 text-green-600"
+                  strokeWidth={2}
+                />
               </div>
               <div>
-                <p className="text-text-primary text-xs font-bold leading-tight">Payment Secured</p>
-                <p className="text-text-secondary text-[10px] mt-0.5">100% Protected</p>
+                <p className="text-text-primary text-xs font-bold leading-tight">
+                  Payment Secured
+                </p>
+                <p className="text-text-secondary text-[10px] mt-0.5">
+                  100% Protected
+                </p>
               </div>
             </div>
 
             {/* Floating badge: rating */}
             <div className="hidden lg:flex absolute -bottom-5 -left-6 bg-white rounded-2xl shadow-lg px-3 py-2.5 items-center gap-2.5 animate-fadeIn">
               <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0">
-                <Star className="w-4 h-4 text-amber-500 fill-amber-500" strokeWidth={2} />
+                <Star
+                  className="w-4 h-4 text-amber-500 fill-amber-500"
+                  strokeWidth={2}
+                />
               </div>
               <div>
-                <p className="text-text-primary text-xs font-bold leading-tight">4.8/5 Rating</p>
-                <p className="text-text-secondary text-[10px] mt-0.5">from 2,300+ orders</p>
+                <p className="text-text-primary text-xs font-bold leading-tight">
+                  4.8/5 Rating
+                </p>
+                <p className="text-text-secondary text-[10px] mt-0.5">
+                  from 2,300+ orders
+                </p>
               </div>
             </div>
           </div>
