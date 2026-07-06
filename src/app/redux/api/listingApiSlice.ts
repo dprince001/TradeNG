@@ -1,5 +1,14 @@
 import { generalApiSlice } from "./apiSlice";
 
+const buildListingsParams = (filters: Record<string, any> = {}) => {
+    const params: Record<string, string> = {};
+    Object.entries(filters).forEach(([key, value]) => {
+        if (value === undefined || value === null || value === "") return;
+        params[key] = String(value);
+    });
+    return params;
+};
+
 const listingApiSlice = generalApiSlice.injectEndpoints({
     endpoints: (builder) => ({
         createListing: builder.mutation({
@@ -12,9 +21,10 @@ const listingApiSlice = generalApiSlice.injectEndpoints({
         }),
 
         getListings: builder.query({
-            query: (id) => ({
+            query: (filters) => ({
                 url: `/listings`,
                 method: "GET",
+                params: buildListingsParams(filters && typeof filters === "object" ? filters : {}),
             }),
             providesTags: ["Listing"],
         }),
@@ -59,8 +69,16 @@ const listingApiSlice = generalApiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Listing"],
         }),
+
+        publishListing: builder.mutation({
+            query: (id) => ({
+                url: `/listings/${id}/publish`,
+                method: "PATCH",
+            }),
+            invalidatesTags: ["Listing"],
+        }),
     }),
     overrideExisting: false
 });
 
-export const { useCreateListingMutation, useGetListingsQuery, useGetMyListingsQuery, useGetListingDetailQuery, useDeleteListingMutation, useUpdateListingMutation, useBuyAListingDirectlyMutation } = listingApiSlice;
+export const { useCreateListingMutation, useGetListingsQuery, useGetMyListingsQuery, useGetListingDetailQuery, useDeleteListingMutation, useUpdateListingMutation, useBuyAListingDirectlyMutation, usePublishListingMutation } = listingApiSlice;

@@ -2,7 +2,7 @@ import {
   createApi,
   fetchBaseQuery,
   FetchBaseQueryError,
-  BaseQueryFn
+  BaseQueryFn,
 } from "@reduxjs/toolkit/query/react";
 import { logOut } from "../api/appSlice";
 
@@ -14,10 +14,17 @@ interface RootState {
   app: {
     userInfo: {
       token: string;
-      user: {email: string, first_name: string, last_name: string, status: string} | null;
+      user: {
+        email: string;
+        first_name: string;
+        last_name: string;
+        status: string;
+      } | null;
     } | null;
   };
 }
+
+// export const getBaseUrl = () => "http://localhost:5000/api/v1";
 
 export const getBaseUrl = () => "https://tradeng-api.onrender.com/api/v1";
 
@@ -35,7 +42,7 @@ const rawBaseQuery = fetchBaseQuery({
     const token = state?.app?.userInfo?.token;
     if (token) headers.set("Authorization", `Bearer ${token}`);
     return headers;
-  }
+  },
 });
 
 const baseQueryWithReauth: BaseQueryFn<
@@ -49,7 +56,7 @@ const baseQueryWithReauth: BaseQueryFn<
   let result = await rawBaseQuery(
     { ...args, url: `${baseUrl}${args.url}` },
     api,
-    extraOptions
+    extraOptions,
   );
 
   if (result?.error?.status === 401 && args.url !== "/auth/login") {
@@ -63,6 +70,18 @@ const baseQueryWithReauth: BaseQueryFn<
 export const generalApiSlice = createApi({
   baseQuery: baseQueryWithReauth,
   reducerPath: "api",
-  tagTypes: ["Categories", "Listing", "Review", "Offer", "Chat"],
-  endpoints: (builder) => ({})
+  tagTypes: [
+    "Categories",
+    "Listing",
+    "Review",
+    "Offer",
+    "Chat",
+    "Wallet",
+    "Transaction",
+    "Order",
+    "Notification",
+    "Profile",
+    "Discovery",
+  ],
+  endpoints: (builder) => ({}),
 });

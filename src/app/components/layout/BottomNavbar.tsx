@@ -10,10 +10,10 @@ const BottomNavbar = () => {
   const isHome = pathname === "/" || pathname === "/home";
   const isProfile = pathname === "/profile" || pathname?.startsWith("/profile");
   const isChat = pathname === "/chat";
-  const isFavourite = pathname === "/favourite";
+  const isFavourite = pathname === "/favourites";
 
   return (
-    <div className="border-t border-gray-100 bg-white py-3 px-6 flex justify-between items-center w-full absolute bottom-0 left-0 z-20">
+    <div className="border-t border-gray-100 bg-white py-3 px-6 flex justify-between items-center w-full fixed bottom-0 left-0 z-20 mdl:hidden">
       <button
         onClick={() => router.push("/")}
         className="flex flex-col items-center gap-1 flex-1"
@@ -38,7 +38,7 @@ const BottomNavbar = () => {
         </span>
       </button>
       <button
-        onClick={() => router.push("/favourite")}
+        onClick={() => router.push("/favourites")}
         className="flex flex-col items-center gap-1 flex-1"
       >
         <svg

@@ -3,7 +3,9 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import TopNavbar from "@/app/components/layout/TopNavbar";
+import BackButton from "@/app/components/layout/BackButton";
+import Container from "@/app/components/layout/Container";
+import AppShell from "@/app/components/layout/AppShell";
 import Button from "@/app/components/Button";
 
 type Step = 1 | 2 | 3 | 4;
@@ -82,22 +84,25 @@ const VerifyPage = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#F9FAFB] flex flex-col relative select-none max-w-[540px] mx-auto w-full shadow-lg border-x border-gray-100/50">
+    <AppShell showFooter={false} showBottomNav={false}>
+    <div className="w-full flex flex-col relative select-none">
       {/* Header */}
-      <TopNavbar
-        title="Verify Identity"
-        onBack={() => {
-          if (step > 1 && step < 4) {
-            setStep((s) => (s - 1) as Step);
-          } else {
-            router.push("/profile");
-          }
-        }}
-      />
+      <Container className="max-w-3xl flex items-center gap-3 pt-6 pb-4">
+        <BackButton
+          onClick={() => {
+            if (step > 1 && step < 4) {
+              setStep((s) => (s - 1) as Step);
+            } else {
+              router.push("/profile");
+            }
+          }}
+        />
+        <h1 className="text-text-primary font-semibold text-base tracking-wide">Verify Identity</h1>
+      </Container>
 
       {/* Progress Indicator */}
       {step < 4 && (
-        <div className="px-5 pt-4">
+        <Container className="max-w-3xl pt-4">
           <div className="flex justify-between items-center text-[10px] text-[#8F959E] font-bold uppercase tracking-wider mb-2">
             <span>Step {step} of 3</span>
             <span>
@@ -112,11 +117,11 @@ const VerifyPage = () => {
               style={{ width: `${(step / 3) * 100}%` }}
             />
           </div>
-        </div>
+        </Container>
       )}
 
       {/* Steps Content container */}
-      <div className="flex-1 px-5 pt-6 pb-24 overflow-y-auto">
+      <Container className="max-w-3xl flex-1 pt-6 pb-24 overflow-y-auto">
         {/* STEP 1: Select ID Type */}
         {step === 1 && (
           <div className="flex flex-col gap-4 animate-slideUp">
@@ -383,21 +388,24 @@ const VerifyPage = () => {
             </p>
           </div>
         )}
-      </div>
+      </Container>
 
       {/* Sticky Bottom Actions */}
-      <div className="absolute bottom-0 left-0 right-0 p-5 bg-white border-t border-gray-100 flex gap-3">
-        {step < 4 ? (
-          <Button fullWidth onClick={handleNext}>
-            {step === 3 ? "Submit Verification" : "Continue"}
-          </Button>
-        ) : (
-          <Button fullWidth onClick={handleDone}>
-            Return to Profile
-          </Button>
-        )}
+      <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-100">
+        <Container className="max-w-3xl py-5 flex gap-3">
+          {step < 4 ? (
+            <Button fullWidth onClick={handleNext}>
+              {step === 3 ? "Submit Verification" : "Continue"}
+            </Button>
+          ) : (
+            <Button fullWidth onClick={handleDone}>
+              Return to Profile
+            </Button>
+          )}
+        </Container>
       </div>
     </div>
+    </AppShell>
   );
 };
 

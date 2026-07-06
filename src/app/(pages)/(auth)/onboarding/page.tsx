@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/app/components/Button";
 import ArrowBackButton from "@/app/assets/svgs/ArrowBackButton";
+import AuthShell from "@/app/components/layout/AuthShell";
 
 const slides = [
   {
@@ -46,7 +47,8 @@ const OnboardingPage = () => {
   const current = slides[activeSlide];
 
   return (
-    <div className="w-full min-h-screen bg-[#F7F8FA] flex flex-col justify-between max-w-md mx-auto relative px-4 py-12 select-none overflow-hidden">
+    <AuthShell heading="Get started in minutes." subheading="Create your account and start buying or selling safely today.">
+    <div className="w-full flex flex-col justify-between relative select-none">
       {/* Skip Button Spacer */}
       <div className="flex justify-end w-full min-h-[24px]">
         {activeSlide < slides.length - 1 && (
@@ -118,6 +120,7 @@ const OnboardingPage = () => {
         </div>
       </div>
     </div>
+    </AuthShell>
   );
 };
 
