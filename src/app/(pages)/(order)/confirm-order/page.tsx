@@ -32,6 +32,8 @@ const ConfirmOrderContent = () => {
   const listing = transaction?.listing;
   const seller = transaction?.seller;
 
+  const displayImage = listing?.images?.[0] || "";
+
   return (
     <AppShell showFooter={false} showBottomNav={false}>
       <div className="w-full bg-[#F7F8FA] relative flex flex-col">
@@ -50,11 +52,13 @@ const ConfirmOrderContent = () => {
               <div className="bg-white rounded-2xl px-4 py-4 mb-5 shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-[70px] h-[70px] rounded-xl bg-[#F0F1F5] overflow-hidden flex-shrink-0 relative">
-                    <img
-                      src={listing?.images?.[0]}
-                      alt={listing?.item_name}
-                      className="w-full h-full object-cover"
-                    />
+                    {displayImage && (
+                      <img
+                        src={displayImage}
+                        alt={listing?.item_name || "Product image"}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
                   </div>
 
                   <div className="flex-1 min-w-0">

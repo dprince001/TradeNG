@@ -142,20 +142,22 @@ const ListingsComponent = () => {
                       Publish
                     </button>
                   )}
-                  <button
-                    onClick={() => {
-                      setEditItem(item);
-                      setEditTitle(item.item_name);
-                      setEditPrice(item.price.toString());
-                      setEditNegotiable(item.allow_price_negotiation);
-                    }}
-                    className="text-gray-500 hover:text-primary transition-colors p-1.5 hover:bg-gray-50 rounded-lg"
-                    aria-label="Edit item"
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                    </svg>
-                  </button>
+                  {item.status !== "SOLD" && (
+                    <button
+                      onClick={() => {
+                        setEditItem(item);
+                        setEditTitle(item.item_name);
+                        setEditPrice(item.price.toString());
+                        setEditNegotiable(item.allow_price_negotiation);
+                      }}
+                      className="text-gray-500 hover:text-primary transition-colors p-1.5 hover:bg-gray-50 rounded-lg"
+                      aria-label="Edit item"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                      </svg>
+                    </button>
+                  )}
                   <button
                     onClick={() => setDeleteItemId(item.id)}
                     className="text-[#FF4304]/60 hover:text-[#FF4304] transition-colors p-1.5 hover:bg-[#FFF5F3] rounded-lg"

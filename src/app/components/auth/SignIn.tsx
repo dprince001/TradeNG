@@ -28,10 +28,10 @@ const signInSchema = z.object({
 type SignInSchemaType = z.infer<typeof signInSchema>;
 
 interface SignInProps {
-  setStep: (step: "explore" | "signin" | "signup" | "otp") => void;
+  setStep?: (step: "explore" | "signin" | "signup" | "otp") => void;
 }
 
-const SignIn = ({ setStep }: SignInProps) => {
+const SignIn = ({ setStep }: SignInProps = {}) => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
@@ -134,7 +134,8 @@ const SignIn = ({ setStep }: SignInProps) => {
         <span className="pt-8 pb-4 text-text-secondary flex items-center justify-center gap-1 text-xs font-medium">
           Don't have an account?{" "}
           <button
-            onClick={() => setStep("signup")}
+            type="button"
+            onClick={() => router.push("/register")}
             className="text-primary font-bold hover:underline"
           >
             Sign up

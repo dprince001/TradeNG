@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Container from "@/app/components/layout/Container";
@@ -12,6 +12,9 @@ import SearchIcon from "@/app/assets/svgs/home/SearchIcon";
 import useCurrentUser from "@/app/hooks/useCurrentUser";
 import useAuthGuard from "@/app/hooks/useAuthGuard";
 import LoginRequiredModal from "@/app/components/auth/LoginRequiredModal";
+import { useDispatch } from "react-redux";
+import { logOut } from "@/app/redux/api/appSlice";
+import { LogOut } from "lucide-react";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -35,10 +38,25 @@ const SiteHeader = ({
   showSearch = true,
 }: SiteHeaderProps) => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const { isLoggedIn } = useCurrentUser();
   const { guard, promptOpen, closePrompt } = useAuthGuard();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [mounted, setMounted] = useState(false);
+
+  // set flag to prevent server error
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const showLoggedIn = mounted && isLoggedIn;
+
+  const handleLogout = () => {
+    dispatch(logOut());
+    setMenuOpen(false);
+    router.push("/login");
+  };
 
   const handleSearch = () => {
     router.push(searchValue ? `/listings?q=${encodeURIComponent(searchValue)}` : "/listings");
@@ -113,31 +131,40 @@ const SiteHeader = ({
             className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
             aria-label="Notifications"
           >
-            <NotificationIcon color="#1D1E20" count={isLoggedIn ? notificationCount : 0} />
+            <NotificationIcon color="#1D1E20" count={showLoggedIn ? notificationCount : 0} />
           </button>
           <button
             onClick={() => guard(() => (onCartClick ? onCartClick() : router.push("/profile/orders")))}
             className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
             aria-label="Cart"
           >
-            <CartIcon color="#1D1E20" count={isLoggedIn ? cartCount : 0} />
+            <CartIcon color="#1D1E20" count={showLoggedIn ? cartCount : 0} />
           </button>
 
           <div className="hidden mdl:flex items-center gap-2.5">
-            {isLoggedIn ? (
-              <button
-                onClick={() => router.push("/profile")}
-                className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm"
-                aria-label="Profile"
-              >
-                U
-              </button>
+            {showLoggedIn ? (
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => router.push("/profile")}
+                  className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm"
+                  aria-label="Profile"
+                >
+                  U
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="text-sm text-red-500 font-medium"
+                  aria-label="Log out"
+                >
+                 <LogOut className="w-5 h-5" strokeWidth={1.8} />
+                </button>
+              </div>
             ) : (
               <>
                 <Button variant="ghost" size="sm" onClick={() => router.push("/login")}>
                   Log In
                 </Button>
-                <Button size="sm" onClick={() => router.push("/onboarding")}>
+                <Button size="sm" onClick={() => router.push("/register")}>
                   Sign Up
                 </Button>
               </>
@@ -158,14 +185,22 @@ const SiteHeader = ({
               {link.label}
             </Link>
           ))}
-          {isLoggedIn ? (
-            <Link
-              href="/profile"
-              onClick={() => setMenuOpen(false)}
-              className="text-text-primary text-sm font-medium py-2.5 px-2 rounded-lg hover:bg-gray-50"
-            >
-              My Profile
-            </Link>
+          {showLoggedIn ? (
+            <>
+              <Link
+                href="/profile"
+                onClick={() => setMenuOpen(false)}
+                className="text-text-primary text-sm font-medium py-2.5 px-2 rounded-lg hover:bg-gray-50"
+              >
+                My Profile
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="text-left text-red-500 text-sm font-medium py-2.5 px-2 rounded-lg hover:bg-red-50"
+              >
+                Log Out
+              </button>
+            </>
           ) : (
             <div className="flex gap-2.5 pt-2">
               <Button
@@ -184,7 +219,7 @@ const SiteHeader = ({
                 size="sm"
                 onClick={() => {
                   setMenuOpen(false);
-                  router.push("/onboarding");
+                  router.push("/register");
                 }}
               >
                 Sign Up

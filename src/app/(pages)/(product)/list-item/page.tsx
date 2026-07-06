@@ -91,6 +91,10 @@ export default function ListItemPage() {
 
     try {
       const data = JSON.parse(saved);
+      if (data.status === "SOLD") {
+        router.replace(`/${editId}`);
+        return;
+      }
       methods.reset({
         item_name: data.item_name ?? "",
         category_id: data.category_id ?? "",

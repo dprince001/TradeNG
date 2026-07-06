@@ -29,7 +29,14 @@ const PaymentPage = () => {
 
   const handlePay = async () => {
     if (!transactionId) return;
-    const response = await startCheckout(transactionId, { showSuccessToast: false });
+    const response = await startCheckout(
+      {
+        id: transactionId,
+        redirect_url: window.location.origin + "/profile/orders",
+        callback_url: window.location.origin + "/profile/orders",
+      },
+      { showSuccessToast: false }
+    );
     const checkoutLink = response?.data?.checkout_link;
     
     if (checkoutLink) {

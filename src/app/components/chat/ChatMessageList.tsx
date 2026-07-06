@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import MessageBubble from "@/app/components/chat/MessageBubble";
 import OfferMessageCard from "@/app/components/chat/OfferMessageCard";
 import { canRespondToOffer, formatMessageTime, getOfferLabel } from "@/app/components/chat/chatHelpers";
@@ -25,6 +26,12 @@ const ChatMessageList = ({
   onDeclineOffer,
   onCounterOffer,
 }: ChatMessageListProps) => {
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
     <>
       {messages.map((message) => {
@@ -61,6 +68,8 @@ const ChatMessageList = ({
 
         return null;
       })}
+      
+      <div ref={bottomRef} />
     </>
   );
 };
