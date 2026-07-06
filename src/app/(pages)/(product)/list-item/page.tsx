@@ -212,7 +212,7 @@ export default function ListItemPage() {
   return (
     <FormProvider {...methods}>
       <AppShell showFooter={false} showBottomNav={false}>
-      <div className="w-full bg-white flex flex-col relative select-none">
+      <div className="w-full flex flex-col relative select-none h-full">
         {/* ── Top Header Navigation ── */}
         {step <= 6 && (
           <Container className="max-w-2xl flex items-center gap-3 pt-6 pb-4">

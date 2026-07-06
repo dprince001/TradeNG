@@ -31,6 +31,7 @@ const PaymentPage = () => {
     if (!transactionId) return;
     const response = await startCheckout(transactionId, { showSuccessToast: false });
     const checkoutLink = response?.data?.checkout_link;
+    
     if (checkoutLink) {
       window.location.href = checkoutLink;
     }
@@ -76,7 +77,7 @@ const PaymentPage = () => {
                   </div>
                 </div>
 
-                <div className="bg-[#FFE8E0] border border-[#FFB899] rounded-[12px] px-3.5 py-3 flex gap-2">
+                <div className="bg-[#FFE8E0] border border-[#FFB899] rounded-[12px] px-3.5 py-3 flex gap-2 items-center">
                   <SecureIcon size={22} color="#FF4304" />
                   <p className="text-[#C03000] text-[10px] leading-[1.5]">
                     Your payment will be held securely in escrow until you confirm delivery
