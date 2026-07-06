@@ -12,8 +12,13 @@ import { useGetTopSellersQuery } from "@/app/redux/api/discoveryApiSlice";
 
 const TopSellers = () => {
   const router = useRouter();
-  const { data: topSellersData, isFetching: topSellersLoading } = useGet(useGetTopSellersQuery, "");
+  const { data: topSellersData, isFetching: topSellersLoading } = useGet(
+    useGetTopSellersQuery,
+    "",
+  );
   const sellers = topSellersData?.sellers || [];
+
+  if (!topSellersLoading && !sellers?.length) return null;
 
   return (
     <section id="top-sellers" className="py-8 md:py-12 scroll-mt-20">
@@ -34,19 +39,29 @@ const TopSellers = () => {
                 >
                   <div className="relative w-14 h-14 rounded-full overflow-hidden mb-2.5 bg-gray-100">
                     {seller.avatar && (
-                      <Image src={seller.avatar} alt={seller.name} fill className="object-cover" />
+                      <Image
+                        src={seller.avatar}
+                        alt={seller.name}
+                        fill
+                        className="object-cover"
+                      />
                     )}
                   </div>
                   <div className="flex items-center gap-1">
                     <span className="text-text-primary text-xs font-semibold truncate max-w-[110px]">
-                      {seller.name || `${seller.first_name} ${seller.last_name}`}
+                      {seller.name ||
+                        `${seller.first_name} ${seller.last_name}`}
                     </span>
-                    {(seller.verified || seller.is_verified_seller) && <VerifiedIcon />}
+                    {(seller.verified || seller.is_verified_seller) && (
+                      <VerifiedIcon />
+                    )}
                   </div>
                   <div className="flex items-center gap-1 mt-1">
                     <StarIcon filled />
                     <span className="text-text-secondary text-[11px]">
-                      {seller.rating || seller.average_rating || 0} · {seller.itemsSold || seller.completed_sales_count || 0} sold
+                      {seller.rating || seller.average_rating || 0} ·{" "}
+                      {seller.itemsSold || seller.completed_sales_count || 0}{" "}
+                      sold
                     </span>
                   </div>
                 </button>

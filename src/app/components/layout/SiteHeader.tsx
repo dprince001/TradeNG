@@ -38,6 +38,11 @@ const SiteHeader = ({
   const { isLoggedIn } = useCurrentUser();
   const { guard, promptOpen, closePrompt } = useAuthGuard();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+
+  const handleSearch = () => {
+    router.push(searchValue ? `/listings?q=${encodeURIComponent(searchValue)}` : "/listings");
+  };
 
   return (
     <header className="sticky top-0 z-30 bg-white border-b border-gray-100">
@@ -74,6 +79,9 @@ const SiteHeader = ({
           <div className="hidden mdl:flex flex-1 max-w-md items-center gap-2.5 bg-[#F5F6FA] rounded-lg px-4 py-2.5">
             <SearchIcon />
             <input
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               type="text"
               placeholder="Search for anything..."
               className="bg-transparent outline-none text-sm text-text-primary placeholder:text-text-secondary w-full"
