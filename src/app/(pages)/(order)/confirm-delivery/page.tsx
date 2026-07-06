@@ -11,6 +11,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import ProductInEscrow from "./ProductInEscrow";
 import TopNavbar from "@/app/components/layout/TopNavbar";
 import Container from "@/app/components/layout/Container";
+import AppShell from "@/app/components/layout/AppShell";
 
 const ConfirmDeliveryContent = () => {
   const router = useRouter();
@@ -24,7 +25,8 @@ const ConfirmDeliveryContent = () => {
   const formatNaira = (amount: number) => `₦${amount.toLocaleString("en-NG")}`;
 
   return (
-    <div className="w-full min-h-screen bg-[#F7F8FA] flex flex-col relative">
+    <AppShell showFooter={false} showBottomNav={false}>
+    <div className="w-full bg-[#F7F8FA] flex flex-col relative">
       {/* ── Header ── */}
       <TopNavbar title="Confirm delivery" onBack={() => router.back()} />
 
@@ -117,6 +119,7 @@ const ConfirmDeliveryContent = () => {
         />
       )}
     </div>
+    </AppShell>
   );
 };
 

@@ -4,6 +4,7 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import TopNavbar from "@/app/components/layout/TopNavbar";
 import Container from "@/app/components/layout/Container";
+import AppShell from "@/app/components/layout/AppShell";
 import VerifiedIcon from "@/app/assets/svgs/home/VerifiedIcon";
 import useGet from "@/app/hooks/useGet";
 import usePost from "@/app/hooks/usePost";
@@ -65,7 +66,8 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="w-full flex flex-col bg-[#FAFAFA] h-dvh">
+    <AppShell fixedHeight showFooter={false} showBottomNav={false}>
+    <div className="w-full h-full flex flex-col bg-[#FAFAFA]">
       {/* ── Header ── */}
       <TopNavbar
         onBack={() => router.back()}
@@ -139,6 +141,7 @@ const ChatPage = () => {
         </Container>
       </div>
     </div>
+    </AppShell>
   );
 };
 

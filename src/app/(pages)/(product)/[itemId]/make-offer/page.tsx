@@ -10,6 +10,7 @@ import useGet from "@/app/hooks/useGet";
 import { useGetListingDetailQuery } from "@/app/redux/api/listingApiSlice";
 import TopNavbar from "@/app/components/layout/TopNavbar";
 import Container from "@/app/components/layout/Container";
+import AppShell from "@/app/components/layout/AppShell";
 import { useMakeAnOfferMutation, useCounterAnOfferMutation } from "@/app/redux/api/offersApiSlice";
 import usePost from "@/app/hooks/usePost";
 import { useStartConversationMutation } from "@/app/redux/api/chatApiSlice";
@@ -96,7 +97,8 @@ const MakeOfferPage = () => {
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col bg-[#FAFAFA]">
+    <AppShell showFooter={false} showBottomNav={false}>
+    <div className="w-full flex flex-col bg-[#FAFAFA]">
       {/* ── Header ── */}
       <TopNavbar
         title={isCounter ? "Counter Offer" : "Make an Offer"}
@@ -198,6 +200,7 @@ const MakeOfferPage = () => {
         </p>
       </Container>
     </div>
+    </AppShell>
   );
 };
 

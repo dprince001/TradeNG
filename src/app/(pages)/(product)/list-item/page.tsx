@@ -7,6 +7,7 @@ import { z } from "zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import TopNavbar from "@/app/components/layout/TopNavbar";
 import Container from "@/app/components/layout/Container";
+import AppShell from "@/app/components/layout/AppShell";
 import PublishListing from "@/app/components/list-items/PublishListing";
 import PricingAndDelivery from "@/app/components/list-items/PricingAndDelivery";
 import AddItemSuccess from "@/app/components/list-items/AddItemSuccess";
@@ -210,7 +211,8 @@ export default function ListItemPage() {
 
   return (
     <FormProvider {...methods}>
-      <div className="w-full min-h-screen bg-white flex flex-col relative select-none">
+      <AppShell showFooter={false} showBottomNav={false}>
+      <div className="w-full bg-white flex flex-col relative select-none">
         {/* ── Top Header Navigation ── */}
         {step <= 6 && (
           <TopNavbar
@@ -278,6 +280,7 @@ export default function ListItemPage() {
           )}
         </Container>
       </div>
+      </AppShell>
     </FormProvider>
   );
 }

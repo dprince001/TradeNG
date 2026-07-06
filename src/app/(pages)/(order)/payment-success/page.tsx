@@ -11,6 +11,7 @@ import DeliveryIcon from "@/app/assets/svgs/home/DeliveryIcon";
 import { useRouter, useSearchParams } from "next/navigation";
 import ProductInEscrow from "../confirm-delivery/ProductInEscrow";
 import Container from "@/app/components/layout/Container";
+import AppShell from "@/app/components/layout/AppShell";
 
 const PaymentSuccessContent = () => {
   const router = useRouter();
@@ -22,7 +23,8 @@ const PaymentSuccessContent = () => {
   const formatNaira = (amount: number) => `₦${amount.toLocaleString("en-NG")}`;
 
   return (
-    <div className="w-full min-h-screen bg-[#F7F8FA] flex flex-col">
+    <AppShell showFooter={false} showBottomNav={false}>
+    <div className="w-full bg-[#F7F8FA] flex flex-col">
       <div className="flex flex-col items-center pt-14 mb-4 px-6 text-center">
         <div className="p-2 bg-[#FFE8E0] rounded-full">
           <div className="bg-primary rounded-full flex items-center justify-center w-20 h-20">
@@ -150,6 +152,7 @@ const PaymentSuccessContent = () => {
         </Button>
       </Container>
     </div>
+    </AppShell>
   );
 };
 

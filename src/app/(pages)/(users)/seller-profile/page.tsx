@@ -12,6 +12,7 @@ import Image from "next/image";
 import ProductCard from "../../home/components/ProductCard";
 import ProgressBar from "@/app/components/ProgressBar";
 import Container from "@/app/components/layout/Container";
+import AppShell from "@/app/components/layout/AppShell";
 
 const SellerProfilePage = () => {
   const router = useRouter();
@@ -147,7 +148,8 @@ const SellerProfilePage = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#F9FAFB] flex flex-col relative select-none pb-8">
+    <AppShell showFooter={false} showBottomNav={false}>
+    <div className="w-full bg-[#F9FAFB] flex flex-col relative select-none pb-8">
       {/* ── Toast Alert ── */}
       {toastMessage && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 bg-black/90 text-white text-xs font-semibold py-3 rounded-full shadow-lg z-50 animate-slideDown flex items-center gap-2">
@@ -507,6 +509,7 @@ const SellerProfilePage = () => {
       </div>
       </Container>
     </div>
+    </AppShell>
   );
 };
 

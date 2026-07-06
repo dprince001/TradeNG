@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import avatarImg from "@/app/assets/images/seller_avatar.png";
 import TopNavbar from "@/app/components/layout/TopNavbar";
 import Container from "@/app/components/layout/Container";
+import AppShell from "@/app/components/layout/AppShell";
 import useGet from "@/app/hooks/useGet";
 import { useGetListingDetailQuery, useDeleteListingMutation } from "@/app/redux/api/listingApiSlice";
 import { useParams } from "next/navigation";
@@ -109,7 +110,8 @@ const ItemDetailPage = () => {
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col">
+    <AppShell showFooter={false} showBottomNav={false}>
+    <div className="w-full flex flex-col">
       {promptOpen && <LoginRequiredModal onClose={closePrompt} message={promptMessage} />}
 
       {/* ── Header ── */}
@@ -331,6 +333,7 @@ const ItemDetailPage = () => {
         )}
       </div>
     </div>
+    </AppShell>
   );
 };
 
