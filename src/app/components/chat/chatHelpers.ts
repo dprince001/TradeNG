@@ -1,12 +1,12 @@
 export const getOfferLabel = (message: any, sellerId?: string) => {
   const senderIsSeller = message.sender_id === sellerId;
   const sellerVerb =
-    message?.offer?.status === "COUNTERED"
+    message?.offer?.parent_offer_id
       ? "countered with"
       : message?.offer?.status === "ACCEPTED"
         ? "accepted"
         : "declined";
-  const buyerVerb = message?.offer?.status === "COUNTERED" ? "countered with" : "offered";
+  const buyerVerb = "offered";
 
   return senderIsSeller ? `Seller ${sellerVerb}` : `Buyer ${buyerVerb}`;
 };
