@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useFavourites } from "@/app/hooks/useFavourites";
 import UserIcon from "@/app/assets/svgs/home/UserIcon";
 import VerifiedIcon from "@/app/assets/svgs/home/VerifiedIcon";
 import Image from "next/image";
@@ -7,7 +7,8 @@ import useAuthGuard from "@/app/hooks/useAuthGuard";
 import LoginRequiredModal from "@/app/components/auth/LoginRequiredModal";
 
 interface ProductCardProps {
-  title: string;
+  id?: string;
+  title?: string;
   start_price?: string;
   item_name?: string;
   price?: string;
@@ -22,6 +23,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({
+  id,
   title,
   item_name,
   start_price,
@@ -31,17 +33,15 @@ const ProductCard = ({
   negotiable = false,
   onClick,
 }: ProductCardProps) => {
-  const [liked, setLiked] = useState(false);
-  const { guard, promptOpen, closePrompt } = useAuthGuard(
-    "Sign in to save items to your favourites."
-  );
+  const { toggleFavourite, isFavourite, mounted } = useFavourites();
+  const productId = id || "";
+  const liked = mounted ? isFavourite(productId) : false;
 
   return (
     <div
       onClick={onClick}
       className={`flex-1 min-w-0 bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm ${onClick ? "cursor-pointer active:scale-[0.97] transition-transform" : ""}`}
     >
-      {promptOpen && <LoginRequiredModal onClose={closePrompt} message="Sign in to save items to your favourites." />}
 
       <div className="relative w-full bg-[#EEF1F5] h-[170px] sml:h-[190px] lg:h-[210px]">
         <Image src={images?.[0] || ""} alt={title || "Product"} fill className="object-cover" />
@@ -49,7 +49,18 @@ const ProductCard = ({
         <button
           onClick={(e) => {
             e.stopPropagation();
-            guard(() => setLiked((l) => !l));
+            if (productId) {
+              toggleFavourite({
+                id: productId,
+                title,
+                item_name,
+                start_price,
+                price,
+                images,
+                seller,
+                negotiable,
+              });
+            }
           }}
           className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-white shadow-sm flex items-center justify-center"
         >

@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux";
 import { setUserInfo } from "@/app/redux/api/appSlice";
 
 interface OtpComponentProps {
-  setStep: (step: "explore" | "signin" | "signup" | "otp") => void;
+  setStep: (step: any) => void;
   email: string;
 }
 

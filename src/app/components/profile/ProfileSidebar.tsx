@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { LayoutGrid, ShoppingBag, Wallet, Settings, User, MessageSquare } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { LayoutGrid, ShoppingBag, Wallet, Settings, User, MessageSquare, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useDispatch } from "react-redux";
+import { logOut } from "@/app/redux/api/appSlice";
 
 const NAV_ITEMS = [
   { href: "/profile", label: "Overview", icon: User },
@@ -16,6 +18,13 @@ const NAV_ITEMS = [
 
 const ProfileSidebar = () => {
   const pathname = usePathname();
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    dispatch(logOut());
+    router.push("/login");
+  };
 
   return (
     <aside className="hidden md:flex md:w-56 flex-shrink-0 flex-col gap-1">
@@ -38,6 +47,14 @@ const ProfileSidebar = () => {
           </Link>
         );
       })}
+
+      <button
+        onClick={handleLogout}
+        className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors text-red-500 hover:bg-red-50 w-full mt-2"
+      >
+        <LogOut className="w-4 h-4" strokeWidth={1.8} />
+        Log Out
+      </button>
     </aside>
   );
 };

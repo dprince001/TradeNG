@@ -7,13 +7,11 @@ import { ListingSkeleton } from "@/app/components/Loader";
 import { FadeInStagger, FadeInItem, PageTransition } from "@/app/components/Motion";
 import ProductCard from "@/app/(pages)/home/components/ProductCard";
 import Button from "@/app/components/Button";
-import useGet from "@/app/hooks/useGet";
-import { useGetMyWishlistQuery } from "@/app/redux/api/profileApiSlice";
+import { useFavourites } from "@/app/hooks/useFavourites";
 
 const FavouritesPage = () => {
   const router = useRouter();
-  const { data: wishlistData, isFetching } = useGet(useGetMyWishlistQuery, "");
-  const listings = (wishlistData?.wishlist || []).map((w: any) => w.listing);
+  const { favourites: listings, mounted } = useFavourites();
 
   return (
     <AppShell>
@@ -24,7 +22,7 @@ const FavouritesPage = () => {
           </h1>
         </PageTransition>
 
-        {isFetching ? (
+        {!mounted ? (
           <ListingSkeleton />
         ) : listings.length === 0 ? (
           <PageTransition className="flex flex-col items-center text-center py-20 gap-3">

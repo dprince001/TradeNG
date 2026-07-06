@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import FormInput from "../FormInput";
 import Button from "../Button";
@@ -27,11 +28,12 @@ const signUpSchema = z
 type SignUpSchemaType = z.infer<typeof signUpSchema>;
 
 interface SignUpProps {
-  setStep: (step: "explore" | "signin" | "signup" | "otp") => void;
+  setStep: (step: any) => void;
   setEmail: (email: string) => void;
 }
 
 const SignUp = ({ setStep, setEmail }: SignUpProps) => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
   const { handlePost: signUp, isLoading: signUpLoading } = usePost(useSignUpMutation)
@@ -108,26 +110,6 @@ const SignUp = ({ setStep, setEmail }: SignUpProps) => {
               }
             />
 
-            {/* <FormInput
-              name="confirmPassword"
-              label="Confirm Password"
-              placeholder="Confirm Password"
-              type={showConfirmPassword ? "text" : "password"}
-              rightElement={
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword((prev) => !prev)}
-                  className="text-gray-400 hover:text-text-primary flex items-center justify-center"
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff size={20} />
-                  ) : (
-                    <Eye size={20} />
-                  )}
-                </button>
-              }
-            /> */}
-
             <div className="flex flex-col gap-1 mt-1">
               <FormInput
                 name="acceptTerms"
@@ -151,7 +133,8 @@ const SignUp = ({ setStep, setEmail }: SignUpProps) => {
         <span className="pt-2 text-text-secondary flex text-center items-center justify-center text-xs">
           Already have an account?{" "}
           <button
-            onClick={() => setStep("signin")}
+            type="button"
+            onClick={() => router.push("/login")}
             className="text-primary ml-1 font-bold hover:underline"
           >
             Log in

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useFavourites } from "@/app/hooks/useFavourites";
 import StarIcon from "@/app/assets/svgs/home/StarIcon";
 import LoveIcon from "@/app/assets/svgs/home/LoveIcon";
 import Button from "@/app/components/Button";
@@ -29,7 +30,9 @@ const CONDITION_LABELS: Record<string, string> = {
 
 const ItemDetailPage = () => {
   const { itemId } = useParams();
-  const [liked, setLiked] = useState(false);
+  const { toggleFavourite, isFavourite, mounted } = useFavourites();
+  const productId = Array.isArray(itemId) ? itemId[0] : itemId;
+  const liked = mounted ? isFavourite(productId as string) : false;
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const router = useRouter();
   const userId = useSelector((state: any) => state.app.userInfo?.user?.id);
@@ -111,6 +114,7 @@ const ItemDetailPage = () => {
         pickup_address: listing?.pickup_address ?? "",
         location: location,
         images: images,
+        status: listing?.status ?? "",
       })
     );
     router.push(`/list-item?edit=${itemId}`);
@@ -143,7 +147,20 @@ const ItemDetailPage = () => {
                 {/* Like button overlay */}
                 <button
                   id="item-detail-like-btn"
-                  onClick={() => guard(() => setLiked((l) => !l))}
+                  onClick={() => {
+                    if (listing) {
+                      toggleFavourite({
+                        id: productId as string,
+                        title: itemName,
+                        item_name: itemName,
+                        price: price as unknown as string,
+                        start_price: price as unknown as string,
+                        images,
+                        seller,
+                        negotiable,
+                      });
+                    }
+                  }}
                   className="absolute bottom-4 right-4 w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center z-10"
                 >
                   <LoveIcon liked={liked} />
@@ -231,9 +248,11 @@ const ItemDetailPage = () => {
                       <Button variant="destructive" onClick={handleDeleteListing} fullWidth loading={deleteListingLoading}>
                         Delete Listing
                       </Button>
-                      <Button variant="outline" className="text-primary border-primary" onClick={handleEditListing} fullWidth>
-                        Edit Item
-                      </Button>
+                      {listing?.status !== "SOLD" && (
+                        <Button variant="outline" className="text-primary border-primary" onClick={handleEditListing} fullWidth>
+                          Edit Item
+                        </Button>
+                      )}
                     </div>
                   )}
                 </div>
@@ -314,9 +333,11 @@ const ItemDetailPage = () => {
 
                   {seller?.id === userId && (
                     <div className="flex flex-col gap-2.5">
-                      <Button variant="outline" className="text-primary border-primary" onClick={handleEditListing} fullWidth>
-                        Edit Item
-                      </Button>
+                      {listing?.status !== "SOLD" && (
+                        <Button variant="outline" className="text-primary border-primary" onClick={handleEditListing} fullWidth>
+                          Edit Item
+                        </Button>
+                      )}
                       <Button variant="destructive" onClick={handleDeleteListing} fullWidth loading={deleteListingLoading}>
                         Delete Listing
                       </Button>
