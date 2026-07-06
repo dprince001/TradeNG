@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import CartIcon from "@/app/components/layout/CartIcon";
 import StarIcon from "@/app/assets/svgs/home/StarIcon";
 import LoveIcon from "@/app/assets/svgs/home/LoveIcon";
 import Button from "@/app/components/Button";
 import { useRouter } from "next/navigation";
 import avatarImg from "@/app/assets/images/seller_avatar.png";
-import TopNavbar from "@/app/components/layout/TopNavbar";
+import BackButton from "@/app/components/layout/BackButton";
 import Container from "@/app/components/layout/Container";
 import AppShell from "@/app/components/layout/AppShell";
 import useGet from "@/app/hooks/useGet";
@@ -122,27 +121,16 @@ const ItemDetailPage = () => {
     <div className="w-full flex flex-col">
       {promptOpen && <LoginRequiredModal onClose={closePrompt} message={promptMessage} />}
 
-      {/* ── Header ── */}
-      <TopNavbar
-        title="Item Details"
-        onBack={() => router.back()}
-        rightElement={
-          <button
-            id="item-detail-cart-btn"
-            onClick={() => guard(() => router.push("/profile/orders"))}
-            className="w-[42px] h-[42px] rounded-full bg-[#F5F6FA] text-[#1D1E20] hover:bg-brand-orange hover:text-white flex items-center justify-center relative transition-all duration-200 active:scale-95"
-          >
-            <CartIcon count={1} />
-          </button>
-        }
-      />
-
       <div className="flex-1">
         {listingDetailLoading || reviewsLoading ? (
           <Spinner />
         ) : (
           <Container className="max-w-5xl py-0 lg:py-6 grid grid-cols-1 lg:grid-cols-3 gap-0 lg:gap-8">
             <div className="lg:col-span-2">
+              <div className="px-5 lg:px-0 pt-4 lg:pt-0 pb-3 lg:pb-4">
+                <BackButton fallbackHref="/listings" />
+              </div>
+
               {/* ── Image Carousel ── */}
               <div className="relative w-full lg:rounded-2xl lg:overflow-hidden">
                 <ImageCarousel
@@ -313,14 +301,14 @@ const ItemDetailPage = () => {
 
                   {seller?.id !== userId && (
                     <div className="flex flex-col gap-2.5">
-                      <Button variant="primary" onClick={() => guard(handleBuyNow)} loading={buyListingLoading} fullWidth>
-                        Buy Now
-                      </Button>
                       {negotiable && (
                         <Button variant="outline" onClick={() => guard(handleMakeOffer)} fullWidth className="text-primary border-primary">
                           Make Offer
                         </Button>
                       )}
+                      <Button variant="primary" onClick={() => guard(handleBuyNow)} loading={buyListingLoading} fullWidth>
+                        Buy Now
+                      </Button>
                     </div>
                   )}
 

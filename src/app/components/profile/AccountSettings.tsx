@@ -91,7 +91,7 @@ const AccountSettings = () => {
         <ChangePasswordModal onClose={() => setShowChangePassword(false)} />
       )}
 
-      <div className="flex-1 flex flex-col px-5 pt-6 pb-24 gap-6">
+      <div className="flex-1 flex flex-col px-5 pt-6 pb-24 gap-6 md:px-8 md:py-8 md:max-w-2xl md:mx-auto w-full">
         <div>
           <span className="text-[10px] font-bold text-[#8F959E] uppercase tracking-wider block mb-2.5">
             Account Settings

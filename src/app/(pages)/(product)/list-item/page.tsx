@@ -5,7 +5,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter, useSearchParams } from "next/navigation";
-import TopNavbar from "@/app/components/layout/TopNavbar";
+import BackButton from "@/app/components/layout/BackButton";
 import Container from "@/app/components/layout/Container";
 import AppShell from "@/app/components/layout/AppShell";
 import PublishListing from "@/app/components/list-items/PublishListing";
@@ -215,15 +215,15 @@ export default function ListItemPage() {
       <div className="w-full bg-white flex flex-col relative select-none">
         {/* ── Top Header Navigation ── */}
         {step <= 6 && (
-          <TopNavbar
-            title={getStepTitle()}
-            onBack={handleBack}
-            rightElement={
-              <span className="text-xs text-text-secondary font-medium">
-                {step === 1 ? "1/4" : step === 2 ? "2/4" : step === 3 ? "3/4" : "4/4"}
-              </span>
-            }
-          />
+          <Container className="max-w-2xl flex items-center gap-3 pt-6 pb-4">
+            <BackButton onClick={handleBack} />
+            <h1 className="flex-1 text-text-primary font-semibold text-base tracking-wide">
+              {getStepTitle()}
+            </h1>
+            <span className="text-xs text-text-secondary font-medium">
+              {step === 1 ? "1/4" : step === 2 ? "2/4" : step === 3 ? "3/4" : "4/4"}
+            </span>
+          </Container>
         )}
 
         <Container className="max-w-2xl flex-1 flex flex-col overflow-y-auto py-6">

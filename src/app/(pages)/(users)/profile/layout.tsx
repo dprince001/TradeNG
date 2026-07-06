@@ -4,7 +4,7 @@ import React from "react";
 import { usePathname, useRouter } from "next/navigation";
 import AppShell from "@/app/components/layout/AppShell";
 import Container from "@/app/components/layout/Container";
-import TopNavbar from "@/app/components/layout/TopNavbar";
+import BackButton from "@/app/components/layout/BackButton";
 import ProfileSidebar from "@/app/components/profile/ProfileSidebar";
 
 const PAGE_TITLES: Record<string, string> = {
@@ -24,10 +24,12 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
     <AppShell showFooter={false}>
       {!isRoot && (
         <div className="md:hidden">
-          <TopNavbar
-            title={PAGE_TITLES[pathname] ?? "Profile"}
-            onBack={() => router.push("/profile")}
-          />
+          <Container className="max-w-screen-xl flex items-center gap-3 pt-6 pb-4">
+            <BackButton onClick={() => router.push("/profile")} />
+            <h1 className="text-text-primary font-semibold text-base tracking-wide">
+              {PAGE_TITLES[pathname] ?? "Profile"}
+            </h1>
+          </Container>
         </div>
       )}
 

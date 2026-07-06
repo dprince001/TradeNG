@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import Container from "@/app/components/layout/Container";
 import { CategorySkeleton } from "@/app/components/Loader";
 import useGet from "@/app/hooks/useGet";
@@ -16,6 +17,7 @@ const mockCategoryEmojis = [
 ];
 
 const CategoryRail = () => {
+  const router = useRouter();
   const { data: categoriesData, isFetching: categoriesLoading } = useGet(useGetCategoriesQuery, "");
 
   const categories = categoriesData?.categories?.map((cat: any) => ({
@@ -36,15 +38,16 @@ const CategoryRail = () => {
         ) : (
           <div className="flex md:grid md:grid-cols-4 lg:grid-cols-7 gap-3 overflow-x-auto no-scrollbar pb-1">
             {categories?.map((cat: any) => (
-              <div
+              <button
                 key={cat.id}
+                onClick={() => router.push(`/listings?category_id=${cat.id}`)}
                 className="flex flex-col flex-shrink-0 w-[74px] h-[78px] md:w-full md:h-24 rounded-[12px] border border-gray-200 items-center justify-center text-[30px] gap-1 bg-white hover:border-primary hover:shadow-sm transition-all cursor-pointer"
               >
                 {cat.emoji}
                 <span className="text-[#374151] text-[10px] md:text-xs font-medium">
                   {cat.label}
                 </span>
-              </div>
+              </button>
             ))}
           </div>
         )}

@@ -77,8 +77,8 @@ const ListingsComponent = () => {
   const filteredListings = listings.filter((item: any) => item.status === listingsTab);
 
   return (
-    <div className="flex-1 flex flex-col px-5 pt-6 pb-24">
-      <div className="flex bg-[#F5F6FA] p-1 rounded-xl mb-5 shadow-inner">
+    <div className="flex-1 flex flex-col px-5 pt-6 pb-24 md:px-8 md:py-8">
+      <div className="flex bg-[#F5F6FA] p-1 rounded-xl mb-5 shadow-inner md:max-w-sm">
         {TABS.map((tab) => (
           <button
             key={tab.key}
@@ -98,7 +98,7 @@ const ListingsComponent = () => {
         {isFetching ? (
           <TableRowSkeleton rows={4} />
         ) : filteredListings.length > 0 ? (
-          <FadeInStagger className="flex flex-col gap-3">
+          <FadeInStagger className="flex flex-col gap-3 md:grid md:grid-cols-2 md:gap-4 lg:grid-cols-3">
             {filteredListings.map((item: any) => (
               <FadeInItem
                 key={item.id}

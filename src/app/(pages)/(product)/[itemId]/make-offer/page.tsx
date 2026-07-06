@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import CartIcon from "@/app/assets/svgs/home/CartIcon";
 import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useParams } from "next/navigation";
 import useGet from "@/app/hooks/useGet";
 import { useGetListingDetailQuery } from "@/app/redux/api/listingApiSlice";
-import TopNavbar from "@/app/components/layout/TopNavbar";
+import BackButton from "@/app/components/layout/BackButton";
 import Container from "@/app/components/layout/Container";
 import AppShell from "@/app/components/layout/AppShell";
 import { useMakeAnOfferMutation, useCounterAnOfferMutation } from "@/app/redux/api/offersApiSlice";
@@ -71,7 +70,7 @@ const MakeOfferPage = () => {
       if (res?.success) {
         sessionStorage.removeItem(`counter-offer-${itemId}`);
         // Go back to the chat page with the conversation id
-        router.push(`/${itemId}/chat?c_id=${storedConvId}`);
+        router.push(`/chat?c_id=${storedConvId}`);
       }
     } else {
       // Initial offer
@@ -90,7 +89,7 @@ const MakeOfferPage = () => {
         );
 
         if (response?.success) {
-          router.push(`/${itemId}/chat?c_id=${response?.data?.conversation?.id}`);
+          router.push(`/chat?c_id=${response?.data?.conversation?.id}`);
         }
       }
     }
@@ -99,21 +98,12 @@ const MakeOfferPage = () => {
   return (
     <AppShell showFooter={false} showBottomNav={false}>
     <div className="w-full flex flex-col bg-[#FAFAFA]">
-      {/* ── Header ── */}
-      <TopNavbar
-        title={isCounter ? "Counter Offer" : "Make an Offer"}
-        onBack={() => router.back()}
-        rightElement={
-          !isCounter ? (
-            <button
-              onClick={() => router.push("/profile/orders")}
-              className="w-10 h-10 rounded-full bg-[#F5F6FA] text-[#1D1E20] hover:bg-brand-orange hover:text-white flex items-center justify-center relative transition-all duration-200"
-            >
-              <CartIcon />
-            </button>
-          ) : undefined
-        }
-      />
+      <Container className="max-w-xl flex items-center gap-3 pt-6 pb-4">
+        <BackButton />
+        <h1 className="text-text-primary font-semibold text-base tracking-wide">
+          {isCounter ? "Counter Offer" : "Make an Offer"}
+        </h1>
+      </Container>
 
       <Container className="max-w-xl flex-1 overflow-y-auto pt-4 pb-8">
         {/* Item summary card */}

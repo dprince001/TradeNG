@@ -1,8 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import CartIcon from "@/app/components/layout/CartIcon";
-import TopNavbar from "@/app/components/layout/TopNavbar";
+import BackButton from "@/app/components/layout/BackButton";
 import Container from "@/app/components/layout/Container";
 import AppShell from "@/app/components/layout/AppShell";
 import LocationIcon from "@/app/assets/svgs/home/LocationIcon";
@@ -36,18 +35,12 @@ const ConfirmOrderContent = () => {
   return (
     <AppShell showFooter={false} showBottomNav={false}>
       <div className="w-full bg-[#F7F8FA] relative flex flex-col">
-        <TopNavbar
-          title="Confirm Order"
-          onBack={() => router.back()}
-          rightElement={
-            <button
-              id="confirm-order-cart-btn"
-              className="w-[42px] h-[42px] rounded-full bg-[#F5F6FA] text-[#1D1E20] hover:bg-brand-orange hover:text-white flex items-center justify-center relative transition-all duration-200 active:scale-95"
-            >
-              <CartIcon count={1} />
-            </button>
-          }
-        />
+        <Container className="max-w-2xl flex items-center gap-3 pt-6 pb-4">
+          <BackButton />
+          <h1 className="text-text-primary font-semibold text-base tracking-wide">
+            Confirm Order
+          </h1>
+        </Container>
 
         <Container className="max-w-2xl flex-1 overflow-y-auto pt-3">
           {isFetching || !transaction ? (

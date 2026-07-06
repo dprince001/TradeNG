@@ -8,7 +8,7 @@ import ConfirmReleaseModal from "./ConfirmReleaseItem";
 import ReportProblemModal from "./ReportProblemModal";
 import { useRouter, useSearchParams } from "next/navigation";
 import ProductInEscrow from "./ProductInEscrow";
-import TopNavbar from "@/app/components/layout/TopNavbar";
+import BackButton from "@/app/components/layout/BackButton";
 import Container from "@/app/components/layout/Container";
 import AppShell from "@/app/components/layout/AppShell";
 import { formatNaira } from "@/lib/utils";
@@ -62,7 +62,10 @@ const ConfirmDeliveryContent = () => {
   return (
     <AppShell showFooter={false} showBottomNav={false}>
       <div className="w-full bg-[#F7F8FA] flex flex-col relative">
-        <TopNavbar title="Confirm delivery" onBack={() => router.back()} />
+        <Container className="max-w-2xl flex items-center gap-3 pt-6 pb-4">
+          <BackButton />
+          <h1 className="text-text-primary font-semibold text-base tracking-wide">Confirm delivery</h1>
+        </Container>
 
         <Container className="max-w-2xl flex-1 overflow-y-auto pt-4 pb-6">
           {isFetching || !transaction ? (

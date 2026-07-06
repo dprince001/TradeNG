@@ -55,7 +55,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col px-5 pt-6 pb-24">
+    <div className="flex-1 flex flex-col px-5 pt-6 pb-24 md:px-8 md:py-8 md:max-w-3xl md:mx-auto w-full">
       <PageTransition className="flex flex-col items-center text-center mt-2">
         <div className="w-40 h-40 rounded-full bg-gradient-to-tr from-[#FF4304] to-[#FF8C39] flex items-center justify-center text-white text-2xl font-extrabold shadow-md border-4 border-white overflow-hidden relative">
           {user?.profile_photo ? (
@@ -134,7 +134,7 @@ export default function ProfilePage() {
         Quick Actions
       </h3>
 
-      <FadeInStagger className="grid grid-cols-4 sml:grid-cols-5 gap-2.5">
+      <FadeInStagger className="grid grid-cols-4 sml:grid-cols-5 md:grid-cols-5 gap-2.5 md:gap-4">
         {quickActions.map((action) => {
           const Icon = action.icon;
           return (
@@ -164,7 +164,7 @@ export default function ProfilePage() {
       {activityFeed.length === 0 ? (
         <p className="text-text-secondary text-xs">No recent activity yet.</p>
       ) : (
-        <FadeInStagger className="flex flex-col gap-3">
+        <FadeInStagger className="flex flex-col gap-3 md:grid md:grid-cols-2 md:gap-3">
           {activityFeed.map((entry: any) => {
             const meta = ledgerTypeMeta[entry.type] || ledgerTypeMeta.DEPOSIT;
             const Icon = meta.icon;
