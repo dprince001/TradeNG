@@ -5,7 +5,8 @@
       "Read(//tmp/**)",
       "Bash(curl -s -o /tmp/home.html -w \"%{http_code}\\\\n\" http://localhost:3001/)",
       "Bash(sleep 8; cat /tmp/home.html | head -c 2000; echo; echo \"---STATUS---\")",
-      "Bash(taskkill //F //IM node.exe //T)"
+      "Bash(taskkill //F //IM node.exe //T)",
+      "Bash(curl -s http://localhost:3000/profile/listings)"
     ]
   }
 }

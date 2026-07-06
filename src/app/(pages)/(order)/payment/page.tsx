@@ -3,6 +3,7 @@
 import { useState, Suspense } from "react";
 import TopNavbar from "@/app/components/layout/TopNavbar";
 import Container from "@/app/components/layout/Container";
+import AppShell from "@/app/components/layout/AppShell";
 import CardIcon from "@/app/assets/svgs/home/CardIcon";
 import WalletIcon from "@/app/assets/svgs/home/WalletIcon";
 import BankIcon from "@/app/assets/svgs/home/BankIcon";
@@ -67,7 +68,8 @@ const PaymentContent = () => {
   const canPay = agreed;
 
   return (
-    <div className="w-full bg-[#F7F8FA] min-h-screen relative flex flex-col">
+    <AppShell showFooter={false} showBottomNav={false}>
+    <div className="w-full bg-[#F7F8FA] relative flex flex-col">
       {/* ── Header ── */}
       <TopNavbar title="Payment" onBack={() => router.back()} />
 
@@ -246,6 +248,7 @@ const PaymentContent = () => {
         </Button>
       </Container>
     </div>
+    </AppShell>
   );
 };
 

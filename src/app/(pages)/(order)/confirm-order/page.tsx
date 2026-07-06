@@ -6,6 +6,7 @@ import IphoneImage from "@/app/assets/images/IphoneImage.png";
 import CartIcon from "@/app/components/layout/CartIcon";
 import TopNavbar from "@/app/components/layout/TopNavbar";
 import Container from "@/app/components/layout/Container";
+import AppShell from "@/app/components/layout/AppShell";
 import LocationIcon from "@/app/assets/svgs/home/LocationIcon";
 import SecureIcon from "@/app/assets/svgs/home/SecureIcon";
 import InfoIcon from "@/app/assets/svgs/home/InfoIcon";
@@ -45,7 +46,8 @@ const ConfirmOrderContent = () => {
   const formatNaira = (amount: number) => `₦${amount.toLocaleString("en-NG")}`;
 
   return (
-    <div className="w-full bg-[#F7F8FA] min-h-screen relative flex flex-col">
+    <AppShell showFooter={false} showBottomNav={false}>
+    <div className="w-full bg-[#F7F8FA] relative flex flex-col">
       {/* ── Header ── */}
       <TopNavbar
         title="Confirm Order"
@@ -250,6 +252,7 @@ const ConfirmOrderContent = () => {
         </Button>
       </Container>
     </div>
+    </AppShell>
   );
 };
 

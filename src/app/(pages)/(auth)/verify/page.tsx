@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import TopNavbar from "@/app/components/layout/TopNavbar";
 import Container from "@/app/components/layout/Container";
+import AppShell from "@/app/components/layout/AppShell";
 import Button from "@/app/components/Button";
 
 type Step = 1 | 2 | 3 | 4;
@@ -83,7 +84,8 @@ const VerifyPage = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#F9FAFB] flex flex-col relative select-none">
+    <AppShell showFooter={false} showBottomNav={false}>
+    <div className="w-full flex flex-col relative select-none">
       {/* Header */}
       <TopNavbar
         title="Verify Identity"
@@ -401,6 +403,7 @@ const VerifyPage = () => {
         </Container>
       </div>
     </div>
+    </AppShell>
   );
 };
 
