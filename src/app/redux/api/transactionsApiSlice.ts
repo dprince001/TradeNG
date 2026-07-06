@@ -75,6 +75,7 @@ export const {
     useGetTransactionDetailQuery,
     useStartCheckoutMutation,
     useVerifyCheckoutPaymentQuery,
+    useLazyVerifyCheckoutPaymentQuery,
     useConfirmReceiptMutation,
     useReleasePaymentMutation,
     useRaiseDisputeMutation,

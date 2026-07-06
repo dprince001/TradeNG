@@ -2,7 +2,7 @@
 
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import TopNavbar from "@/app/components/layout/TopNavbar";
+import BackButton from "@/app/components/layout/BackButton";
 import Container from "@/app/components/layout/Container";
 import AppShell from "@/app/components/layout/AppShell";
 import VerifiedIcon from "@/app/assets/svgs/home/VerifiedIcon";
@@ -69,9 +69,10 @@ const ChatPage = () => {
     <AppShell fixedHeight showFooter={false} showBottomNav={false}>
     <div className="w-full h-full flex flex-col bg-[#FAFAFA]">
       {/* ── Header ── */}
-      <TopNavbar
-        onBack={() => router.back()}
-        title={
+      <div className="bg-white border-b border-gray-50/50 sticky top-0 z-30">
+        <Container className="max-w-2xl flex items-center gap-3 pt-6 pb-4">
+          <BackButton />
+
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-[#E5FFF4] text-[#00E58F] flex items-center justify-center overflow-hidden">
               {itemDetails?.seller?.avatar ? (
@@ -86,8 +87,8 @@ const ChatPage = () => {
               <VerifiedIcon color="#10B981" size="14" />
             )}
           </div>
-        }
-      />
+        </Container>
+      </div>
 
       <div className="flex items-center gap-3 border-b border-gray-100 z-10 bg-white">
         <Container className="max-w-2xl py-3 flex items-center gap-3">

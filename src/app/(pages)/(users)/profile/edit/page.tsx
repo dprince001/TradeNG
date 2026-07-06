@@ -55,7 +55,7 @@ export default function EditProfilePage() {
   }
 
   return (
-    <PageTransition className="flex-1 flex flex-col px-5 pt-6 pb-24">
+    <PageTransition className="flex-1 flex flex-col px-5 pt-6 pb-24 md:px-8 md:py-8 md:max-w-2xl md:mx-auto w-full">
       <div className="flex flex-col items-center text-center mt-2 mb-6">
         <div className="relative cursor-pointer group">
           <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[#FF4304] to-[#FF8C39] flex items-center justify-center text-white text-2xl font-extrabold shadow-md border-4 border-white group-hover:brightness-95 transition-all">
@@ -71,7 +71,7 @@ export default function EditProfilePage() {
         </span>
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 md:grid md:grid-cols-2 md:gap-x-5">
         <Input
           label="First Name"
           value={firstName}
@@ -96,13 +96,15 @@ export default function EditProfilePage() {
           onChange={(e) => setAddress(e.target.value)}
           placeholder="Enter address"
         />
-        <Input
-          label="Short Bio"
-          type="textarea"
-          value={about}
-          onChange={(e) => setAbout(e.target.value)}
-          placeholder="Tell buyers about yourself..."
-        />
+        <div className="md:col-span-2">
+          <Input
+            label="Short Bio"
+            type="textarea"
+            value={about}
+            onChange={(e) => setAbout(e.target.value)}
+            placeholder="Tell buyers about yourself..."
+          />
+        </div>
       </div>
 
       <div className="mt-auto pt-8">

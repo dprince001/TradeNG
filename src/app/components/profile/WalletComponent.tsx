@@ -82,8 +82,8 @@ const WalletComponent = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col px-5 pt-6 pb-24">
-      <div className="bg-brand-gradient rounded-3xl p-6 text-white shadow-[0_10px_24px_rgba(255,67,4,0.15)] relative overflow-hidden">
+    <div className="flex-1 flex flex-col px-5 pt-6 pb-24 md:px-8 md:py-8">
+      <div className="bg-brand-gradient rounded-3xl p-6 md:p-8 text-white shadow-[0_10px_24px_rgba(255,67,4,0.15)] relative overflow-hidden md:max-w-xl">
         <div className="absolute right-0 top-0 w-32 h-32 bg-white/5 rounded-full -mr-8 -mt-8 pointer-events-none" />
         <div className="absolute left-0 bottom-0 w-24 h-24 bg-white/5 rounded-full -ml-8 -mb-8 pointer-events-none" />
 
@@ -122,7 +122,7 @@ const WalletComponent = () => {
         </div>
       </div>
 
-      <div className="bg-[#FFF5F3] border border-primary/5 rounded-2xl p-4 mt-5 flex items-start gap-3 shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
+      <div className="bg-[#FFF5F3] border border-primary/5 rounded-2xl p-4 mt-5 flex items-start gap-3 shadow-[0_2px_8px_rgba(0,0,0,0.01)] md:max-w-xl">
         <span className="text-[10px] text-text-secondary leading-relaxed font-semibold">
           Funds are held safely until buyer confirms delivery
         </span>
@@ -135,7 +135,7 @@ const WalletComponent = () => {
       {ledger.length === 0 ? (
         <p className="text-text-secondary text-xs">No wallet activity yet.</p>
       ) : (
-        <FadeInStagger className="flex flex-col gap-3">
+        <FadeInStagger className="flex flex-col gap-3 md:grid md:grid-cols-2 md:gap-3">
           {ledger.map((tx: any) => {
             const isCredit = tx.type === "ESCROW_RELEASE" || tx.type === "WITHDRAWAL_REVERSAL";
             return (

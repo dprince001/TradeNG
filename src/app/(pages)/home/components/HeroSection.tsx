@@ -17,9 +17,7 @@ const HeroSection = () => {
   const [query, setQuery] = useState("");
 
   const handleSearch = () => {
-    router.push(
-      query ? `/?q=${encodeURIComponent(query)}#listings` : "#listings",
-    );
+    router.push(query ? `/listings?q=${encodeURIComponent(query)}` : "/listings");
   };
 
   return (

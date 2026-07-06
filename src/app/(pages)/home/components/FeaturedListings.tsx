@@ -18,7 +18,10 @@ const FeaturedListings = () => {
           <h2 className="text-text-primary text-lg md:text-2xl font-semibold">
             Featured Listings
           </h2>
-          <button className="text-text-secondary text-xs md:text-sm hover:text-primary">
+          <button
+            onClick={() => router.push("/listings")}
+            className="text-text-secondary text-xs md:text-sm hover:text-primary"
+          >
             View All
           </button>
         </div>

@@ -65,8 +65,8 @@ const OrdersComponent = () => {
   const isFetching = ordersTab === "buying" ? buyingLoading : sellingLoading;
 
   return (
-    <div className="flex-1 flex flex-col px-5 pt-6 pb-24">
-      <div className="flex bg-[#F5F6FA] p-1 rounded-xl mb-5 shadow-inner">
+    <div className="flex-1 flex flex-col px-5 pt-6 pb-24 md:px-8 md:py-8">
+      <div className="flex bg-[#F5F6FA] p-1 rounded-xl mb-5 shadow-inner md:max-w-sm">
         {(["buying", "selling"] as const).map((tab) => (
           <button
             key={tab}
@@ -86,7 +86,7 @@ const OrdersComponent = () => {
         {isFetching ? (
           <OrderSkeleton />
         ) : orders.length > 0 ? (
-          <FadeInStagger className="flex flex-col gap-4">
+          <FadeInStagger className="flex flex-col gap-4 md:grid md:grid-cols-2 md:gap-4">
             {orders.map((item: any) => {
               const meta = statusMeta[item.status] || statusMeta.PENDING_PAYMENT;
               const counterparty = ordersTab === "buying" ? item.seller : item.buyer;

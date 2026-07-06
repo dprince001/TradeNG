@@ -48,6 +48,15 @@ const ConversationThread = ({
   const counterpart = getConversationCounterpart(conversation, currentUserId);
   const counterpartName = getFullName(counterpart);
 
+  const goToCounterpartProfile = () => {
+    if (!counterpart?.id) return;
+    const params = new URLSearchParams({ id: counterpart.id });
+    if (counterpartName) params.set("name", counterpartName);
+    if (counterpart?.avatar) params.set("avatar", counterpart.avatar);
+    if (counterpart?.is_verified_seller) params.set("verified", "true");
+    router.push(`/seller-profile?${params.toString()}`);
+  };
+
   const { data: conversationData, isLoading: messagesLoading } = useGet(
     useGetMessageInAConversationQuery,
     conversationId,
@@ -106,7 +115,11 @@ const ConversationThread = ({
           </button>
         )}
 
-        <div className="w-9 h-9 rounded-full bg-[#E5FFF4] text-[#00E58F] flex items-center justify-center overflow-hidden flex-shrink-0">
+        <button
+          onClick={goToCounterpartProfile}
+          className="w-9 h-9 rounded-full bg-[#E5FFF4] text-[#00E58F] flex items-center justify-center overflow-hidden flex-shrink-0 hover:opacity-80 transition-opacity"
+          aria-label={`View ${counterpartName || "user"}'s profile`}
+        >
           {counterpart?.avatar ? (
             <img
               src={counterpart.avatar}
@@ -116,11 +129,15 @@ const ConversationThread = ({
           ) : (
             "👤"
           )}
-        </div>
+        </button>
 
-        <div className="min-w-0 flex-1">
+        <button
+          onClick={goToCounterpartProfile}
+          className="min-w-0 flex-1 text-left"
+          aria-label={`View ${counterpartName || "user"}'s profile`}
+        >
           <div className="flex items-center gap-1.5">
-            <span className="text-text-primary font-semibold text-sm truncate">
+            <span className="text-text-primary font-semibold text-sm truncate hover:underline">
               {counterpartName}
             </span>
             {counterpart?.is_verified_seller && (
@@ -130,7 +147,7 @@ const ConversationThread = ({
           <span className="text-text-secondary text-xs truncate block">
             {listing?.item_name || "Item"}
           </span>
-        </div>
+        </button>
       </div>
 
       <EscrowNoticeBar className="flex-shrink-0" />
@@ -155,7 +172,9 @@ const ConversationThread = ({
         {latestAcceptedOffer && !isSeller && (
           <AcceptedOfferBanner
             amount={latestAcceptedOffer.amount ?? 0}
-            onProceed={() => router.push(`/payment/${latestAcceptedOffer.id}`)}
+            onProceed={() =>
+              router.push(`/payment/${latestAcceptedOffer.transaction_id}`)
+            }
           />
         )}
       </div>

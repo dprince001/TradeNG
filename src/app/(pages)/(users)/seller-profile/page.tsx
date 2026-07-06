@@ -7,6 +7,7 @@ import ProductCard from "../../home/components/ProductCard";
 import ProgressBar from "@/app/components/ProgressBar";
 import Container from "@/app/components/layout/Container";
 import AppShell from "@/app/components/layout/AppShell";
+import BackButton from "@/app/components/layout/BackButton";
 import { ProfileSkeleton, ListingSkeleton } from "@/app/components/Loader";
 import { FadeInStagger, FadeInItem, PageTransition } from "@/app/components/Motion";
 import useGet from "@/app/hooks/useGet";
@@ -37,12 +38,20 @@ const renderStars = (rating: number, size = 12) => (
   </div>
 );
 
+const PROFILE_TABS = ["listings", "reviews", "about"] as const;
+type ProfileTab = (typeof PROFILE_TABS)[number];
+
 const SellerProfileContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const sellerId = searchParams.get("id");
 
-  const [activeTab, setActiveTab] = useState<"listings" | "reviews" | "about">("listings");
+  // Fallback display info passed by the linking page (e.g. a chat thread)
+  // for users who have no listings, since there's no "get user by id" endpoint.
+  const fallbackName = searchParams.get("name");
+  const fallbackAvatar = searchParams.get("avatar");
+  const fallbackVerified = searchParams.get("verified") === "true";
+
   const { guard, promptOpen, closePrompt } = useAuthGuard("Sign in to message this seller.");
   const { handlePost: startConversation } = usePost(useStartConversationMutation);
 
@@ -55,11 +64,26 @@ const SellerProfileContent = () => {
 
   const allListings = listingsData?.listings || [];
   const sellerListings = sellerId ? allListings.filter((l: any) => l.seller?.id === sellerId) : [];
-  const seller = sellerListings[0]?.seller;
+  const hasListings = sellerListings.length > 0;
+
+  const seller = sellerListings[0]?.seller ?? (sellerId
+    ? {
+        id: sellerId,
+        first_name: fallbackName?.split(" ")?.[0] ?? "",
+        last_name: fallbackName?.split(" ")?.slice(1).join(" ") ?? "",
+        profile_photo: fallbackAvatar || undefined,
+        is_verified_seller: fallbackVerified,
+      }
+    : null);
+
   const reviews = reviewsData?.reviews || [];
   const avgRating = reviews.length
     ? reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / reviews.length
     : 0;
+
+  const availableTabs = PROFILE_TABS.filter((tab) => tab !== "listings" || hasListings);
+  const [activeTab, setActiveTab] = useState<ProfileTab>("listings");
+  const resolvedTab = availableTabs.includes(activeTab) ? activeTab : availableTabs[0];
 
   const handleMessageSeller = () => {
     guard(async () => {
@@ -67,7 +91,7 @@ const SellerProfileContent = () => {
       if (!firstListing) return;
       const response = await startConversation({ listing_id: firstListing.id }, { showSuccessToast: false });
       if (response?.success) {
-        router.push(`/${firstListing.id}/chat?c_id=${response?.data?.conversation?.id}`);
+        router.push(`/chat?c_id=${response?.data?.conversation?.id}`);
       }
     });
   };
@@ -88,16 +112,10 @@ const SellerProfileContent = () => {
 
       <div className="w-full bg-[#F9FAFB] flex flex-col relative pb-8">
         <div className="relative w-full h-[160px] md:h-[220px] bg-gradient-to-br from-[#0D0500] via-[#7A1E00] to-[#C03300]">
-          <button
-            onClick={() => router.back()}
-            className="absolute top-4 left-4 w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform"
-            aria-label="Back"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D1E20" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12" />
-              <polyline points="12 19 5 12 12 5" />
-            </svg>
-          </button>
+          <BackButton
+            fallbackHref="/home"
+            className="absolute top-4 left-4 w-9 h-9 bg-white shadow-md hover:scale-105"
+          />
         </div>
 
         <Container className="max-w-5xl -mt-10 relative z-10 md:grid md:grid-cols-3 md:gap-8 md:items-start">
@@ -143,31 +161,33 @@ const SellerProfileContent = () => {
               </div>
             </div>
 
-            <div className="flex gap-3 mt-5 w-full max-w-sm md:max-w-none">
-              <button
-                onClick={handleMessageSeller}
-                className="flex-1 bg-primary text-white hover:bg-primary/95 active:scale-95 transition-all text-xs font-extrabold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md shadow-primary/10"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-                Message Seller
-              </button>
-            </div>
+            {hasListings && (
+              <div className="flex gap-3 mt-5 w-full max-w-sm md:max-w-none">
+                <button
+                  onClick={handleMessageSeller}
+                  className="flex-1 bg-primary text-white hover:bg-primary/95 active:scale-95 transition-all text-xs font-extrabold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md shadow-primary/10"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  </svg>
+                  Message Seller
+                </button>
+              </div>
+            )}
           </PageTransition>
 
           <div className="mt-6 md:mt-0 md:col-span-2">
             <div className="border-b border-gray-150 bg-white w-full flex sticky top-0 z-20">
-              {(["listings", "reviews", "about"] as const).map((tab) => (
+              {availableTabs.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`flex-1 text-center py-4 text-xs font-bold transition-all relative capitalize ${
-                    activeTab === tab ? "text-primary" : "text-[#8F959E]"
+                    resolvedTab === tab ? "text-primary" : "text-[#8F959E]"
                   }`}
                 >
                   {tab}
-                  {activeTab === tab && (
+                  {resolvedTab === tab && (
                     <div className="absolute bottom-0 left-1/4 right-1/4 h-[2px] bg-primary rounded-full animate-fadeIn" />
                   )}
                 </button>
@@ -175,7 +195,7 @@ const SellerProfileContent = () => {
             </div>
 
             <div className="flex-1 w-full py-5">
-              {activeTab === "listings" &&
+              {resolvedTab === "listings" &&
                 (sellerListings.length === 0 ? (
                   <p className="text-text-secondary text-sm text-center py-10">No active listings.</p>
                 ) : (
@@ -188,7 +208,7 @@ const SellerProfileContent = () => {
                   </FadeInStagger>
                 ))}
 
-              {activeTab === "reviews" && (
+              {resolvedTab === "reviews" && (
                 <div className="flex flex-col gap-4">
                   <div className="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center text-center shadow-sm">
                     <span className="text-3xl font-extrabold text-[#1D1E20]">{avgRating.toFixed(1)}</span>
@@ -226,7 +246,7 @@ const SellerProfileContent = () => {
                 </div>
               )}
 
-              {activeTab === "about" && (
+              {resolvedTab === "about" && (
                 <div className="flex flex-col gap-4">
                   <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm flex flex-col gap-3">
                     <h3 className="text-xs font-extrabold text-[#1D1E20] uppercase tracking-wider">

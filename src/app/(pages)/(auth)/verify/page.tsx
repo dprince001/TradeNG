@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import TopNavbar from "@/app/components/layout/TopNavbar";
+import BackButton from "@/app/components/layout/BackButton";
 import Container from "@/app/components/layout/Container";
 import AppShell from "@/app/components/layout/AppShell";
 import Button from "@/app/components/Button";
@@ -87,16 +87,18 @@ const VerifyPage = () => {
     <AppShell showFooter={false} showBottomNav={false}>
     <div className="w-full flex flex-col relative select-none">
       {/* Header */}
-      <TopNavbar
-        title="Verify Identity"
-        onBack={() => {
-          if (step > 1 && step < 4) {
-            setStep((s) => (s - 1) as Step);
-          } else {
-            router.push("/profile");
-          }
-        }}
-      />
+      <Container className="max-w-3xl flex items-center gap-3 pt-6 pb-4">
+        <BackButton
+          onClick={() => {
+            if (step > 1 && step < 4) {
+              setStep((s) => (s - 1) as Step);
+            } else {
+              router.push("/profile");
+            }
+          }}
+        />
+        <h1 className="text-text-primary font-semibold text-base tracking-wide">Verify Identity</h1>
+      </Container>
 
       {/* Progress Indicator */}
       {step < 4 && (

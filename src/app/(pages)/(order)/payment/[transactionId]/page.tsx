@@ -1,6 +1,6 @@
 "use client";
 
-import TopNavbar from "@/app/components/layout/TopNavbar";
+import BackButton from "@/app/components/layout/BackButton";
 import Container from "@/app/components/layout/Container";
 import AppShell from "@/app/components/layout/AppShell";
 import SecureIcon from "@/app/assets/svgs/home/SecureIcon";
@@ -39,7 +39,10 @@ const PaymentPage = () => {
   return (
     <AppShell showFooter={false} showBottomNav={false}>
       <div className="w-full bg-[#F7F8FA] relative flex flex-col">
-        <TopNavbar title="Payment" onBack={() => router.back()} />
+        <Container className="max-w-2xl flex items-center gap-3 pt-6 pb-4">
+          <BackButton />
+          <h1 className="text-text-primary font-semibold text-base tracking-wide">Payment</h1>
+        </Container>
 
         <Container className="max-w-2xl flex-1 overflow-y-auto pt-3">
           {isFetching || !transaction ? (
