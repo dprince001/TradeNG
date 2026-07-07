@@ -27,7 +27,6 @@ const AddItemComponent = ({ categoriesData, setStep }: AddItemComponentProps) =>
     })) ?? [];
 
   const handleNext = async () => {
-    // Validate only step 1 fields (defect_description is optional)
     const valid = await trigger(["item_name", "category_id", "condition", "description"]);
     if (valid) setStep(2);
   };

@@ -29,7 +29,6 @@ const OtpComponent = ({ setStep, email }: OtpComponentProps) => {
     newOtp[index] = val.substring(val.length - 1);
     setOtp(newOtp);
 
-    // Auto-focus next input
     if (val && index < 5) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       nextInput?.focus();
@@ -50,7 +49,6 @@ const OtpComponent = ({ setStep, email }: OtpComponentProps) => {
     const pasteData = e.clipboardData.getData("text");
     if (!pasteData) return;
 
-    // Extract digits up to length 6
     const digits = pasteData.replace(/\D/g, "").substring(0, 6);
     if (!digits) return;
 
@@ -60,7 +58,6 @@ const OtpComponent = ({ setStep, email }: OtpComponentProps) => {
     }
     setOtp(newOtp);
 
-    // Focus the last filled input
     const targetIndex = Math.min(digits.length - 1, 5);
     const targetInput = document.getElementById(`otp-${targetIndex}`);
     targetInput?.focus();
@@ -102,7 +99,6 @@ const OtpComponent = ({ setStep, email }: OtpComponentProps) => {
   return (
     <div className="flex-1 flex flex-col justify-between w-full animate-fadeIn p-5">
       <div>
-        {/* Back button */}
         <button
           onClick={() => setStep("signup")}
           className="w-8 h-8 rounded-full bg-white border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-text-primary mb-6 transition-colors"

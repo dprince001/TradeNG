@@ -23,7 +23,6 @@ import { useGetMyBuyingOrdersQuery } from "@/app/redux/api/ordersApiSlice";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Categories", href: "/#categories" },
-  // { label: "Sell", href: "/list-item" },
 ];
 
 interface SiteHeaderProps {
@@ -58,7 +57,6 @@ const SiteHeader = ({
   );
   const fetchedCartCount = ordersData?.orders?.length ?? 0;
 
-  // set flag to prevent server error
   useEffect(() => {
     setMounted(true);
   }, []);

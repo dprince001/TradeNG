@@ -18,7 +18,6 @@ interface AppShellProps {
   showFooter?: boolean;
   showBottomNav?: boolean;
   className?: string;
-  /** Locks the shell to the viewport height (no page scroll) so children can manage their own internal scroll areas — use for app-like screens such as chat. */
   fixedHeight?: boolean;
 }
 

@@ -34,7 +34,6 @@ const ChatComposer = ({ value, onChange, onSend, conversationId, isLoading }: Ch
     }
   };
 
-  // Stop typing if the user navigates away or switches conversation mid-type.
   useEffect(() => () => signalStoppedTyping(), [conversationId]);
 
   const handleChange = (nextValue: string) => {

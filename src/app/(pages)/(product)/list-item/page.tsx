@@ -46,7 +46,7 @@ export type ListingFormValues = z.infer<typeof listingSchema>;
 export default function ListItemPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const editId = searchParams.get("edit"); // present when editing
+  const editId = searchParams.get("edit");
   const isEditMode = !!editId;
 
   const { handlePost: createListing, isLoading: createListingLoading } = usePost(useCreateListingMutation);
@@ -61,7 +61,7 @@ export default function ListItemPage() {
 
   const [photos, setPhotos] = useState<string[]>([]);
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
-  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]); // kept from edit
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -82,7 +82,6 @@ export default function ListItemPage() {
     mode: "onChange",
   });
 
-  // ── Pre-fill form in edit ────────────────────────────────────────────
   useEffect(() => {
     if (!isEditMode || !editId) return;
 
@@ -108,7 +107,6 @@ export default function ListItemPage() {
         location: data.location ?? "",
       });
 
-      // Pre-load existing images as preview URLs
       if (Array.isArray(data.images) && data.images.length > 0) {
         setPhotos(data.images);
         setExistingImageUrls(data.images);
@@ -118,7 +116,6 @@ export default function ListItemPage() {
     }
   }, [editId, isEditMode]);
 
-  // ── Photo helpers ────────────────────────────────────────────────────────
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
@@ -137,11 +134,9 @@ export default function ListItemPage() {
     }
   };
 
-  // ── Publish / Update ─────────────────────────────────────────────────────
   const handlePublish = async (status: "ACTIVE" | "DRAFT") => {
     const values = methods.getValues();
 
-    // Upload any new photo files
     let uploadedUrls: string[] = [];
     if (photoFiles.length > 0) {
       const formData = new FormData();
@@ -153,9 +148,8 @@ export default function ListItemPage() {
       uploadedUrls = uploadRes.data?.data?.images ?? uploadRes.data?.images ?? [];
     }
 
-    // Merge existing image URLs with any newly uploaded ones
     const finalImages = [
-      ...existingImageUrls.filter((url) => photos.includes(url)), // keep non-removed images
+      ...existingImageUrls.filter((url) => photos.includes(url)),
       ...uploadedUrls,
     ];
 
@@ -217,7 +211,6 @@ export default function ListItemPage() {
     <FormProvider {...methods}>
       <AppShell showFooter={false} showBottomNav={false}>
       <div className="w-full flex flex-col relative select-none h-full">
-        {/* ── Top Header Navigation ── */}
         {step <= 6 && (
           <Container className="max-w-2xl flex items-center gap-3 pt-6 pb-4">
             <BackButton onClick={handleBack} />
@@ -231,7 +224,6 @@ export default function ListItemPage() {
         )}
 
         <Container className="max-w-2xl flex-1 flex flex-col overflow-y-auto py-6">
-          {/* STEP 1: Describe Item */}
           {step === 1 && (
             <AddItemComponent
               categoriesData={categoriesData}
@@ -239,7 +231,6 @@ export default function ListItemPage() {
             />
           )}
 
-          {/* STEP 2: Pricing & Delivery */}
           {step === 2 && (
             <PricingAndDelivery
               showDeliveryDropdown={showDeliveryDropdown}
@@ -249,7 +240,6 @@ export default function ListItemPage() {
             />
           )}
 
-          {/* STEP 3: Add Photos */}
           {step === 3 && (
             <AddPhotosComponent
               photos={photos}
@@ -260,7 +250,6 @@ export default function ListItemPage() {
             />
           )}
 
-          {/* STEP 4: Review & Publish */}
           {step === 4 && (
             <PublishListing
               photos={photos}
@@ -275,7 +264,6 @@ export default function ListItemPage() {
             />
           )}
 
-          {/* STEP 5: Success */}
           {step === 5 && (
             <AddItemSuccess
               itemName={methods.watch("item_name")}

@@ -21,7 +21,6 @@ const FilterOverlay = ({ onClose }: FilterOverlayProps) => {
         className="w-full max-w-sm bg-white rounded-t-3xl md:rounded-none px-4 pt-6 pb-8 shadow-2xl animate-slideUp md:animate-slideLeft md:h-full md:overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-5">
           <h2 className="text-text-primary font-semibold">Filter Results</h2>
 
@@ -47,7 +46,6 @@ const FilterOverlay = ({ onClose }: FilterOverlayProps) => {
           </Button>
         </div>
 
-        {/* Category */}
         <div className="mb-5">
           <Select
             label="Category"
@@ -80,13 +78,11 @@ const FilterOverlay = ({ onClose }: FilterOverlayProps) => {
           ></Select>
         </div>
 
-        {/* Price Range */}
         <div className="mb-5">
           <p className="text-sm font-medium mb-2">Price Range</p>
           <PriceRangeSlider />
         </div>
 
-        {/* Item Condition */}
         <div className="mb-5">
           <p className="text-sm font-medium mb-3">Item Condition</p>
 
@@ -109,7 +105,6 @@ const FilterOverlay = ({ onClose }: FilterOverlayProps) => {
           </div>
         </div>
 
-        {/* Location */}
         <div className="mb-5">
           <Input label="Location" type="text" placeholder="Enter location" />
 
@@ -122,7 +117,6 @@ const FilterOverlay = ({ onClose }: FilterOverlayProps) => {
           </Button>
         </div>
 
-        {/* Verified Sellers Only */}
         <div className="flex items-center gap-2 mb-7">
           <Input
             type="checkbox"
@@ -132,7 +126,6 @@ const FilterOverlay = ({ onClose }: FilterOverlayProps) => {
           />
         </div>
 
-        {/* Action Buttons */}
         <div className="flex gap-3">
           <Button
             type="button"

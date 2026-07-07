@@ -19,24 +19,10 @@ const transactionsApiSlice = generalApiSlice.injectEndpoints({
     }),
 
     startCheckout: builder.mutation({
-      query: ({ id }) => {
-        // const id = typeof args === "string" ? args : args.id;
-        // const callbackUrl = typeof window !== "undefined" ? window.location.origin + "/callback" : "";
-
-        return {
-          url: `/transactions/${id}/checkout`,
-          method: "POST",
-          // body: {
-          //     redirect_url: callbackUrl,
-          //     callback_url: callbackUrl,
-          //     ...(typeof args === "object" ? args : {})
-          // },
-          // params: {
-          //     redirect_url: callbackUrl,
-          //     callback_url: callbackUrl,
-          // }
-        };
-      },
+      query: ({ id }) => ({
+        url: `/transactions/${id}/checkout`,
+        method: "POST",
+      }),
       invalidatesTags: ["Transaction", "Order"],
     }),
 

@@ -20,8 +20,7 @@ const MakeOfferPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // mode=counter to coubter existing offer
-  const mode = searchParams.get("mode"); // "counter" | null
+  const mode = searchParams.get("mode");
   const isCounter = mode === "counter";
   const conversationId = searchParams.get("c_id");
 
@@ -44,7 +43,6 @@ const MakeOfferPage = () => {
 
   const handleSubmit = async () => {
     if (isCounter) {
-      // get stored offerId from session
       const saved = sessionStorage.getItem(`counter-offer-${itemId}`);
       let offerId: string | null = null;
       let storedConvId: string | null = conversationId;
@@ -69,11 +67,9 @@ const MakeOfferPage = () => {
 
       if (res?.success) {
         sessionStorage.removeItem(`counter-offer-${itemId}`);
-        // Go back to the chat page with the conversation id
         router.push(`/chat?c_id=${storedConvId}`);
       }
     } else {
-      // Initial offer
       const res = await makeAnOffer({
         listingId: itemId,
         offer: {
@@ -106,7 +102,6 @@ const MakeOfferPage = () => {
       </Container>
 
       <Container className="max-w-xl flex-1 overflow-y-auto pt-4 pb-8">
-        {/* Item summary card */}
         <div className="flex items-center gap-3 mb-4 bg-white rounded-2xl px-4 py-4 mb-8">
           <div className="w-[70px] h-[70px] rounded-xl bg-[#F0F1F5] overflow-hidden flex-shrink-0 relative">
             {image ? (
@@ -132,7 +127,6 @@ const MakeOfferPage = () => {
           </div>
         </div>
 
-        {/* Counter context label */}
         {isCounter && (
           <div className="bg-[#FFF5F3] border border-primary/20 rounded-xl px-4 py-3 mb-6">
             <p className="text-xs font-semibold text-primary">
@@ -154,7 +148,6 @@ const MakeOfferPage = () => {
           />
         </div>
 
-        {/* Note Textarea */}
         <div className="mb-6">
           <label className="block text-sm font-semibold text-gray-900 mb-2">
             Add a note (optional)

@@ -31,7 +31,6 @@ const ProductInEscrow = ({
         </div>
       </div>
 
-      {/* Escrow badge */}
       <div className="flex items-center gap-2 bg-[#FFE8E0] border border-[#FFB899] rounded-xl px-3 py-3 mt-4">
         <SecureIcon size={16} color="#FF4304" />
         <span className="text-[#C03000] text-sm">

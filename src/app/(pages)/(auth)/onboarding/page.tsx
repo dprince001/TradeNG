@@ -49,7 +49,6 @@ const OnboardingPage = () => {
   return (
     <AuthShell heading="Get started in minutes." subheading="Create your account and start buying or selling safely today.">
     <div className="w-full flex flex-col justify-between relative select-none">
-      {/* Skip Button Spacer */}
       <div className="flex justify-end w-full min-h-[24px]">
         {activeSlide < slides.length - 1 && (
           <button
@@ -61,9 +60,7 @@ const OnboardingPage = () => {
         )}
       </div>
 
-      {/*  */}
 
-      {/* Text Info Footer controls */}
       <div className="flex flex-col gap-6 w-full">
         <div className="flex flex-col items-center text-center gap-3.5 mb-2 max-w-xs mx-auto">
           <h2 className="text-[#1D1E20] text-3xl font-bold">{current.title}</h2>
@@ -82,7 +79,6 @@ const OnboardingPage = () => {
           ))}
         </div>
 
-        {/* Buttons */}
         <div className="flex items-center gap-3 w-full">
           {activeSlide > 0 && activeSlide < slides.length - 1 ? (
             <>

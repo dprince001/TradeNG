@@ -36,11 +36,7 @@ const PaymentPage = () => {
     if (!transactionId) return;
 
     const response = await startCheckout(
-      {
-        id: transactionId,
-        // redirect_url: window.location.origin + "/profile/orders",
-        // callback_url: window.location.origin + "/profile/orders",
-      },
+      { id: transactionId },
       { showSuccessToast: false },
     );
     const checkoutLink = response?.data?.checkout_link;

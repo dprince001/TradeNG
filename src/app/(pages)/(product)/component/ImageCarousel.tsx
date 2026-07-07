@@ -57,7 +57,6 @@ const ImageCarousel = ({
             </>
           )}
 
-          {/* Dots */}
           <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/20 px-2 py-1 rounded-full backdrop-blur-[2px]">
             {photos.map((_, i) => (
               <button

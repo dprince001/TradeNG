@@ -2,24 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Container from "@/app/components/layout/Container";
 import Button from "@/app/components/Button";
 import {
   Search,
   ShieldCheck,
-  Users,
   Star,
   ArrowRight,
   Lock,
-  PackageCheck,
   BadgeCheck,
 } from "lucide-react";
-
-// const trustStats = [
-//   { icon: ShieldCheck, label: "Escrow Protected" },
-//   { icon: Users, label: "10k+ Active Users" },
-//   { icon: Star, label: "4.8 Avg. Rating" },
-// ];
 
 const HeroSection = () => {
   const router = useRouter();
@@ -74,14 +67,9 @@ const HeroSection = () => {
 
           <div className="mt-6 flex items-center justify-center md:justify-start gap-3">
             <Button
+              size="lg"
               variant="secondary"
-              onClick={() => router.push("/list-item")}
-            >
-              Start Selling
-            </Button>
-            <Button
-              variant="none"
-              className="text-white font-medium text-sm hover:underline inline-flex items-center gap-1.5 group"
+              className="bg-white text-primary hover:bg-white/90 active:bg-white/80 shadow-sm inline-flex items-center gap-1.5 group"
               onClick={() => router.push("/listings")}
             >
               Browse Listings
@@ -91,19 +79,6 @@ const HeroSection = () => {
               />
             </Button>
           </div>
-
-          {/* <div className="mt-8 flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-3">
-            {trustStats.map(({ icon: Icon, label }) => (
-              <div key={label} className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-4 h-4 text-white" strokeWidth={2} />
-                </div>
-                <span className="text-white/80 text-xs font-medium whitespace-nowrap">
-                  {label}
-                </span>
-              </div>
-            ))}
-          </div> */}
         </div>
 
         <div className="hidden md:flex flex-1 justify-center relative">
@@ -113,7 +88,6 @@ const HeroSection = () => {
           />
 
           <div className="relative w-full max-w-sm">
-            {/* Order preview card */}
             <div className="bg-white rounded-3xl shadow-2xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-text-secondary text-xs font-medium">
@@ -122,17 +96,20 @@ const HeroSection = () => {
                 <BadgeCheck className="w-4 h-4 text-primary" strokeWidth={2} />
               </div>
 
-              <div className="w-full h-36 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mb-4">
-                <PackageCheck
-                  className="w-10 h-10 text-gray-300"
-                  strokeWidth={1.5}
+              <div className="relative w-full h-36 rounded-2xl overflow-hidden mb-4">
+                <Image
+                  src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8ZGVsbCUyMHhwc3xlbnwwfHwwfHx8MA%3D%3D"
+                  alt="Dell XPS 13 Laptop"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 384px"
                 />
               </div>
 
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-text-primary font-bold text-[15px]">
-                    iPhone 13 Pro Max
+                    Dell XPS 13 Laptop
                   </p>
                   <p className="text-text-secondary text-xs mt-0.5">
                     TechHub Store
@@ -154,7 +131,6 @@ const HeroSection = () => {
               </div>
             </div>
 
-            {/* Floating badge: payment secured */}
             <div className="hidden lg:flex absolute -top-5 -right-6 bg-white rounded-2xl shadow-lg px-3 py-2.5 items-center gap-2.5 animate-fadeIn">
               <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0">
                 <ShieldCheck
@@ -172,7 +148,6 @@ const HeroSection = () => {
               </div>
             </div>
 
-            {/* Floating badge: rating */}
             <div className="hidden lg:flex absolute -bottom-5 -left-6 bg-white rounded-2xl shadow-lg px-3 py-2.5 items-center gap-2.5 animate-fadeIn">
               <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0">
                 <Star

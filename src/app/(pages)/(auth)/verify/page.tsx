@@ -36,7 +36,6 @@ const VerifyPage = () => {
         toast.error("Please capture your face verification selfie first!");
         return;
       }
-      // Submit Verification and set state to pending
       localStorage.setItem("verificationStatus", "pending");
       setStep(4);
     }
@@ -86,7 +85,6 @@ const VerifyPage = () => {
   return (
     <AppShell showFooter={false} showBottomNav={false}>
     <div className="w-full flex flex-col relative select-none">
-      {/* Header */}
       <Container className="max-w-3xl flex items-center gap-3 pt-6 pb-4">
         <BackButton
           onClick={() => {
@@ -100,7 +98,6 @@ const VerifyPage = () => {
         <h1 className="text-text-primary font-semibold text-base tracking-wide">Verify Identity</h1>
       </Container>
 
-      {/* Progress Indicator */}
       {step < 4 && (
         <Container className="max-w-3xl pt-4">
           <div className="flex justify-between items-center text-[10px] text-[#8F959E] font-bold uppercase tracking-wider mb-2">
@@ -120,9 +117,7 @@ const VerifyPage = () => {
         </Container>
       )}
 
-      {/* Steps Content container */}
       <Container className="max-w-3xl flex-1 pt-6 pb-24 overflow-y-auto">
-        {/* STEP 1: Select ID Type */}
         {step === 1 && (
           <div className="flex flex-col gap-4 animate-slideUp">
             <div>
@@ -199,7 +194,6 @@ const VerifyPage = () => {
           </div>
         )}
 
-        {/* STEP 2: Upload Documents */}
         {step === 2 && (
           <div className="flex flex-col gap-4 animate-slideUp">
             <div>
@@ -210,7 +204,6 @@ const VerifyPage = () => {
             </div>
 
             <div className="grid grid-cols-1 gap-4 mt-2">
-              {/* Front side upload card */}
               <div className="border border-dashed border-gray-300 rounded-2xl p-5 bg-white flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[160px]">
                 {isFrontUploaded ? (
                   <div className="flex flex-col items-center gap-2 text-green-600 animate-fadeIn">
@@ -256,7 +249,6 @@ const VerifyPage = () => {
                 )}
               </div>
 
-              {/* Back side upload card */}
               <div className="border border-dashed border-gray-300 rounded-2xl p-5 bg-white flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[160px]">
                 {isBackUploaded ? (
                   <div className="flex flex-col items-center gap-2 text-green-600 animate-fadeIn">
@@ -305,7 +297,6 @@ const VerifyPage = () => {
           </div>
         )}
 
-        {/* STEP 3: Face Verification */}
         {step === 3 && (
           <div className="flex flex-col gap-4 animate-slideUp">
             <div>
@@ -346,7 +337,6 @@ const VerifyPage = () => {
                   </div>
                 )}
 
-                {/* Oval guide border overlay */}
                 <div className="absolute inset-2.5 rounded-full border-2 border-brand-orange/15 pointer-events-none border-double" />
               </div>
 
@@ -362,7 +352,6 @@ const VerifyPage = () => {
           </div>
         )}
 
-        {/* STEP 4: Verification Success Screen */}
         {step === 4 && (
           <div className="flex flex-col items-center justify-center text-center py-10 animate-scaleUp">
             <div className="w-20 h-20 rounded-full bg-green-50 border border-green-200 flex items-center justify-center text-green-500 shadow-md mb-6">
@@ -390,7 +379,6 @@ const VerifyPage = () => {
         )}
       </Container>
 
-      {/* Sticky Bottom Actions */}
       <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-100">
         <Container className="max-w-3xl py-5 flex gap-3">
           {step < 4 ? (

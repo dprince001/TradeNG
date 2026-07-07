@@ -24,11 +24,8 @@ interface RootState {
   };
 }
 
-// export const getBaseUrl = () => "http://localhost:5000/api/v1";
-
 export const getBaseUrl = () => "https://tradeng-api.onrender.com/api/v1";
 
-// Base query setup
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: getBaseUrl(),
   prepareHeaders: (headers, { getState }) => {

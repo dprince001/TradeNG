@@ -6,9 +6,7 @@ import BackIcon from "@/app/assets/svgs/home/BackIcon";
 import { cn } from "@/lib/utils";
 
 interface BackButtonProps {
-  /** Where to send the user when there's no browser history to go back to. Omit to hide the button in that case. */
   fallbackHref?: string;
-  /** Override the default back navigation (e.g. to step back within a wizard). */
   onClick?: () => void;
   className?: string;
 }

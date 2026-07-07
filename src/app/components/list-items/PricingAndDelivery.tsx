@@ -46,7 +46,6 @@ const PricingAndDelivery = ({
       </div>
 
       <div className="flex flex-col gap-5">
-        {/* Item Price */}
         <div className="flex flex-col gap-1.5 w-full">
           <label className="text-sm font-medium text-text-primary">Item Price (₦)</label>
           <div className="relative">
@@ -68,7 +67,6 @@ const PricingAndDelivery = ({
           )}
         </div>
 
-        {/* Price Negotiation Toggle */}
         <div className="flex items-center justify-between py-2 border-b border-gray-50/50">
           <span className="text-sm font-medium text-text-primary">Allow price negotiation?</span>
           <button
@@ -102,7 +100,6 @@ const PricingAndDelivery = ({
           )}
         />
 
-        {/* Pickup / Home delivery address */}
         {needsAddress && (
           <div className="flex flex-col gap-1.5 w-full">
             <label className="text-sm font-medium text-text-primary">Pickup address</label>
@@ -121,16 +118,6 @@ const PricingAndDelivery = ({
       </div>
 
       <div className="mt-auto pt-6">
-        {/* <Button
-          type="button"
-          // onClick={() => setStep(3)}
-
-          fullWidth
-          variant="primary"
-        >
-          Next
-        </Button> */}
-
         <Button
           type="button"
           onClick={async () => {
