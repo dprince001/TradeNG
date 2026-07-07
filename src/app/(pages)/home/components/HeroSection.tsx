@@ -99,7 +99,7 @@ const HeroSection = () => {
               <div className="relative w-full h-36 rounded-2xl overflow-hidden mb-4">
                 <Image
                   src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8ZGVsbCUyMHhwc3xlbnwwfHwwfHx8MA%3D%3D"
-                  alt="iPhone 13 Pro Max"
+                  alt="Dell XPS 13 Laptop"
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 384px"
@@ -109,7 +109,7 @@ const HeroSection = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-text-primary font-bold text-[15px]">
-                    iPhone 13 Pro Max
+                    Dell XPS 13 Laptop
                   </p>
                   <p className="text-text-secondary text-xs mt-0.5">
                     TechHub Store
