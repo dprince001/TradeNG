@@ -54,11 +54,7 @@ const ConversationThread = ({
 
   const goToCounterpartProfile = () => {
     if (!counterpart?.id) return;
-    const params = new URLSearchParams({ id: counterpart.id });
-    if (counterpartName) params.set("name", counterpartName);
-    if (counterpart?.avatar) params.set("avatar", counterpart.avatar);
-    if (counterpart?.is_verified_seller) params.set("verified", "true");
-    router.push(`/seller-profile?${params.toString()}`);
+    router.push(`/profile/${counterpart.id}`);
   };
 
   const { data: conversationData, isLoading: messagesLoading, refetch: refetchMessages } = useGet(
@@ -219,7 +215,6 @@ const ConversationThread = ({
             messages={messages}
             userId={currentUserId}
             sellerId={sellerId}
-            isSeller={isSeller}
             acceptLoading={acceptAnOfferLoading}
             declineLoading={declineAnOfferLoading}
             onAcceptOffer={(offerId) => acceptAnOffer(offerId)}

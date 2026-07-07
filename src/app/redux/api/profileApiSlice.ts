@@ -27,6 +27,14 @@ const profileApiSlice = generalApiSlice.injectEndpoints({
             invalidatesTags: ["Profile"],
         }),
 
+        getPublicUserProfile: builder.query({
+            query: (userId) => ({
+                url: `/profile/users/${userId}`,
+                method: "GET",
+            }),
+            providesTags: (result, error, userId) => [{ type: "Profile", id: userId }],
+        }),
+
         getMySellerStats: builder.query({
             query: () => ({
                 url: `/profile/stats`,
@@ -98,6 +106,7 @@ const profileApiSlice = generalApiSlice.injectEndpoints({
 
 export const {
     useGetMyProfileQuery,
+    useGetPublicUserProfileQuery,
     useUpdateMyProfileMutation,
     useDeleteMyAccountMutation,
     useGetMySellerStatsQuery,

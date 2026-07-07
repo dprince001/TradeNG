@@ -7,7 +7,6 @@ interface ChatMessageListProps {
   messages: any[];
   userId?: string;
   sellerId?: string;
-  isSeller: boolean;
   acceptLoading?: boolean;
   declineLoading?: boolean;
   onAcceptOffer: (offerId: string) => void;
@@ -19,7 +18,6 @@ const ChatMessageList = ({
   messages,
   userId,
   sellerId,
-  isSeller,
   acceptLoading,
   declineLoading,
   onAcceptOffer,
@@ -56,7 +54,7 @@ const ChatMessageList = ({
               isCounterOffer={isCounterOffer}
               label={getOfferLabel(message, sellerId)}
               note={note}
-              showActions={canRespondToOffer(message, isSeller, isMine)}
+              showActions={canRespondToOffer(message, isMine)}
               acceptLoading={acceptLoading}
               declineLoading={declineLoading}
               onAccept={() => onAcceptOffer(offer.id)}

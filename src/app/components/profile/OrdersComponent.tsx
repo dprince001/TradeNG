@@ -9,7 +9,7 @@ import { FadeInStagger, FadeInItem } from "@/app/components/Motion";
 import useGet from "@/app/hooks/useGet";
 import { useGetMyBuyingOrdersQuery, useGetMySellingOrdersQuery } from "@/app/redux/api/ordersApiSlice";
 
-const statusMeta: Record<string, { progress: number; comment: string; color: string; dot: string; text: string }> = {
+export const statusMeta: Record<string, { progress: number; comment: string; color: string; dot: string; text: string }> = {
   PENDING_PAYMENT: {
     progress: 15,
     comment: "Waiting for payment to complete",
@@ -94,13 +94,7 @@ const OrdersComponent = () => {
               return (
                 <FadeInItem
                   key={item.id}
-                  onClick={() =>
-                    router.push(
-                      item.status === "PENDING_PAYMENT"
-                        ? `/payment/${item.id}`
-                        : `/confirm-delivery?id=${item.id}`
-                    )
-                  }
+                  onClick={() => router.push(`/order-details/${item.id}`)}
                   className="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col gap-4 shadow-[0_2px_6px_rgba(0,0,0,0.01)] cursor-pointer hover:border-primary/30 transition-colors"
                 >
                   <div className="flex gap-4">

@@ -36,7 +36,8 @@ const SignIn = ({ setStep }: SignInProps = {}) => {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
 
-  const { handlePost: signIn, isLoading: signInLoading } = usePost(useSignInMutation)
+  const { handlePost: signIn, isLoading: signInLoading } =
+    usePost(useSignInMutation);
 
   const methods = useForm<SignInSchemaType>({
     resolver: zodResolver(signInSchema),
@@ -119,7 +120,7 @@ const SignIn = ({ setStep }: SignInProps = {}) => {
         </FormProvider>
 
         {/* Social Logins */}
-        <div className="flex flex-col items-center gap-5 pt-8">
+        {/* <div className="flex flex-col items-center gap-5 pt-8">
           <span className="text-text-secondary text-xs font-bold">Or with</span>
           <div className="flex gap-4 w-full">
             <button className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-200 bg-white rounded-xl hover:bg-gray-50 transition-colors text-sm font-bold">
@@ -129,7 +130,7 @@ const SignIn = ({ setStep }: SignInProps = {}) => {
               <GoogleIcon /> Google
             </button>
           </div>
-        </div>
+        </div> */}
 
         <span className="pt-8 pb-4 text-text-secondary flex items-center justify-center gap-1 text-xs font-medium">
           Don't have an account?{" "}
