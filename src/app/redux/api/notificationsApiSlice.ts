@@ -15,7 +15,7 @@ const notificationsApiSlice = generalApiSlice.injectEndpoints({
                 url: `/notifications/unread-count`,
                 method: "GET",
             }),
-            providesTags: ["Notification"],
+            providesTags: ["Notification", "Chat"],
         }),
 
         markAllNotificationsRead: builder.mutation({
@@ -23,7 +23,7 @@ const notificationsApiSlice = generalApiSlice.injectEndpoints({
                 url: `/notifications/read-all`,
                 method: "PATCH",
             }),
-            invalidatesTags: ["Notification"],
+            invalidatesTags: ["Notification", "Chat"],
         }),
 
         markNotificationRead: builder.mutation({
@@ -31,7 +31,7 @@ const notificationsApiSlice = generalApiSlice.injectEndpoints({
                 url: `/notifications/${id}/read`,
                 method: "PATCH",
             }),
-            invalidatesTags: ["Notification"],
+            invalidatesTags: ["Notification", "Chat"],
         }),
     }),
     overrideExisting: false

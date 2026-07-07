@@ -4,8 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/app/components/layout/AppShell";
 import AddIcon from "@/app/assets/svgs/home/AddIcon";
-import FilterOverlay from "@/app/(pages)/home/components/Filter";
-import NotificationPanel from "@/app/components/layout/NotificationPanel";
 import HeroSection from "@/app/(pages)/home/components/HeroSection";
 import CategoryRail from "@/app/(pages)/home/components/CategoryRail";
 import EscrowBanner from "@/app/(pages)/home/components/EscrowBanner";
@@ -13,45 +11,24 @@ import DiscoverySection from "@/app/(pages)/home/components/DiscoverySection";
 import PlatformStats from "@/app/(pages)/home/components/PlatformStats";
 import TopSellers from "@/app/(pages)/home/components/TopSellers";
 import useAuthGuard from "@/app/hooks/useAuthGuard";
-import useCurrentUser from "@/app/hooks/useCurrentUser";
 import LoginRequiredModal from "@/app/components/auth/LoginRequiredModal";
-import useGet from "@/app/hooks/useGet";
-import { useGetUnreadNotificationCountQuery } from "@/app/redux/api/notificationsApiSlice";
 import {
   useGetBestSellingListingsQuery,
   useGetFeaturedListingsQuery,
   useGetRecentFromVerifiedSellersQuery,
 } from "@/app/redux/api/discoveryApiSlice";
-import { useGetMyBuyingOrdersQuery } from "@/app/redux/api/ordersApiSlice";
 
 const DISCOVERY_PREVIEW_LIMIT = 10;
 
 const HomePage = () => {
   const router = useRouter();
-  const [showFilter, setShowFilter] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
   const { guard, promptOpen, closePrompt } = useAuthGuard("Sign in to start selling on TradeNG.");
-  const { isLoggedIn } = useCurrentUser();
-
-  const { data: unreadData } = useGet(useGetUnreadNotificationCountQuery, "", isLoggedIn);
-  const unreadCount = unreadData?.unread_count ?? 0;
-
-  const { data: ordersData } = useGet(useGetMyBuyingOrdersQuery, "", isLoggedIn);
-  const cartCount = ordersData?.orders?.length
 
   return (
     <>
-      {showFilter && <FilterOverlay onClose={() => setShowFilter(false)} />}
-      {promptOpen && <LoginRequiredModal onClose={closePrompt} message="Sign in to start selling on TradeNG." />}
-      <NotificationPanel isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
+      {promptOpen && <LoginRequiredModal onClose={closePrompt} />}
 
-      <AppShell
-        headerProps={{
-          cartCount: cartCount,
-          notificationCount: unreadCount,
-          onNotificationClick: () => setShowNotifications(true),
-        }}
-      >
+      <AppShell>
         <HeroSection />
         <PlatformStats />
         <CategoryRail />

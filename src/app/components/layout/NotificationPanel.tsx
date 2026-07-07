@@ -47,7 +47,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, onClose }
     }
     if (notif.related_transaction_id) {
       router.push(`/confirm-delivery?id=${notif.related_transaction_id}`);
-    } else if (notif.related_conversation_id && notif.related_listing_id) {
+    } else if (notif.related_conversation_id) {
       router.push(`/chat?c_id=${notif.related_conversation_id}`);
     } else if (notif.related_listing_id) {
       router.push(`/${notif.related_listing_id}`);

@@ -1,20 +1,22 @@
 import Input from "@/app/components/Input";
 import MessageIcon from "@/app/assets/svgs/home/MessageIcon";
 import { useSocket } from "@/app/context/SocketContext";
+import { Spinner } from "@/app/components/Loader";
 
 interface ChatComposerProps {
   value: string;
   onChange: (value: string) => void;
   onSend: () => void;
-  conversationId: string
+  conversationId: string;
+  isLoading?: boolean;
 }
 
-const ChatComposer = ({ value, onChange, onSend, conversationId }: ChatComposerProps) => {
+const ChatComposer = ({ value, onChange, onSend, conversationId, isLoading }: ChatComposerProps) => {
   const { startTyping, stopTyping } = useSocket();
 
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-3 mt-auto">
       <Input
         placeholder="Type a message..."
         className="bg-[#F3F4F6] rounded-full"
@@ -27,10 +29,11 @@ const ChatComposer = ({ value, onChange, onSend, conversationId }: ChatComposerP
 
       <button
         onClick={onSend}
+        disabled={isLoading}
         aria-label="Send message"
-        className="w-12 h-12 bg-[#FF4304] rounded-full flex items-center justify-center text-white flex-shrink-0 hover:bg-orange-600 transition-colors shadow-sm active:scale-95"
+        className="w-12 h-12 bg-[#FF4304] rounded-full flex items-center justify-center text-white flex-shrink-0 hover:bg-orange-600 transition-colors shadow-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <MessageIcon />
+        {isLoading ? <Spinner className="w-5 h-5 text-white" /> : <MessageIcon />}
       </button>
     </div>
   );
