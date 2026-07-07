@@ -10,6 +10,8 @@ import {
 } from "react";
 import { io, Socket } from "socket.io-client";
 import { useSelector } from "react-redux";
+import useGet from "@/app/hooks/useGet";
+import { useGetUnreadNotificationCountQuery } from "@/app/redux/api/notificationsApiSlice";
 
 export interface SocketNotification {
   id: string;
@@ -18,6 +20,7 @@ export interface SocketNotification {
   read?: boolean;
   created_at?: string;
   data?: Record<string, any>;
+  unread_count?: number;
 }
 
 export interface IncomingMessage {
@@ -43,6 +46,7 @@ interface SocketContextValue {
   stopTyping: (conversationId: string) => void;
   onTyping: (callback: (data: any) => void) => () => void;
   onStopTyping: (callback: (data: any) => void) => () => void;
+  onNewMessage: (callback: (data: any) => void) => () => void;
 }
 
 const SocketContext = createContext<SocketContextValue>({
@@ -58,6 +62,7 @@ const SocketContext = createContext<SocketContextValue>({
   stopTyping: () => { },
   onTyping: (callback: (data: any) => void) => () => { },
   onStopTyping: (callback: (data: any) => void) => () => { },
+  onNewMessage: (callback: (data: any) => void) => () => { },
 });
 
 const SOCKET_URL = "https://tradeng-api.onrender.com";
@@ -71,6 +76,14 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [notifications, setNotifications] = useState<SocketNotification[]>([]);
   const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
+
+  const { data: unreadData } = useGet(useGetUnreadNotificationCountQuery, "", !!token);
+
+  useEffect(() => {
+    if (unreadData?.unread_count !== undefined) {
+      setUnreadNotificationCount(unreadData.unread_count);
+    }
+  }, [unreadData?.unread_count]);
 
   // Connect / reconnect whenever token changes
   useEffect(() => {
@@ -107,15 +120,29 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     // ---- Notification events ------------------------------------------------
     const handleNotification = (data: SocketNotification) => {
       console.log('notification received', data);
-      setNotifications((prev) => [data, ...prev]);
-      setUnreadNotificationCount((c) => c + 1);
+      
+      if (data.type === "NEW_MESSAGE") {
+        if (data.unread_count !== undefined) {
+          setUnreadMessageCount(data.unread_count);
+        } else {
+          setUnreadMessageCount((c) => c + 1);
+        }
+      } else {
+        setNotifications((prev) => [data, ...prev]);
+        if (data.unread_count !== undefined) {
+          setUnreadNotificationCount(data.unread_count);
+        } else {
+          setUnreadNotificationCount((c) => c + 1);
+        }
+      }
     };
 
     socket.on("notification:new", handleNotification);
 
     // ---- New message ------------------------------
-    socket.on("message:new", () => {
-      console.log('message received');
+    socket.on("message:new", (msg: IncomingMessage) => {
+      console.log('message received', msg);
+      if (msg && msg.sender_id === userId) return;
       setUnreadMessageCount((c) => c + 1);
     });
 
@@ -159,6 +186,11 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     return () => { socketRef.current?.off("typing:stop", callback); };
   }, []);
 
+  const onNewMessage = useCallback((callback: (data: any) => void) => {
+    socketRef.current?.on("message:new", callback);
+    return () => { socketRef.current?.off("message:new", callback); };
+  }, []);
+
 
   const markNotificationsRead = useCallback(() => {
     setUnreadNotificationCount(0);
@@ -179,6 +211,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         stopTyping,
         onTyping,
         onStopTyping,
+        onNewMessage,
       }}
     >
       {children}

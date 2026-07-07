@@ -16,6 +16,8 @@ import { useDispatch } from "react-redux";
 import { logOut } from "@/app/redux/api/appSlice";
 import { LogOut } from "lucide-react";
 import { useSocket } from "@/app/context/SocketContext";
+import useGet from "@/app/hooks/useGet";
+import { useGetMyBuyingOrdersQuery } from "@/app/redux/api/ordersApiSlice";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -46,6 +48,9 @@ const SiteHeader = ({
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [mounted, setMounted] = useState(false);
+
+  const { data: ordersData } = useGet(useGetMyBuyingOrdersQuery, "", isLoggedIn);
+  const fetchedCartCount = ordersData?.orders?.length ?? 0;
 
   // set flag to prevent server error
   useEffect(() => {
@@ -145,10 +150,10 @@ const SiteHeader = ({
             className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
             aria-label="Cart"
           >
-            <CartIcon color="#1D1E20" count={showLoggedIn ? cartCount : 0} />
+            <CartIcon color="#1D1E20" count={showLoggedIn ? (cartCount || fetchedCartCount) : 0} />
           </button>
 
-          <div className="hidden mdl:flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5">
             {showLoggedIn ? (
               <div className="flex items-center gap-3">
                 <button

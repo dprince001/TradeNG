@@ -60,7 +60,7 @@ const ConversationList = ({
             const lastMessage = conversation?.last_message ?? conversation?.latest_message;
             const preview =
               lastMessage?.body ||
-              (lastMessage?.message_type === "OFFER" ? "Sent an offer" : "No messages yet");
+              (lastMessage?.message_type === "OFFER" ? "Sent an offer" : "");
 
             return (
               <ConversationListItem

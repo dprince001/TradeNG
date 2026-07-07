@@ -10,6 +10,7 @@ import usePost from "@/app/hooks/usePost";
 import {
   useGetMessageInAConversationQuery,
   useSendMessageMutation,
+  useMarkMessageAsReadMutation
 } from "@/app/redux/api/chatApiSlice";
 import {
   useAcceptAnOfferMutation,
@@ -39,8 +40,7 @@ const ConversationThread = ({
 }: ConversationThreadProps) => {
   const router = useRouter();
   const [message, setMessage] = useState("");
-  const [liveMessages, setLiveMessages] = useState<any[]>([]);
-  const { joinConversation, leaveConversation, onTyping, onStopTyping, isConnected } = useSocket();
+  const { joinConversation, leaveConversation, onTyping, onStopTyping, onNewMessage, isConnected } = useSocket();
   const [isTyping, setIsTyping] = useState(false);
 
   const conversationId = conversation?.id;
@@ -61,7 +61,7 @@ const ConversationThread = ({
     router.push(`/seller-profile?${params.toString()}`);
   };
 
-  const { data: conversationData, isLoading: messagesLoading } = useGet(
+  const { data: conversationData, isLoading: messagesLoading, refetch: refetchMessages } = useGet(
     useGetMessageInAConversationQuery,
     conversationId,
     !!conversationId,
@@ -71,7 +71,8 @@ const ConversationThread = ({
     usePost(useAcceptAnOfferMutation);
   const { handlePost: declineAnOffer, isLoading: declineAnOfferLoading } =
     usePost(useDeclineAnOfferMutation);
-  const { handlePost: sendMessage } = usePost(useSendMessageMutation);
+  const { handlePost: sendMessage, isLoading: isSendingMessage } = usePost(useSendMessageMutation);
+  const { handlePost: markMessageAsRead, isLoading: markMessageAsReadLoading } = usePost(useMarkMessageAsReadMutation);
 
   const messages = [...(conversationData?.messages || [])].reverse();
 
@@ -81,12 +82,19 @@ const ConversationThread = ({
       (m) => m.message_type === "OFFER" && m.offer?.status === "ACCEPTED",
     )?.offer;
 
+  // Mark conversation as read
+  useEffect(() => {
+    if (conversationId) {
+      markMessageAsRead(conversationId, { showSuccessToast: false });
+    }
+  }, [conversationId]);
+
   // Join / leave conversation room
   useEffect(() => {
     if (!conversationId || !isConnected) return;
     joinConversation(conversationId);
     return () => leaveConversation(conversationId);
-  }, [conversationId, joinConversation, leaveConversation]);
+  }, [conversationId, joinConversation, leaveConversation, isConnected]);
 
   // Listen for typing events
   useEffect(() => {
@@ -113,7 +121,22 @@ const ConversationThread = ({
       unsubStart();
       unsubStop();
     };
-  }, [conversationId, currentUserId, onTyping, onStopTyping]);
+  }, [conversationId, currentUserId, onTyping, onStopTyping, isConnected]);
+
+  // Listen for new messages
+  useEffect(() => {
+    if (!isConnected) return;
+
+    const unsubNewMessage = onNewMessage((payload) => {
+      if (payload.conversation_id === conversationId) {
+        refetchMessages?.();
+      }
+    });
+
+    return () => {
+      unsubNewMessage();
+    };
+  }, [conversationId, onNewMessage, isConnected, refetchMessages]);
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
@@ -135,7 +158,7 @@ const ConversationThread = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full min-h-0 bg-[#FAFAFA]">
+    <div className="flex flex-col h-full min-h-0 bg-[#FAFAFA] w-full">
       {/* Header */}
       <div className="flex items-center gap-3 px-5 py-3.5 border-b border-gray-100 bg-white flex-shrink-0">
         {onBack && (
@@ -223,12 +246,13 @@ const ConversationThread = ({
         )}
       </div>
 
-      <div className="px-5 py-4 bg-white border-t border-gray-100 flex-shrink-0">
+      <div className="px-5 py-4 bg-white border-t border-gray-100 flex-shrink-0 mt-auto">
         <ChatComposer
           value={message}
           onChange={setMessage}
           onSend={handleSendMessage}
           conversationId={conversationId}
+          isLoading={isSendingMessage}
         />
       </div>
     </div>
