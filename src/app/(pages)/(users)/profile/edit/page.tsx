@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useDispatch } from "react-redux";
 import { Pencil, User } from "lucide-react";
 import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
@@ -11,6 +12,8 @@ import { PageTransition } from "@/app/components/Motion";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import useGet from "@/app/hooks/useGet";
 import usePost from "@/app/hooks/usePost";
+import useCurrentUser from "@/app/hooks/useCurrentUser";
+import { setUserInfo } from "@/app/redux/api/appSlice";
 import {
   useGetMyProfileQuery,
   useUpdateMyProfileMutation,
@@ -19,6 +22,8 @@ import { useUploadImagesMutation } from "@/app/redux/api/uploadsApiSlice";
 
 export default function EditProfilePage() {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const { user: currentUser } = useCurrentUser();
   const { data: profileData, isFetching } = useGet(useGetMyProfileQuery, "");
   const { handlePost, isLoading } = usePost(useUpdateMyProfileMutation);
   const { handlePost: uploadPhoto, isLoading: isUploadingPhoto } = usePost(
@@ -62,10 +67,13 @@ export default function EditProfilePage() {
     if (!uploadedUrl) return;
 
     setProfilePhoto(uploadedUrl);
-    await handlePost(
+    const response = await handlePost(
       { profile_photo: uploadedUrl },
       { showSuccessToast: false },
     );
+    if (response?.success !== false) {
+      dispatch(setUserInfo({ user: { ...currentUser?.user, profile_photo: uploadedUrl } }));
+    }
   };
 
   const handleSaveProfile = async () => {
@@ -78,6 +86,19 @@ export default function EditProfilePage() {
       profile_photo: profilePhoto,
     });
     if (response?.success !== false) {
+      dispatch(
+        setUserInfo({
+          user: {
+            ...currentUser?.user,
+            first_name: firstName,
+            last_name: lastName,
+            phone_number: phoneNumber,
+            address,
+            about,
+            profile_photo: profilePhoto,
+          },
+        })
+      );
       router.push("/profile");
     }
   };

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
+import { PackageSearch } from "lucide-react";
 import ProductCard from "../../../home/components/ProductCard";
 import ProgressBar from "@/app/components/ProgressBar";
 import Container from "@/app/components/layout/Container";
@@ -99,14 +100,15 @@ const PublicProfilePage = () => {
     { dataKey: "reviews", limit: REVIEWS_PAGE_SIZE, enabled: Boolean(userId) }
   );
 
+  const isSeller = seller?.role === "SELLER";
   const hasListings = listings.length > 0;
-  const isVerifiedBadgeEligible = Boolean(seller?.is_verified_seller) && hasListings;
+  const isVerifiedBadgeEligible = isSeller && Boolean(seller?.is_verified_seller);
 
   const avgRating = seller?.review_average ?? 0;
   const reviewCount = seller?.review_count ?? 0;
 
-  const availableTabs = PROFILE_TABS.filter((tab) => tab !== "listings" || hasListings || listingsLoading);
-  const [activeTab, setActiveTab] = useState<ProfileTab>("listings");
+  const availableTabs = PROFILE_TABS.filter((tab) => tab !== "listings" || isSeller);
+  const [activeTab, setActiveTab] = useState<ProfileTab>(isSeller ? "listings" : "reviews");
   const resolvedTab = availableTabs.includes(activeTab) ? activeTab : availableTabs[0];
 
   const handleMessageSeller = () => {
@@ -133,14 +135,14 @@ const PublicProfilePage = () => {
       {promptOpen && <LoginRequiredModal onClose={closePrompt} message="Sign in to message this seller." />}
 
       <div className="w-full flex flex-col relative">
-        <div className="relative w-full h-[140px] sml:h-[160px] md:h-[200px] bg-gradient-to-br from-[#0D0500] via-[#7A1E00] to-[#C03300] md:rounded-t-2xl">
+        <Container className="max-w-5xl pt-4 md:pt-6">
           <BackButton
             fallbackHref="/home"
-            className="absolute top-4 left-4 w-9 h-9 bg-white shadow-md hover:scale-105"
+            className="w-9 h-9 bg-white border border-gray-100 shadow-sm hover:scale-105"
           />
-        </div>
+        </Container>
 
-        <Container className="max-w-5xl -mt-10 relative z-10 md:grid md:grid-cols-3 md:gap-8 md:items-start pb-8">
+        <Container className="max-w-5xl relative z-10 md:grid md:grid-cols-3 md:gap-8 md:items-start pt-2 pb-8">
           <PageTransition className="flex flex-col items-center md:col-span-1">
             <div className="w-[88px] h-[88px] rounded-full border-4 border-white shadow-md overflow-hidden bg-white flex items-center justify-center text-2xl font-extrabold text-primary bg-primary/10 relative flex-shrink-0">
               {seller?.profile_photo ? (
@@ -179,15 +181,27 @@ const PublicProfilePage = () => {
             </div>
 
             <div className="grid grid-cols-2 divide-x divide-gray-100 border border-gray-100 rounded-2xl py-4 bg-white shadow-sm mt-5 text-center w-full max-w-sm md:max-w-none">
-              <div>
-                <span className="text-sm font-extrabold text-[#1D1E20] block">
-                  {listings.length}
-                  {listingsHasNext ? "+" : ""}
-                </span>
-                <span className="text-[9px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
-                  Active Listings
-                </span>
-              </div>
+              {isSeller ? (
+                <div>
+                  <span className="text-sm font-extrabold text-[#1D1E20] block">
+                    {listings.length}
+                    {listingsHasNext ? "+" : ""}
+                  </span>
+                  <span className="text-[9px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
+                    Active Listings
+                  </span>
+                </div>
+              ) : (
+                <div>
+                  <span className="text-sm font-extrabold text-[#1D1E20] block">
+                    {reviewCount}
+                    {reviewsHasNext ? "+" : ""}
+                  </span>
+                  <span className="text-[9px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
+                    Reviews
+                  </span>
+                </div>
+              )}
               <div>
                 <span className="text-sm font-extrabold text-[#1D1E20] block">{avgRating.toFixed(1)}</span>
                 <span className="text-[9px] text-[#8F959E] font-bold uppercase tracking-wider mt-0.5 block">
@@ -196,7 +210,7 @@ const PublicProfilePage = () => {
               </div>
             </div>
 
-            {!isOwnProfile && hasListings && (
+            {!isOwnProfile && isSeller && hasListings && (
               <div className="flex gap-3 mt-5 w-full max-w-sm md:max-w-none">
                 <button
                   onClick={handleMessageSeller}
@@ -230,11 +244,19 @@ const PublicProfilePage = () => {
             </div>
 
             <div className="flex-1 w-full py-5">
-              {resolvedTab === "listings" &&
+              {resolvedTab === "listings" && isSeller &&
                 (listingsLoading ? (
                   <ListingSkeleton />
                 ) : listings.length === 0 ? (
-                  <p className="text-text-secondary text-sm text-center py-10">No active listings.</p>
+                  <div className="flex flex-col items-center justify-center text-center py-16 gap-3">
+                    <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center">
+                      <PackageSearch className="w-7 h-7 text-text-secondary" strokeWidth={1.5} />
+                    </div>
+                    <p className="text-text-primary font-semibold text-sm">No published listings yet</p>
+                    <p className="text-text-secondary text-xs max-w-xs">
+                      {seller?.first_name || "This seller"} hasn't listed any items for sale yet. Check back later.
+                    </p>
+                  </div>
                 ) : (
                   <>
                     <FadeInStagger className="grid grid-cols-2 sml:grid-cols-3 gap-3.5">
@@ -336,14 +358,16 @@ const PublicProfilePage = () => {
                     </div>
                   </div>
 
-                  <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm flex flex-col gap-2.5">
-                    <ProgressBar
-                      title="Verification"
-                      progress={seller?.is_verified_seller ? 100 : 40}
-                      comment={seller?.is_verified_seller ? "Fully verified seller" : "Seller not yet fully verified"}
-                      color={seller?.is_verified_seller ? "bg-green-500" : "bg-amber-500"}
-                    />
-                  </div>
+                  {isSeller && (
+                    <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm flex flex-col gap-2.5">
+                      <ProgressBar
+                        title="Verification"
+                        progress={seller?.is_verified_seller ? 100 : 40}
+                        comment={seller?.is_verified_seller ? "Fully verified seller" : "Seller not yet fully verified"}
+                        color={seller?.is_verified_seller ? "bg-green-500" : "bg-amber-500"}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
