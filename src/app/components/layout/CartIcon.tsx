@@ -6,7 +6,7 @@ interface CartIconProps {
   color?: string;
 }
 
-const CartIcon = ({ count = 2, className = "", color = "currentColor" }: CartIconProps) => {
+const CartIcon = ({ count = 0, className = "", color = "currentColor" }: CartIconProps) => {
   return (
     <div className={`relative flex items-center justify-center ${className}`}>
       <svg

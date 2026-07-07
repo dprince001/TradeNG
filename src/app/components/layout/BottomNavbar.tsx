@@ -2,10 +2,12 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import React from "react";
+import { useSocket } from "@/app/context/SocketContext";
 
 const BottomNavbar = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const { unreadMessageCount } = useSocket();
 
   const isHome = pathname === "/" || pathname === "/home";
   const isProfile = pathname === "/profile" || pathname?.startsWith("/profile");
@@ -61,8 +63,13 @@ const BottomNavbar = () => {
       </button>
       <button
         onClick={() => router.push("/chat")}
-        className="flex flex-col items-center gap-1 flex-1"
+        className="flex flex-col items-center gap-1 flex-1 relative"
       >
+        {unreadMessageCount > 0 && (
+          <span className="absolute top-0 right-1/2 translate-x-3 -translate-y-0.5 min-w-[16px] h-[16px] rounded-full bg-primary text-white text-[9px] font-bold flex items-center justify-center px-1">
+            {unreadMessageCount > 9 ? "9+" : unreadMessageCount}
+          </span>
+        )}
         <svg
           width="24"
           height="24"

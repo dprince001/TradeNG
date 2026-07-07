@@ -15,6 +15,7 @@ import LoginRequiredModal from "@/app/components/auth/LoginRequiredModal";
 import { useDispatch } from "react-redux";
 import { logOut } from "@/app/redux/api/appSlice";
 import { LogOut } from "lucide-react";
+import { useSocket } from "@/app/context/SocketContext";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -41,6 +42,7 @@ const SiteHeader = ({
   const dispatch = useDispatch();
   const { isLoggedIn } = useCurrentUser();
   const { guard, promptOpen, closePrompt } = useAuthGuard();
+  const { unreadMessageCount, unreadNotificationCount, markNotificationsRead } = useSocket();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [mounted, setMounted] = useState(false);
@@ -127,11 +129,16 @@ const SiteHeader = ({
             </svg>
           </button>
           <button
-            onClick={() => guard(() => onNotificationClick?.())}
-            className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+            onClick={() => {
+              guard(() => {
+                markNotificationsRead();
+                onNotificationClick?.();
+              });
+            }}
+            className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform relative"
             aria-label="Notifications"
           >
-            <NotificationIcon color="#1D1E20" count={showLoggedIn ? notificationCount : 0} />
+            <NotificationIcon color="#1D1E20" count={showLoggedIn ? unreadNotificationCount : 0} />
           </button>
           <button
             onClick={() => guard(() => (onCartClick ? onCartClick() : router.push("/profile/orders")))}

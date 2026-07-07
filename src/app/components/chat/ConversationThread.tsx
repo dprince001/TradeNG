@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import VerifiedIcon from "@/app/assets/svgs/home/VerifiedIcon";
@@ -24,6 +24,7 @@ import {
   getConversationItemId,
   getFullName,
 } from "@/app/components/chat/chatHelpers";
+import { useSocket } from "@/app/context/SocketContext";
 
 interface ConversationThreadProps {
   conversation: any;
@@ -38,6 +39,9 @@ const ConversationThread = ({
 }: ConversationThreadProps) => {
   const router = useRouter();
   const [message, setMessage] = useState("");
+  const [liveMessages, setLiveMessages] = useState<any[]>([]);
+  const { joinConversation, leaveConversation, onTyping, onStopTyping, isConnected } = useSocket();
+  const [isTyping, setIsTyping] = useState(false);
 
   const conversationId = conversation?.id;
   const itemId = getConversationItemId(conversation);
@@ -77,7 +81,39 @@ const ConversationThread = ({
       (m) => m.message_type === "OFFER" && m.offer?.status === "ACCEPTED",
     )?.offer;
 
-  console.log(latestAcceptedOffer);
+  // Join / leave conversation room
+  useEffect(() => {
+    if (!conversationId || !isConnected) return;
+    joinConversation(conversationId);
+    return () => leaveConversation(conversationId);
+  }, [conversationId, joinConversation, leaveConversation]);
+
+  // Listen for typing events
+  useEffect(() => {
+    if (!isConnected) return;
+
+    const unsubStart = onTyping((payload) => {
+      console.log(payload)
+      if (
+        payload.conversation_id === conversationId
+      ) {
+        setIsTyping(true);
+      }
+    });
+
+    const unsubStop = onStopTyping((payload) => {
+      if (
+        payload.conversation_id === conversationId
+      ) {
+        setIsTyping(false);
+      }
+    });
+
+    return () => {
+      unsubStart();
+      unsubStop();
+    };
+  }, [conversationId, currentUserId, onTyping, onStopTyping]);
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
@@ -145,7 +181,7 @@ const ConversationThread = ({
             )}
           </div>
           <span className="text-text-secondary text-xs truncate block">
-            {listing?.item_name || "Item"}
+            {listing?.item_name || "Item"} {isTyping && <span className="text-primary italic ml-1">Typing...</span>}
           </span>
         </button>
       </div>
@@ -177,6 +213,14 @@ const ConversationThread = ({
             }
           />
         )}
+
+        {isTyping && (
+          <div className="flex gap-1.5 mt-4 mb-2 items-center bg-[#F5F6FA] w-fit px-3.5 py-2.5 rounded-2xl rounded-bl-sm border border-gray-100">
+            <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+            <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+            <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+          </div>
+        )}
       </div>
 
       <div className="px-5 py-4 bg-white border-t border-gray-100 flex-shrink-0">
@@ -184,6 +228,7 @@ const ConversationThread = ({
           value={message}
           onChange={setMessage}
           onSend={handleSendMessage}
+          conversationId={conversationId}
         />
       </div>
     </div>

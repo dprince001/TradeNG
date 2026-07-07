@@ -12,9 +12,9 @@ const GovernmentIdIcon = () => {
       <path
         d="M1 2.33333L2.33333 3.66667L5 1"
         stroke="#9CA3AF"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

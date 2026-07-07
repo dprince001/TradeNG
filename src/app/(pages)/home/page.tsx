@@ -22,6 +22,7 @@ import {
   useGetFeaturedListingsQuery,
   useGetRecentFromVerifiedSellersQuery,
 } from "@/app/redux/api/discoveryApiSlice";
+import { useGetMyBuyingOrdersQuery } from "@/app/redux/api/ordersApiSlice";
 
 const DISCOVERY_PREVIEW_LIMIT = 10;
 
@@ -35,6 +36,9 @@ const HomePage = () => {
   const { data: unreadData } = useGet(useGetUnreadNotificationCountQuery, "", isLoggedIn);
   const unreadCount = unreadData?.unread_count ?? 0;
 
+  const { data: ordersData } = useGet(useGetMyBuyingOrdersQuery, "", isLoggedIn);
+  const cartCount = ordersData?.orders?.length
+
   return (
     <>
       {showFilter && <FilterOverlay onClose={() => setShowFilter(false)} />}
@@ -43,7 +47,7 @@ const HomePage = () => {
 
       <AppShell
         headerProps={{
-          cartCount: 1,
+          cartCount: cartCount,
           notificationCount: unreadCount,
           onNotificationClick: () => setShowNotifications(true),
         }}
