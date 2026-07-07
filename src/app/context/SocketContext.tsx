@@ -74,8 +74,6 @@ const SocketContext = createContext<SocketContextValue>({
   onMessageRead: (callback: (data: ReadReceipt) => void) => () => { },
 });
 
-// Socket.io runs on the same host as the REST API (no separate port/path) — derive it
-// from the API base URL rather than hardcoding an environment, so both always agree.
 const SOCKET_URL = getBaseUrl().replace(/\/api\/v\d+\/?$/, "");
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
@@ -96,9 +94,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [unreadData?.unread_count]);
 
-  // Connect / reconnect whenever token changes
   useEffect(() => {
-    // Disconnect any previous socket
     if (socketRef.current) {
       socketRef.current.disconnect();
       socketRef.current = null;
@@ -128,7 +124,6 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       console.warn("[Socket] Connection error:", err.message);
     });
 
-    // ---- Notification events ------------------------------------------------
     const handleNotification = (data: SocketNotification) => {
       console.log('notification received', data);
       
@@ -150,7 +145,6 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
     socket.on("notification:new", handleNotification);
 
-    // ---- New message ------------------------------
     socket.on("message:new", (msg: IncomingMessage) => {
       console.log('message received', msg);
       if (msg && msg.sender_id === userId) return;
@@ -164,9 +158,6 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [token, userId]);
 
-  // ---------------------------------------------------------------------------
-  // Helpers
-  // ---------------------------------------------------------------------------
   const joinConversation = useCallback((conversationId: string) => {
     socketRef.current?.emit("conversation:join", { conversation_id: conversationId });
     console.log('joining conversation', conversationId)
@@ -175,7 +166,6 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const leaveConversation = useCallback((conversationId: string) => {
     socketRef.current?.emit("conversation:leave", { conversation_id: conversationId });
     console.log('leaving conversation', conversationId)
-    // Reset unread when leaving
     setUnreadMessageCount(0);
   }, []);
 

@@ -7,19 +7,12 @@ import Button from "@/app/components/Button";
 import {
   Search,
   ShieldCheck,
-  Users,
   Star,
   ArrowRight,
   Lock,
   PackageCheck,
   BadgeCheck,
 } from "lucide-react";
-
-// const trustStats = [
-//   { icon: ShieldCheck, label: "Escrow Protected" },
-//   { icon: Users, label: "10k+ Active Users" },
-//   { icon: Star, label: "4.8 Avg. Rating" },
-// ];
 
 const HeroSection = () => {
   const router = useRouter();
@@ -91,19 +84,6 @@ const HeroSection = () => {
               />
             </Button>
           </div>
-
-          {/* <div className="mt-8 flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-3">
-            {trustStats.map(({ icon: Icon, label }) => (
-              <div key={label} className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-4 h-4 text-white" strokeWidth={2} />
-                </div>
-                <span className="text-white/80 text-xs font-medium whitespace-nowrap">
-                  {label}
-                </span>
-              </div>
-            ))}
-          </div> */}
         </div>
 
         <div className="hidden md:flex flex-1 justify-center relative">
@@ -113,7 +93,6 @@ const HeroSection = () => {
           />
 
           <div className="relative w-full max-w-sm">
-            {/* Order preview card */}
             <div className="bg-white rounded-3xl shadow-2xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-text-secondary text-xs font-medium">
@@ -154,7 +133,6 @@ const HeroSection = () => {
               </div>
             </div>
 
-            {/* Floating badge: payment secured */}
             <div className="hidden lg:flex absolute -top-5 -right-6 bg-white rounded-2xl shadow-lg px-3 py-2.5 items-center gap-2.5 animate-fadeIn">
               <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0">
                 <ShieldCheck
@@ -172,7 +150,6 @@ const HeroSection = () => {
               </div>
             </div>
 
-            {/* Floating badge: rating */}
             <div className="hidden lg:flex absolute -bottom-5 -left-6 bg-white rounded-2xl shadow-lg px-3 py-2.5 items-center gap-2.5 animate-fadeIn">
               <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0">
                 <Star

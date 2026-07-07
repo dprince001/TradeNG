@@ -135,7 +135,6 @@ const ItemDetailPage = () => {
                 <BackButton fallbackHref="/listings" />
               </div>
 
-              {/* ── Image Carousel ── */}
               <div className="relative w-full lg:rounded-2xl lg:overflow-hidden">
                 <ImageCarousel
                   photos={images}
@@ -144,7 +143,6 @@ const ItemDetailPage = () => {
                   aspectRatio="aspect-[4/3]"
                 />
 
-                {/* Like button overlay */}
                 <button
                   id="item-detail-like-btn"
                   onClick={() => {
@@ -167,7 +165,6 @@ const ItemDetailPage = () => {
                 </button>
               </div>
 
-              {/* Product Info */}
               <div className="px-5 lg:px-0 pt-5">
                 <div className="flex items-center gap-2 mb-1">
                   <h1 className="text-lg lg:text-2xl font-bold">{itemName || "Item"}</h1>
@@ -197,7 +194,6 @@ const ItemDetailPage = () => {
                   <p className="text-[#374151] text-xs lg:text-sm leading-[1.65] mb-5">{description}</p>
                 )}
 
-                {/* Seller Card (mobile/tablet only — shown in sidebar on desktop) */}
                 <div className="lg:hidden flex items-center justify-between bg-white rounded-2xl border border-[#F0F1F5] shadow-[0_4px_4px_0px_rgba(0,0,0,0.1)] px-4 py-3.5 mb-6">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-[#E5E7EB] flex items-center justify-center overflow-hidden">
@@ -228,7 +224,6 @@ const ItemDetailPage = () => {
                   </button>
                 </div>
 
-                {/* Mobile/tablet actions (desktop actions live in the sidebar) */}
                 <div className="lg:hidden">
                   {seller?.id !== userId && (
                     <div className="pb-4 flex gap-3">
@@ -257,7 +252,6 @@ const ItemDetailPage = () => {
                   )}
                 </div>
 
-                {/* Seller's Review */}
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-3">
                     <h2 className="text-xs lg:text-sm font-bold">Seller's Review</h2>
@@ -268,7 +262,6 @@ const ItemDetailPage = () => {
                     </div>
                   </div>
 
-                  {/* Review Card */}
                   {reviews.length > 0 ? (
                     reviews?.slice(0, 2).map((review: any) => (
                       <div key={review.id} className="bg-[#FFF5F3] rounded-2xl p-5 mb-3 text-xs">
@@ -302,7 +295,6 @@ const ItemDetailPage = () => {
               </div>
             </div>
 
-            {/* Desktop sidebar: seller card + actions, sticky */}
             <div className="hidden lg:block">
               <div className="sticky top-24 flex flex-col gap-4">
                 <div className="bg-white rounded-2xl border border-[#F0F1F5] shadow-sm p-5">

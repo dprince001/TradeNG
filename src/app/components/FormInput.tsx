@@ -13,7 +13,6 @@ const FormInput = ({ name, ...props }: FormInputProps) => {
     formState: { errors },
   } = useFormContext();
 
-  // Handle nested objects if any, but flat is standard for login fields
   const errorMsg = errors[name]?.message as string | undefined;
 
   return (

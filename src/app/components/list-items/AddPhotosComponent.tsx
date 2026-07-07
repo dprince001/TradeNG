@@ -28,7 +28,6 @@ const AddPhotosComponent = ({
         </p>
       </div>
 
-      {/* Dotted Upload Box */}
       <div
         onClick={() => fileInputRef.current?.click()}
         className="border-2 border-dashed border-gray-200 hover:border-primary/40 rounded-2xl py-8 px-6 flex flex-col items-center justify-center cursor-pointer transition-colors bg-gray-50/20 group"
@@ -71,7 +70,6 @@ const AddPhotosComponent = ({
         </button>
       </div>
 
-      {/* Uploaded Thumbnails Grid */}
       {photos.length > 0 && (
         <div className="flex flex-col gap-2.5">
           <span className="text-xs font-bold text-text-primary">
@@ -114,7 +112,6 @@ const AddPhotosComponent = ({
               </div>
             ))}
 
-            {/* Add more photo grid card */}
             <button
               onClick={() => fileInputRef.current?.click()}
               className="aspect-square rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center bg-gray-50/50 hover:bg-gray-50 transition-colors"

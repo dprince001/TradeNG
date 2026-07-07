@@ -22,8 +22,6 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
   const router = useRouter();
   const isRoot = pathname === "/profile";
 
-  // /profile/{userId} is a public storefront page (someone else's profile) — it
-  // renders its own header/tabs, so it opts out of the "my profile" sidebar chrome.
   const firstSegment = pathname.split("/")[2];
   const isPublicUserProfile = !isRoot && firstSegment && !STATIC_PROFILE_SEGMENTS.includes(firstSegment);
 

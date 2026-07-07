@@ -97,21 +97,18 @@ const ConversationThread = ({
   const latestAcceptedOffer = latestAcceptedOfferMessage?.offer;
   const latestAcceptedOfferClosed = isOfferClosed(latestAcceptedOfferMessage);
 
-  // Mark conversation as read
   useEffect(() => {
     if (conversationId) {
       markMessageAsRead(conversationId, { showSuccessToast: false });
     }
   }, [conversationId]);
 
-  // Join / leave conversation room
   useEffect(() => {
     if (!conversationId || !isConnected) return;
     joinConversation(conversationId);
     return () => leaveConversation(conversationId);
   }, [conversationId, joinConversation, leaveConversation, isConnected]);
 
-  // Listen for typing events
   useEffect(() => {
     if (!isConnected) return;
 
@@ -134,14 +131,12 @@ const ConversationThread = ({
     };
   }, [conversationId, currentUserId, onTyping, onStopTyping, isConnected]);
 
-  // Listen for new messages (regular text + offers both arrive over message:new)
   useEffect(() => {
     if (!isConnected) return;
 
     const unsubNewMessage = onNewMessage((payload) => {
       if (payload.conversation_id === conversationId) {
         refetchMessages?.();
-        // The other participant is still in the room actively sending — clear any stale typing indicator.
         if (payload.sender_id !== currentUserId) setIsTyping(false);
       }
     });
@@ -157,7 +152,6 @@ const ConversationThread = ({
     currentUserId,
   ]);
 
-  // Listen for read receipts — flips our sent messages to "seen" live.
   useEffect(() => {
     if (!isConnected) return;
 
@@ -196,7 +190,6 @@ const ConversationThread = ({
 
   return (
     <div className="flex flex-col h-full min-h-0 bg-[#FAFAFA] w-full">
-      {/* Header */}
       <div className="flex items-center gap-3 px-5 py-3.5 border-b border-gray-100 bg-white flex-shrink-0">
         {onBack && (
           <button

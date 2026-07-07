@@ -61,12 +61,9 @@ const PublishListing = ({
         </p>
       </div>
 
-      {/* Listing Preview Card */}
       <div className="border border-gray-100 rounded-2xl overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.04)] bg-white flex flex-col">
-        {/* Image Carousel */}
        <ImageCarousel photos={photos} setActivePhotoIndex={setActivePhotoIndex} activePhotoIndex={activePhotoIndex} />
 
-        {/* Card details */}
         <div className="p-5 flex flex-col gap-4">
           <div>
             <div className="flex items-center gap-2 flex-wrap">

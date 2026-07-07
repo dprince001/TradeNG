@@ -68,7 +68,6 @@ const ProductCard = ({
         </button>
       </div>
 
-      {/* Info  */}
       <div className="px-3 pt-2.5 pb-3">
         <p className="text-text-primary text-xs font-medium leading-tight mb-1.5">
           {title || item_name}

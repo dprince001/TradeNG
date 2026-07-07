@@ -132,7 +132,6 @@ const OrderDetailsPage = () => {
             <OrderSkeleton />
           ) : (
             <PageTransition className="flex flex-col gap-4">
-              {/* Product summary */}
               <div className="bg-white rounded-2xl p-4 shadow-sm">
                 <div className="flex gap-4">
                   <div className="w-[84px] h-[84px] rounded-xl bg-[#F0F1F5] overflow-hidden flex-shrink-0 relative">
@@ -181,7 +180,6 @@ const OrderDetailsPage = () => {
                 </div>
               </div>
 
-              {/* Counterparty */}
               <button
                 onClick={() => counterparty?.id && router.push(`/profile/${counterparty.id}`)}
                 className="bg-white rounded-2xl p-4 shadow-sm flex items-center justify-between gap-3 text-left hover:bg-gray-50 transition-colors"
@@ -208,7 +206,6 @@ const OrderDetailsPage = () => {
                 <ChevronRight size={18} className="text-gray-300 flex-shrink-0" />
               </button>
 
-              {/* Cost breakdown */}
               <div className="bg-white rounded-2xl p-4 shadow-sm flex flex-col gap-3">
                 <h3 className="text-text-primary text-xs font-extrabold uppercase tracking-wider">
                   Payment Breakdown
@@ -232,7 +229,6 @@ const OrderDetailsPage = () => {
                 </div>
               </div>
 
-              {/* Status-driven action panel */}
               {transaction.status === "PENDING_PAYMENT" && (
                 <div className="bg-white rounded-2xl p-5 flex flex-col items-center text-center shadow-sm">
                   <div className="w-[56px] h-[56px] rounded-full bg-amber-50 flex items-center justify-center mb-4">

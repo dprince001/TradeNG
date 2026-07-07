@@ -5,24 +5,12 @@ import { toast } from "sonner";
 type PaginationType = "cursor" | "page";
 
 interface UsePaginatedQueryOptions {
-  /** Key inside `data.data` that holds the array of items, e.g. "listings" or "reviews". */
   dataKey: string;
-  /** Pagination mode. Backend defaults to cursor, so this hook does too. */
   paginationType?: PaginationType;
   limit?: number;
   enabled?: boolean;
 }
 
-/**
- * Wraps an RTK Query hook to drive either cursor-based infinite scroll
- * (default, matching the backend default) or classic numbered pagination,
- * depending on `paginationType`.
- *
- * Cursor mode accumulates items across loads and exposes `sentinelRef` —
- * attach it to a div at the end of the list to auto-load more on scroll.
- * Page mode replaces items per page and exposes `page`/`setPage` for
- * numbered pagination controls instead.
- */
 const usePaginatedQuery = (
   useQueryHook: (arg: any) => any,
   baseParams: Record<string, any>,

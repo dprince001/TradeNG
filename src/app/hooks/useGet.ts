@@ -7,7 +7,7 @@ const useGet = (
   arg: any,
   condition = true
 ) => {
-  const queryResult = useQueryHook(condition ? arg : skipToken); // RTK Query handles skipToken
+  const queryResult = useQueryHook(condition ? arg : skipToken);
 
   const { data, error, isLoading, isFetching, isError, isSuccess, refetch } = queryResult;
 

@@ -12,14 +12,12 @@ const ForgotPasswordPage = () => {
   const router = useRouter();
   const [step, setStep] = useState<ForgotStep>("email");
 
-  // Form states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // OTP State (4 digits as shown in mockup)
   const [otp, setOtp] = useState<string[]>(new Array(4).fill(""));
 
   const handleOtpChange = (index: number, val: string) => {
@@ -28,7 +26,6 @@ const ForgotPasswordPage = () => {
     newOtp[index] = val.substring(val.length - 1);
     setOtp(newOtp);
 
-    // Auto-focus next input
     if (val && index < 3) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       nextInput?.focus();
@@ -63,7 +60,6 @@ const ForgotPasswordPage = () => {
       subheading="We'll send a verification code to your email so you can safely get back into your account."
     >
     <div className="w-full flex flex-col justify-between relative select-none">
-      {/* Back button */}
       {step !== "success" && (
         <div className="flex justify-start w-full mb-6">
           <button
@@ -90,7 +86,6 @@ const ForgotPasswordPage = () => {
         </div>
       )}
 
-      {/* ── STEP 1: Enter Email ── */}
       {step === "email" && (
         <div className="flex-1 flex flex-col justify-between animate-fadeIn">
           <div>
@@ -128,7 +123,6 @@ const ForgotPasswordPage = () => {
         </div>
       )}
 
-      {/* ── STEP 2: Verify Code (4 digits) ── */}
       {step === "otp" && (
         <div className="flex-1 flex flex-col justify-between animate-fadeIn">
           <div>
@@ -169,7 +163,6 @@ const ForgotPasswordPage = () => {
         </div>
       )}
 
-      {/* ── STEP 3: Reset Password ── */}
       {step === "reset" && (
         <div className="flex-1 flex flex-col justify-between animate-fadeIn">
           <div>
@@ -241,7 +234,6 @@ const ForgotPasswordPage = () => {
         </div>
       )}
 
-      {/* ── STEP 4: Success Confirmation ── */}
       {step === "success" && (
         <div className="flex-1 flex flex-col justify-between items-center text-center animate-fadeIn pt-10">
           <div className="flex-1 flex flex-col items-center justify-center">

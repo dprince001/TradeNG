@@ -333,15 +333,6 @@ const PaymentStatusPage = () => {
         </Container>
 
         <Container className="max-w-2xl pt-6 pb-4 space-y-3 mt-auto">
-          {/* <Button
-            fullWidth
-            disabled={!transaction}
-            onClick={() => router.push(`/confirm-delivery?id=${transactionId}`)}
-            className="font-bold text-md"
-          >
-            Track Order
-          </Button> */}
-
           <Button
             fullWidth
             disabled={!transaction}

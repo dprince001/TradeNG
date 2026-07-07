@@ -16,12 +16,9 @@ export const getOfferLabel = (message: any, sellerId?: string) => {
 
 export const canRespondToOffer = (message: any, isMine: boolean) => {
   const status = message?.offer?.status;
-  // Bidirectional: only whoever did *not* propose the current offer may accept/counter/decline it.
   return !isMine && status !== "ACCEPTED" && status !== "DECLINED";
 };
 
-// Once an accepted offer's transaction has moved past PENDING_PAYMENT (buyer already paid),
-// the offer is done — action buttons (accept/decline/counter/proceed to payment) no longer apply.
 export const isOfferClosed = (message: any) => {
   const transactionStatus = message?.transaction_status;
   return Boolean(transactionStatus) && transactionStatus.toLowerCase() !== "pending_payment";
