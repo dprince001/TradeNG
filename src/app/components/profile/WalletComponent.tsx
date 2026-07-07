@@ -22,7 +22,9 @@ import {
   useAddPayoutBankMutation,
   useUpdatePayoutBankMutation,
   useRemovePayoutBankMutation,
+  useGetWithdrawalsQuery,
   useRequestWithdrawalMutation,
+  useCancelWithdrawalMutation,
 } from "@/app/redux/api/walletApiSlice";
 
 const ledgerLabels: Record<string, string> = {
@@ -32,15 +34,24 @@ const ledgerLabels: Record<string, string> = {
   WITHDRAWAL_REVERSAL: "Withdrawal reversed",
 };
 
+const withdrawalStatusStyles: Record<string, string> = {
+  PENDING: "text-amber-600 bg-amber-50",
+  COMPLETED: "text-green-600 bg-green-50",
+  REJECTED: "text-red-500 bg-red-50",
+  CANCELLED: "text-[#8F959E] bg-gray-100",
+};
+
 const WalletComponent = () => {
   const { data: walletData, isFetching: walletLoading } = useGet(useGetWalletQuery, "");
   const { data: ledgerData } = useGet(useGetWalletLedgerQuery, "");
   const { data: banksData, refetch: refetchBanks } = useGet(useGetPayoutBanksQuery, "");
+  const { data: withdrawalsData, refetch: refetchWithdrawals } = useGet(useGetWithdrawalsQuery, "");
 
   const { handlePost: addBank, isLoading: addingBank } = usePost(useAddPayoutBankMutation);
   const { handlePost: updateBank, isLoading: updatingBank } = usePost(useUpdatePayoutBankMutation);
   const { handlePost: removeBank, isLoading: removingBank } = usePost(useRemovePayoutBankMutation);
   const { handlePost: requestWithdrawal, isLoading: withdrawing } = usePost(useRequestWithdrawalMutation);
+  const { handlePost: cancelWithdrawal, isLoading: cancellingWithdrawal } = usePost(useCancelWithdrawalMutation);
 
   const [showWalletModal, setShowWalletModal] = useState<"withdraw" | "add-bank" | null>(null);
   const [modalAmount, setModalAmount] = useState("");
@@ -50,10 +61,12 @@ const WalletComponent = () => {
   const [accountNumber, setAccountNumber] = useState("");
   const [accountName, setAccountName] = useState("");
   const [deleteBankId, setDeleteBankId] = useState<string | null>(null);
+  const [cancelWithdrawalId, setCancelWithdrawalId] = useState<string | null>(null);
 
   const wallet = walletData?.wallet;
   const ledger = ledgerData?.ledger || [];
   const banks = banksData?.payout_banks || [];
+  const withdrawals = withdrawalsData?.withdrawals || [];
 
   const closeModal = () => {
     setShowWalletModal(null);
@@ -84,7 +97,10 @@ const WalletComponent = () => {
     const amount = parseFloat(modalAmount);
     if (!selectedBankId || isNaN(amount) || amount <= 0) return;
     const response = await requestWithdrawal({ amount, payout_bank_id: selectedBankId });
-    if (response?.success !== false) closeModal();
+    if (response?.success !== false) {
+      refetchWithdrawals();
+      closeModal();
+    }
   };
 
   const handleSaveBank = async () => {
@@ -104,6 +120,15 @@ const WalletComponent = () => {
     if (response?.success !== false) {
       refetchBanks();
       setDeleteBankId(null);
+    }
+  };
+
+  const handleCancelWithdrawal = async () => {
+    if (!cancelWithdrawalId) return;
+    const response = await cancelWithdrawal(cancelWithdrawalId);
+    if (response?.success !== false) {
+      refetchWithdrawals();
+      setCancelWithdrawalId(null);
     }
   };
 
@@ -223,6 +248,53 @@ const WalletComponent = () => {
                   </svg>
                 </button>
               </div>
+            </FadeInItem>
+          ))}
+        </FadeInStagger>
+      )}
+
+      <h3 className="text-xs font-extrabold text-[#1D1E20] uppercase tracking-wider mt-7 mb-3.5">
+        Withdrawal Requests
+      </h3>
+
+      {withdrawals.length === 0 ? (
+        <p className="text-text-secondary text-xs mb-2">No withdrawal requests yet.</p>
+      ) : (
+        <FadeInStagger className="flex flex-col gap-3 md:grid md:grid-cols-2 md:gap-3 mb-2">
+          {withdrawals.map((w: any) => (
+            <FadeInItem
+              key={w.id}
+              className="bg-white border border-gray-100 rounded-2xl p-4 flex items-center justify-between shadow-[0_2px_6px_rgba(0,0,0,0.01)] md:max-w-xl"
+            >
+              <div className="flex flex-col space-y-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-[#1D1E20] leading-tight">
+                    {formatNaira(w.amount)}
+                  </span>
+                  <span
+                    className={`text-[9px] font-bold rounded-full px-2 py-0.5 flex-shrink-0 ${
+                      withdrawalStatusStyles[w.status] || "text-[#8F959E] bg-gray-100"
+                    }`}
+                  >
+                    {w.status}
+                  </span>
+                </div>
+                <span className="text-[11px] text-[#8F959E] font-medium truncate">
+                  {w.bank_name} · {w.account_number}
+                </span>
+                <span className="text-[10px] text-[#8F959E]">
+                  {new Date(w.created_at).toLocaleString()}
+                </span>
+              </div>
+
+              {w.status === "PENDING" && (
+                <button
+                  onClick={() => setCancelWithdrawalId(w.id)}
+                  className="text-[11px] font-bold text-red-500 hover:underline flex-shrink-0 ml-3"
+                >
+                  Cancel
+                </button>
+              )}
             </FadeInItem>
           ))}
         </FadeInStagger>
@@ -390,6 +462,28 @@ const WalletComponent = () => {
             </Button>
             <Button variant="primary" className="flex-1 bg-red-500 hover:bg-red-600" loading={removingBank} onClick={handleDeleteBank}>
               Remove
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={cancelWithdrawalId !== null} onOpenChange={(open) => !open && setCancelWithdrawalId(null)}>
+        <DialogContent className="max-w-sm rounded-3xl p-6 bg-white border border-gray-150">
+          <DialogHeader>
+            <DialogTitle className="text-base font-extrabold text-[#1D1E20] leading-none mb-1">
+              Cancel Withdrawal
+            </DialogTitle>
+            <DialogDescription className="text-[10px] text-text-secondary leading-normal mb-2">
+              The requested amount will be credited back to your available balance.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex gap-3 mt-3">
+            <Button variant="outline" className="flex-1 text-[#1D1E20] border-gray-200" onClick={() => setCancelWithdrawalId(null)}>
+              Keep Request
+            </Button>
+            <Button variant="primary" className="flex-1 bg-red-500 hover:bg-red-600" loading={cancellingWithdrawal} onClick={handleCancelWithdrawal}>
+              Cancel Withdrawal
             </Button>
           </div>
         </DialogContent>

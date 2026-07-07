@@ -68,6 +68,14 @@ const walletApiSlice = generalApiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Wallet"],
         }),
+
+        cancelWithdrawal: builder.mutation({
+            query: (id) => ({
+                url: `/wallet/withdrawals/${id}/cancel`,
+                method: "PATCH",
+            }),
+            invalidatesTags: ["Wallet"],
+        }),
     }),
     overrideExisting: false
 });
@@ -81,4 +89,5 @@ export const {
     useRemovePayoutBankMutation,
     useGetWithdrawalsQuery,
     useRequestWithdrawalMutation,
+    useCancelWithdrawalMutation,
 } = walletApiSlice;
