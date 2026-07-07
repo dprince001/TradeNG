@@ -212,7 +212,7 @@ const ItemDetailPage = () => {
                   </div>
 
                   <button
-                    onClick={() => router.push(`/seller-profile?id=${seller?.id}`)}
+                    onClick={() => router.push(`/profile/${seller?.id}`)}
                     className="flex items-center gap-1.5 text-primary text-xs font-semibold"
                   >
                     view seller
@@ -312,7 +312,7 @@ const ItemDetailPage = () => {
                     </div>
                     <div>
                       <span className="text-sm font-semibold block">{sellerName}</span>
-                      <button onClick={() => router.push(`/seller-profile?id=${seller?.id}`)} className="text-primary text-xs font-semibold">
+                      <button onClick={() => router.push(`/profile/${seller?.id}`)} className="text-primary text-xs font-semibold">
                         View seller profile
                       </button>
                     </div>

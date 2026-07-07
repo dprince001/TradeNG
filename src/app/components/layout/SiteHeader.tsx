@@ -9,6 +9,7 @@ import CartIcon from "@/app/components/layout/CartIcon";
 import NotificationIcon from "@/app/components/layout/NotificationIconComponent";
 import MenuIcon from "@/app/assets/svgs/home/MenuIcon";
 import SearchIcon from "@/app/assets/svgs/home/SearchIcon";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import useCurrentUser from "@/app/hooks/useCurrentUser";
 import useAuthGuard from "@/app/hooks/useAuthGuard";
 import LoginRequiredModal from "@/app/components/auth/LoginRequiredModal";
@@ -22,7 +23,7 @@ import { useGetMyBuyingOrdersQuery } from "@/app/redux/api/ordersApiSlice";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Categories", href: "/#categories" },
-  { label: "Sell", href: "/list-item" },
+  // { label: "Sell", href: "/list-item" },
 ];
 
 interface SiteHeaderProps {
@@ -42,14 +43,19 @@ const SiteHeader = ({
 }: SiteHeaderProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { isLoggedIn } = useCurrentUser();
+  const { user, isLoggedIn } = useCurrentUser();
   const { guard, promptOpen, closePrompt } = useAuthGuard();
-  const { unreadMessageCount, unreadNotificationCount, markNotificationsRead } = useSocket();
+  const { unreadMessageCount, unreadNotificationCount, markNotificationsRead } =
+    useSocket();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [mounted, setMounted] = useState(false);
 
-  const { data: ordersData } = useGet(useGetMyBuyingOrdersQuery, "", isLoggedIn);
+  const { data: ordersData } = useGet(
+    useGetMyBuyingOrdersQuery,
+    "",
+    isLoggedIn,
+  );
   const fetchedCartCount = ordersData?.orders?.length ?? 0;
 
   // set flag to prevent server error
@@ -66,7 +72,11 @@ const SiteHeader = ({
   };
 
   const handleSearch = () => {
-    router.push(searchValue ? `/listings?q=${encodeURIComponent(searchValue)}` : "/listings");
+    router.push(
+      searchValue
+        ? `/listings?q=${encodeURIComponent(searchValue)}`
+        : "/listings",
+    );
   };
 
   return (
@@ -83,7 +93,10 @@ const SiteHeader = ({
             <MenuIcon />
           </button>
 
-          <Link href="/" className="text-text-primary font-bold text-lg tracking-tight">
+          <Link
+            href="/"
+            className="text-text-primary font-bold text-lg tracking-tight"
+          >
             Trade<span className="text-primary">NG</span>
           </Link>
         </div>
@@ -120,7 +133,16 @@ const SiteHeader = ({
             className="hidden mdl:flex w-10 h-10 rounded-full bg-gray-100 items-center justify-center hover:scale-105 active:scale-95 transition-transform"
             aria-label="Favourites"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D1E20" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#1D1E20"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
           </button>
@@ -129,7 +151,16 @@ const SiteHeader = ({
             className="hidden mdl:flex w-10 h-10 rounded-full bg-gray-100 items-center justify-center hover:scale-105 active:scale-95 transition-transform"
             aria-label="Chat"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D1E20" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#1D1E20"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
             </svg>
           </button>
@@ -143,14 +174,24 @@ const SiteHeader = ({
             className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform relative"
             aria-label="Notifications"
           >
-            <NotificationIcon color="#1D1E20" count={showLoggedIn ? unreadNotificationCount : 0} />
+            <NotificationIcon
+              color="#1D1E20"
+              count={showLoggedIn ? unreadNotificationCount : 0}
+            />
           </button>
           <button
-            onClick={() => guard(() => (onCartClick ? onCartClick() : router.push("/profile/orders")))}
+            onClick={() =>
+              guard(() =>
+                onCartClick ? onCartClick() : router.push("/profile/orders"),
+              )
+            }
             className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
             aria-label="Cart"
           >
-            <CartIcon color="#1D1E20" count={showLoggedIn ? (cartCount || fetchedCartCount) : 0} />
+            <CartIcon
+              color="#1D1E20"
+              count={showLoggedIn ? cartCount || fetchedCartCount : 0}
+            />
           </button>
 
           <div className="flex items-center gap-2.5">
@@ -158,22 +199,36 @@ const SiteHeader = ({
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => router.push("/profile")}
-                  className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm"
+                  className="w-10 h-10 rounded-full hover:scale-105 active:scale-95 transition-transform"
                   aria-label="Profile"
                 >
-                  U
+                  <Avatar className="w-10 h-10">
+                    <AvatarImage
+                      src={user?.user?.profile_photo}
+                      alt="Profile"
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
+                      {user?.user?.first_name?.[0]}
+                      {user?.user?.last_name?.[0]}
+                    </AvatarFallback>
+                  </Avatar>
                 </button>
                 <button
                   onClick={handleLogout}
                   className="text-sm text-red-500 font-medium"
                   aria-label="Log out"
                 >
-                 <LogOut className="w-5 h-5" strokeWidth={1.8} />
+                  <LogOut className="w-5 h-5" strokeWidth={1.8} />
                 </button>
               </div>
             ) : (
               <>
-                <Button variant="ghost" size="sm" onClick={() => router.push("/login")}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => router.push("/login")}
+                >
                   Log In
                 </Button>
                 <Button size="sm" onClick={() => router.push("/register")}>

@@ -6,7 +6,7 @@ import ChatInbox from "@/app/components/chat/ChatInbox";
 
 const ChatInboxPage = () => {
   return (
-    <AppShell fixedHeight showFooter={false} headerProps={{ showSearch: false }}>
+    <AppShell fixedHeight showFooter={false}>
       <Suspense fallback={null}>
         <ChatInbox />
       </Suspense>

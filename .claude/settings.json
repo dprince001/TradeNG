@@ -15,7 +15,8 @@
       "Bash(curl -s https://tradeng-api.onrender.com/api/docs/v1/swagger-ui-init.js)",
       "Bash(timeout 60 bash -c 'until curl -sf http://localhost:3000 >/dev/null; do sleep 1; done')",
       "Bash(command -v chromium-cli)",
-      "Bash(tail -n 100 /tmp/nextdev.log)"
+      "Bash(tail -n 100 /tmp/nextdev.log)",
+      "Bash(node extract3.js)"
     ]
   }
 }

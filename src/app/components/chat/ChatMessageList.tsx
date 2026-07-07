@@ -1,13 +1,18 @@
 import { useEffect, useRef } from "react";
 import MessageBubble from "@/app/components/chat/MessageBubble";
 import OfferMessageCard from "@/app/components/chat/OfferMessageCard";
-import { canRespondToOffer, formatMessageTime, getOfferLabel } from "@/app/components/chat/chatHelpers";
+import {
+  canRespondToOffer,
+  formatMessageTime,
+  getOfferLabel,
+  isOfferClosed,
+} from "@/app/components/chat/chatHelpers";
 
 interface ChatMessageListProps {
   messages: any[];
   userId?: string;
   sellerId?: string;
-  isSeller: boolean;
+  counterpartReadAt?: string | null;
   acceptLoading?: boolean;
   declineLoading?: boolean;
   onAcceptOffer: (offerId: string) => void;
@@ -19,7 +24,7 @@ const ChatMessageList = ({
   messages,
   userId,
   sellerId,
-  isSeller,
+  counterpartReadAt,
   acceptLoading,
   declineLoading,
   onAcceptOffer,
@@ -39,13 +44,26 @@ const ChatMessageList = ({
         const time = formatMessageTime(message.created_at);
 
         if (message.message_type === "TEXT") {
-          return <MessageBubble key={message.id} body={message.body} time={time} isMine={isMine} />;
+          const isRead =
+            isMine &&
+            !!counterpartReadAt &&
+            new Date(message.created_at) <= new Date(counterpartReadAt);
+          return (
+            <MessageBubble
+              key={message.id}
+              body={message.body}
+              time={time}
+              isMine={isMine}
+              isRead={isRead}
+            />
+          );
         }
 
         if (message.message_type === "OFFER") {
           const offer = message?.offer;
           const isCounterOffer = !!offer?.parent_offer_id;
           const note = message.body?.split(" — ")[1];
+          const closed = isOfferClosed(message);
 
           return (
             <OfferMessageCard
@@ -56,7 +74,8 @@ const ChatMessageList = ({
               isCounterOffer={isCounterOffer}
               label={getOfferLabel(message, sellerId)}
               note={note}
-              showActions={canRespondToOffer(message, isSeller, isMine)}
+              showActions={!closed && canRespondToOffer(message, isMine)}
+              closed={closed}
               acceptLoading={acceptLoading}
               declineLoading={declineLoading}
               onAccept={() => onAcceptOffer(offer.id)}
@@ -68,7 +87,7 @@ const ChatMessageList = ({
 
         return null;
       })}
-      
+
       <div ref={bottomRef} />
     </>
   );

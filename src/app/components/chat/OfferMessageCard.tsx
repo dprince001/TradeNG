@@ -1,3 +1,4 @@
+import { Lock } from "lucide-react";
 import Button from "@/app/components/Button";
 import MessageBubble from "@/app/components/chat/MessageBubble";
 import { formatNaira } from "@/lib/utils";
@@ -10,6 +11,7 @@ interface OfferMessageCardProps {
   label: string;
   note?: string;
   showActions: boolean;
+  closed?: boolean;
   acceptLoading?: boolean;
   declineLoading?: boolean;
   onAccept?: () => void;
@@ -25,6 +27,7 @@ const OfferMessageCard = ({
   label,
   note,
   showActions,
+  closed,
   acceptLoading,
   declineLoading,
   onAccept,
@@ -45,31 +48,38 @@ const OfferMessageCard = ({
 
         <div className="text-[20px] font-bold text-primary mb-1">{formatNaira(amount)}</div>
 
-        {showActions && (
-          <div className="flex items-center gap-2 mb-3 mt-2">
-            <Button variant="primary" fullWidth onClick={onAccept} loading={acceptLoading} size="sm">
-              Accept
-            </Button>
-            <Button
-              variant="outline"
-              fullWidth
-              size="sm"
-              className="border-[#BBBBC8] text-[#BBBBC8]"
-              onClick={onCounter}
-            >
-              Counter
-            </Button>
-            <Button
-              variant="outline"
-              fullWidth
-              size="sm"
-              className="border-[#BBBBC8] text-[#BBBBC8]"
-              loading={declineLoading}
-              onClick={onDecline}
-            >
-              Decline
-            </Button>
+        {closed ? (
+          <div className="inline-flex items-center gap-1.5 mb-2 mt-2 bg-gray-100 text-[#8F959E] text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full">
+            <Lock size={11} />
+            Closed
           </div>
+        ) : (
+          showActions && (
+            <div className="flex items-center gap-2 mb-3 mt-2">
+              <Button variant="primary" fullWidth onClick={onAccept} loading={acceptLoading} size="sm">
+                Accept
+              </Button>
+              <Button
+                variant="outline"
+                fullWidth
+                size="sm"
+                className="border-[#BBBBC8] text-[#BBBBC8]"
+                onClick={onCounter}
+              >
+                Counter
+              </Button>
+              <Button
+                variant="outline"
+                fullWidth
+                size="sm"
+                className="border-[#BBBBC8] text-[#BBBBC8]"
+                loading={declineLoading}
+                onClick={onDecline}
+              >
+                Decline
+              </Button>
+            </div>
+          )
         )}
 
         <p className="text-[10px] text-[#6B7280] mt-1 text-center">{time}</p>

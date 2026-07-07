@@ -34,7 +34,7 @@ const TopSellers = () => {
             {sellers.map((seller: any) => (
               <FadeInItem key={seller.id}>
                 <button
-                  onClick={() => router.push(`/seller-profile?id=${seller.id}`)}
+                  onClick={() => router.push(`/profile/${seller.id}`)}
                   className="flex-shrink-0 w-[150px] md:w-full bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex flex-col items-center text-center hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5 transition-all"
                 >
                   <div className="relative w-14 h-14 rounded-full overflow-hidden mb-2.5 bg-gray-100">

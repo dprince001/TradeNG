@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# TradeNG — Web
 
-## Getting Started
+TradeNG is a peer-to-peer escrow marketplace: sellers list items, buyers purchase directly or negotiate a price via offers, and payments are held in escrow until the buyer confirms receipt. This repo is the **Next.js web client** for the platform.
 
-First, run the development server:
+- **Design (Figma):** https://www.figma.com/design/mTczcEieXFNfN170IUHdmY/Lendsqr-Assessment---Split-?node-id=99-574&p=f
+- **API docs (Swagger UI):** http://localhost:5000/api/docs/v1/ (served by the backend, see [API server](#api-server))
+- **API base URL:** `http://localhost:5000/api/v1`
+
+## Tech stack
+
+- **Framework:** Next.js 13 (App Router), React 18, TypeScript
+- **Styling:** Tailwind CSS, shadcn/ui + Radix primitives, Framer Motion
+- **State/data:** Redux Toolkit + RTK Query (REST), Socket.io-client (realtime)
+- **Forms:** react-hook-form + zod
+- **Notifications (toasts):** sonner
+
+## Prerequisites
+
+1. **The TradeNG API server must be running locally on port 5000.** This web app talks to `http://localhost:5000/api/v1` (hardcoded in [`src/app/redux/api/apiSlice.ts`](src/app/redux/api/apiSlice.ts)) and connects its Socket.io client to the same origin — there is no `.env` to configure. Clone and run the API server separately before starting this app.
+2. Node.js (any version compatible with Next.js 13 / React 18, e.g. 18.x or 20.x).
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Other scripts:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```bash
+npm run build   # production build
+npm run start   # run the production build
+npm run lint    # lint the project
+```
 
-## Learn More
+## Demo accounts
 
-To learn more about Next.js, take a look at the following resources:
+The API's `npm run db:seed` script (run on the backend) populates a full set of demo accounts covering every account/listing/transaction state. **Every seeded account uses the password `Passw0rd1`.**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Email | Role | Notes |
+|---|---|---|
+| `adaeze.seller@tradeng.dev` | Top seller #1 | `ACTIVE`, verified seller, highest completed-sales count — tops the top-sellers leaderboard. Has listings in every status (active, negotiable, draft, sold), an open dispute, a completed withdrawal, and notifications across most types. |
+| `chidi.seller@tradeng.dev` | Top seller #2 | `ACTIVE`, verified seller. Has a cancelled listing, a transaction mid auto-release countdown (`RECEIPT_CONFIRMED`), and a pending withdrawal request. |
+| `bola.seller@tradeng.dev` | Top seller #3 | `ACTIVE`, verified seller. Has a transaction still in escrow (`PAID`, not yet shipped-confirmed), one still `PENDING_PAYMENT`, and a rejected withdrawal (with its ledger reversal). |
+| `ifeoma.seller@tradeng.dev` | Verified seller, low volume | `ACTIVE`, verified seller, but zero released sales — deliberately absent from the top-sellers leaderboard despite being verified. Has a refunded transaction from a buyer-favor dispute resolution. |
+| `emeka.buyer@tradeng.dev` | Buyer | `ACTIVE`, no listings. Buyer on several transactions above; has a wishlist and an ongoing counter-offer thread. |
+| `ngozi.buyer@tradeng.dev` | Buyer | `ACTIVE`, has a pending seller-verification request — useful for testing the verification-approval path. |
+| `tunde.unverified@tradeng.dev` | Unverified account | `status: "UNVERIFIED"` — use this to test the signup/email-verification flow. Has a live signup OTP: `482913`. |
+| `grace.suspended@tradeng.dev` | Suspended account | `status: "SUSPENDED"` — use this to test the login rejection path for suspended users. |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+> These accounts only exist after the API's seed script has been run against your local database. If login fails with "user not found," re-run `npm run db:seed` on the backend.
 
-## Deploy on Vercel
+## Project structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/app/
+├─ (pages)/
+│  ├─ (auth)/          Login, register, OTP verification, forgot/reset password, onboarding
+│  ├─ (users)/profile/  My profile, edit profile, public seller/buyer profile, orders, listings, wallet, settings
+│  ├─ (product)/        Product detail page, list/edit item flow
+│  ├─ (order)/          Checkout, payment, payment status, confirm delivery, order details
+│  ├─ (info)/            About, contact, FAQs, privacy/terms, dispute center, escrow protection
+│  ├─ chat/              Buyer/seller messaging (Socket.io realtime)
+│  ├─ discovery/         Category/discovery browsing
+│  ├─ favourites/        Wishlist
+│  ├─ home/              Landing page (top sellers, categories, platform stats)
+│  └─ listings/          Marketplace listing search/browse
+├─ components/           Shared UI (layout, auth, chat, list-items, profile) + primitives (Button, Input, Modal, Loader…)
+├─ redux/api/             RTK Query API slices, one per backend resource (auth, listings, transactions, chat, wallet, reviews, uploads, …)
+├─ context/               React context providers (Socket.io connection/notifications)
+└─ hooks/                 Shared hooks (useCurrentUser, useGet, usePost, usePaginatedQuery, useAuthGuard, …)
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## How it works
+
+- **Auth & session:** On login/OTP-verify, the API returns `{ user, token }`, which is stored in Redux (`state.app.userInfo`) and persisted to `localStorage` so sessions survive a refresh. `useCurrentUser()` reads this state; `useAuthGuard()` gates actions behind a login prompt for guests.
+- **Data fetching:** All REST calls go through RTK Query slices in `src/app/redux/api/`. `useGet`/`usePost` are thin wrappers around RTK Query hooks that standardize loading state and toast on success/error. `usePaginatedQuery` layers infinite-scroll pagination on top of list endpoints (cursor- or page-based, per the API's pagination contract).
+- **Realtime:** `SocketContext` opens a single authenticated Socket.io connection (JWT passed as `auth.token`) and exposes chat messages, typing indicators, read receipts, offer updates, and live notification counts to the rest of the app.
+- **Escrow flow:** Seller publishes a listing → buyer buys directly or negotiates an offer → a `Transaction` is created (`PENDING_PAYMENT`) → buyer checks out via Nomba → webhook/manual verify marks it `PAID` → buyer confirms receipt (`RECEIPT_CONFIRMED`) → buyer releases payment or it auto-releases after 48h (`RELEASED`) → buyer can leave a review. Disputes can be raised at the `PAID`/`RECEIPT_CONFIRMED` stages, moving the transaction to `DISPUTED`.
+- **Response envelope:** Every API response is wrapped as `{ success, message, data, pagination, code, status, ... }`; `usePost`/`useGet` unwrap this so components just deal with `data`.
+
+For the full request/response contracts (schemas, status codes, socket event payloads), see the [API docs](http://localhost:5000/api/docs/v1/) — the Swagger UI is served directly by the running API server.

@@ -37,6 +37,15 @@ const listingApiSlice = generalApiSlice.injectEndpoints({
             providesTags: ["Listing"],
         }),
 
+        getListingsForUser: builder.query({
+            query: ({ userId, ...params }: { userId: string } & Record<string, any>) => ({
+                url: `/listings/users/${userId}`,
+                method: "GET",
+                params: buildListingsParams(params),
+            }),
+            providesTags: ["Listing"],
+        }),
+
         getListingDetail: builder.query({
             query: (id) => ({
                 url: `/listings/${id}`,
@@ -81,4 +90,4 @@ const listingApiSlice = generalApiSlice.injectEndpoints({
     overrideExisting: false
 });
 
-export const { useCreateListingMutation, useGetListingsQuery, useGetMyListingsQuery, useGetListingDetailQuery, useDeleteListingMutation, useUpdateListingMutation, useBuyAListingDirectlyMutation, usePublishListingMutation } = listingApiSlice;
+export const { useCreateListingMutation, useGetListingsQuery, useGetMyListingsQuery, useGetListingsForUserQuery, useGetListingDetailQuery, useDeleteListingMutation, useUpdateListingMutation, useBuyAListingDirectlyMutation, usePublishListingMutation } = listingApiSlice;
