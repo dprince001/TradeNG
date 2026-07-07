@@ -20,6 +20,13 @@ export const canRespondToOffer = (message: any, isMine: boolean) => {
   return !isMine && status !== "ACCEPTED" && status !== "DECLINED";
 };
 
+// Once an accepted offer's transaction has moved past PENDING_PAYMENT (buyer already paid),
+// the offer is done — action buttons (accept/decline/counter/proceed to payment) no longer apply.
+export const isOfferClosed = (message: any) => {
+  const transactionStatus = message?.transaction_status;
+  return Boolean(transactionStatus) && transactionStatus.toLowerCase() !== "pending_payment";
+};
+
 export const formatMessageTime = (createdAt?: string) => {
   if (!createdAt) return "";
   return new Date(createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });

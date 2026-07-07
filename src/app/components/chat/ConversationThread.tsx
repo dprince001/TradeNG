@@ -10,7 +10,7 @@ import usePost from "@/app/hooks/usePost";
 import {
   useGetMessageInAConversationQuery,
   useSendMessageMutation,
-  useMarkMessageAsReadMutation
+  useMarkMessageAsReadMutation,
 } from "@/app/redux/api/chatApiSlice";
 import {
   useAcceptAnOfferMutation,
@@ -24,6 +24,7 @@ import {
   getConversationCounterpart,
   getConversationItemId,
   getFullName,
+  isOfferClosed,
 } from "@/app/components/chat/chatHelpers";
 import { useSocket } from "@/app/context/SocketContext";
 
@@ -40,8 +41,19 @@ const ConversationThread = ({
 }: ConversationThreadProps) => {
   const router = useRouter();
   const [message, setMessage] = useState("");
-  const { joinConversation, leaveConversation, onTyping, onStopTyping, onNewMessage, isConnected } = useSocket();
+  const {
+    joinConversation,
+    leaveConversation,
+    onTyping,
+    onStopTyping,
+    onNewMessage,
+    onMessageRead,
+    isConnected,
+  } = useSocket();
   const [isTyping, setIsTyping] = useState(false);
+  const [counterpartReadAt, setCounterpartReadAt] = useState<string | null>(
+    null,
+  );
 
   const conversationId = conversation?.id;
   const itemId = getConversationItemId(conversation);
@@ -57,7 +69,11 @@ const ConversationThread = ({
     router.push(`/profile/${counterpart.id}`);
   };
 
-  const { data: conversationData, isLoading: messagesLoading, refetch: refetchMessages } = useGet(
+  const {
+    data: conversationData,
+    isLoading: messagesLoading,
+    refetch: refetchMessages,
+  } = useGet(
     useGetMessageInAConversationQuery,
     conversationId,
     !!conversationId,
@@ -67,16 +83,19 @@ const ConversationThread = ({
     usePost(useAcceptAnOfferMutation);
   const { handlePost: declineAnOffer, isLoading: declineAnOfferLoading } =
     usePost(useDeclineAnOfferMutation);
-  const { handlePost: sendMessage, isLoading: isSendingMessage } = usePost(useSendMessageMutation);
-  const { handlePost: markMessageAsRead, isLoading: markMessageAsReadLoading } = usePost(useMarkMessageAsReadMutation);
+  const { handlePost: sendMessage, isLoading: isSendingMessage } = usePost(
+    useSendMessageMutation,
+  );
+  const { handlePost: markMessageAsRead, isLoading: markMessageAsReadLoading } =
+    usePost(useMarkMessageAsReadMutation);
 
   const messages = [...(conversationData?.messages || [])].reverse();
 
-  const latestAcceptedOffer = [...messages]
+  const latestAcceptedOfferMessage = [...messages]
     .reverse()
-    .find(
-      (m) => m.message_type === "OFFER" && m.offer?.status === "ACCEPTED",
-    )?.offer;
+    .find((m) => m.message_type === "OFFER" && m.offer?.status === "ACCEPTED");
+  const latestAcceptedOffer = latestAcceptedOfferMessage?.offer;
+  const latestAcceptedOfferClosed = isOfferClosed(latestAcceptedOfferMessage);
 
   // Mark conversation as read
   useEffect(() => {
@@ -97,18 +116,14 @@ const ConversationThread = ({
     if (!isConnected) return;
 
     const unsubStart = onTyping((payload) => {
-      console.log(payload)
-      if (
-        payload.conversation_id === conversationId
-      ) {
+      console.log(payload);
+      if (payload.conversation_id === conversationId) {
         setIsTyping(true);
       }
     });
 
     const unsubStop = onStopTyping((payload) => {
-      if (
-        payload.conversation_id === conversationId
-      ) {
+      if (payload.conversation_id === conversationId) {
         setIsTyping(false);
       }
     });
@@ -119,20 +134,46 @@ const ConversationThread = ({
     };
   }, [conversationId, currentUserId, onTyping, onStopTyping, isConnected]);
 
-  // Listen for new messages
+  // Listen for new messages (regular text + offers both arrive over message:new)
   useEffect(() => {
     if (!isConnected) return;
 
     const unsubNewMessage = onNewMessage((payload) => {
       if (payload.conversation_id === conversationId) {
         refetchMessages?.();
+        // The other participant is still in the room actively sending — clear any stale typing indicator.
+        if (payload.sender_id !== currentUserId) setIsTyping(false);
       }
     });
 
     return () => {
       unsubNewMessage();
     };
-  }, [conversationId, onNewMessage, isConnected, refetchMessages]);
+  }, [
+    conversationId,
+    onNewMessage,
+    isConnected,
+    refetchMessages,
+    currentUserId,
+  ]);
+
+  // Listen for read receipts — flips our sent messages to "seen" live.
+  useEffect(() => {
+    if (!isConnected) return;
+
+    const unsubRead = onMessageRead((payload) => {
+      if (
+        payload.conversation_id === conversationId &&
+        payload.reader_id !== currentUserId
+      ) {
+        setCounterpartReadAt(payload.read_at);
+      }
+    });
+
+    return () => {
+      unsubRead();
+    };
+  }, [conversationId, onMessageRead, isConnected, currentUserId]);
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
@@ -200,7 +241,10 @@ const ConversationThread = ({
             )}
           </div>
           <span className="text-text-secondary text-xs truncate block">
-            {listing?.item_name || "Item"} {isTyping && <span className="text-primary italic ml-1">Typing...</span>}
+            {listing?.item_name || "Item"}{" "}
+            {isTyping && (
+              <span className="text-primary italic ml-1">Typing...</span>
+            )}
           </span>
         </button>
       </div>
@@ -215,6 +259,7 @@ const ConversationThread = ({
             messages={messages}
             userId={currentUserId}
             sellerId={sellerId}
+            counterpartReadAt={counterpartReadAt}
             acceptLoading={acceptAnOfferLoading}
             declineLoading={declineAnOfferLoading}
             onAcceptOffer={(offerId) => acceptAnOffer(offerId)}
@@ -223,20 +268,32 @@ const ConversationThread = ({
           />
         )}
 
-        {latestAcceptedOffer && !isSeller && (
-          <AcceptedOfferBanner
-            amount={latestAcceptedOffer.amount ?? 0}
-            onProceed={() =>
-              router.push(`/payment/${latestAcceptedOffer.transaction_id}`)
-            }
-          />
-        )}
+        {latestAcceptedOffer &&
+          isOfferClosed(latestAcceptedOfferMessage) &&
+          !isSeller && (
+            <AcceptedOfferBanner
+              amount={latestAcceptedOffer.amount ?? 0}
+              closed={latestAcceptedOfferClosed}
+              onProceed={() =>
+                router.push(`/payment/${latestAcceptedOffer.transaction_id}`)
+              }
+            />
+          )}
 
         {isTyping && (
           <div className="flex gap-1.5 mt-4 mb-2 items-center bg-[#F5F6FA] w-fit px-3.5 py-2.5 rounded-2xl rounded-bl-sm border border-gray-100">
-            <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-            <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-            <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+            <span
+              className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+              style={{ animationDelay: "0ms" }}
+            ></span>
+            <span
+              className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+              style={{ animationDelay: "150ms" }}
+            ></span>
+            <span
+              className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+              style={{ animationDelay: "300ms" }}
+            ></span>
           </div>
         )}
       </div>

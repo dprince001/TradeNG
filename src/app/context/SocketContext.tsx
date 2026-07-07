@@ -12,6 +12,7 @@ import { io, Socket } from "socket.io-client";
 import { useSelector } from "react-redux";
 import useGet from "@/app/hooks/useGet";
 import { useGetUnreadNotificationCountQuery } from "@/app/redux/api/notificationsApiSlice";
+import { getBaseUrl } from "@/app/redux/api/apiSlice";
 
 export interface SocketNotification {
   id: string;
@@ -33,6 +34,12 @@ export interface IncomingMessage {
   offer?: any;
 }
 
+export interface ReadReceipt {
+  conversation_id: string;
+  reader_id: string;
+  read_at: string;
+}
+
 interface SocketContextValue {
   socket: Socket | null;
   isConnected: boolean;
@@ -47,6 +54,7 @@ interface SocketContextValue {
   onTyping: (callback: (data: any) => void) => () => void;
   onStopTyping: (callback: (data: any) => void) => () => void;
   onNewMessage: (callback: (data: any) => void) => () => void;
+  onMessageRead: (callback: (data: ReadReceipt) => void) => () => void;
 }
 
 const SocketContext = createContext<SocketContextValue>({
@@ -63,9 +71,12 @@ const SocketContext = createContext<SocketContextValue>({
   onTyping: (callback: (data: any) => void) => () => { },
   onStopTyping: (callback: (data: any) => void) => () => { },
   onNewMessage: (callback: (data: any) => void) => () => { },
+  onMessageRead: (callback: (data: ReadReceipt) => void) => () => { },
 });
 
-const SOCKET_URL = "https://tradeng-api.onrender.com";
+// Socket.io runs on the same host as the REST API (no separate port/path) — derive it
+// from the API base URL rather than hardcoding an environment, so both always agree.
+const SOCKET_URL = getBaseUrl().replace(/\/api\/v\d+\/?$/, "");
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const token = useSelector((state: any) => state.app.userInfo?.token);
@@ -191,6 +202,11 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     return () => { socketRef.current?.off("message:new", callback); };
   }, []);
 
+  const onMessageRead = useCallback((callback: (data: ReadReceipt) => void) => {
+    socketRef.current?.on("message:read", callback);
+    return () => { socketRef.current?.off("message:read", callback); };
+  }, []);
+
 
   const markNotificationsRead = useCallback(() => {
     setUnreadNotificationCount(0);
@@ -212,6 +228,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         onTyping,
         onStopTyping,
         onNewMessage,
+        onMessageRead,
       }}
     >
       {children}
