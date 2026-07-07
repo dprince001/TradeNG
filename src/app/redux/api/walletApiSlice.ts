@@ -35,6 +35,15 @@ const walletApiSlice = generalApiSlice.injectEndpoints({
             invalidatesTags: ["Wallet"],
         }),
 
+        updatePayoutBank: builder.mutation({
+            query: ({ id, ...body }) => ({
+                url: `/wallet/payout-banks/${id}`,
+                method: "PATCH",
+                body,
+            }),
+            invalidatesTags: ["Wallet"],
+        }),
+
         removePayoutBank: builder.mutation({
             query: (id) => ({
                 url: `/wallet/payout-banks/${id}`,
@@ -68,6 +77,7 @@ export const {
     useGetWalletLedgerQuery,
     useGetPayoutBanksQuery,
     useAddPayoutBankMutation,
+    useUpdatePayoutBankMutation,
     useRemovePayoutBankMutation,
     useGetWithdrawalsQuery,
     useRequestWithdrawalMutation,
