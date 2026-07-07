@@ -2,7 +2,7 @@
 
 TradeNG is a peer-to-peer escrow marketplace: sellers list items, buyers purchase directly or negotiate a price via offers, and payments are held in escrow until the buyer confirms receipt. This repo is the **Next.js web client** for the platform.
 
-- **Design (Figma):** https://www.figma.com/design/mTczcEieXFNfN170IUHdmY/Lendsqr-Assessment---Split-?node-id=99-574&p=f
+- **Design (Figma):** https://www.figma.com/design/mTczcEieXFNfN170IUHdmY/TradeNG?node-id=99-574&p=f&t=uyGOEtcyNXMvLV0Q-0
 - **Backend repo:** https://github.com/marvelmiles/tradeNG-api.git
 - **API docs (Swagger UI):** https://tradeng-api.onrender.com/api/docs/v1/
 - **API base URL:** `https://tradeng-api.onrender.com/api/v1`
