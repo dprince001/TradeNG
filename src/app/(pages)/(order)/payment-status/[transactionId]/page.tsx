@@ -336,7 +336,7 @@ const PaymentStatusPage = () => {
           <Button
             fullWidth
             disabled={!transaction}
-            onClick={() => router.push(`/profile/orders}`)}
+            onClick={() => router.push(`/profile/orders`)}
             className="font-bold text-md"
           >
             View Orders
