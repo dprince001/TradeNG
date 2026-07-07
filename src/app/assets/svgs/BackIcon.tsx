@@ -12,9 +12,9 @@ const BackIcon = () => {
       <path
         d="M6 11L1 6L6 1"
         stroke="black"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

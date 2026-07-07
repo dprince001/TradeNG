@@ -1,13 +1,18 @@
 import Input from "@/app/components/Input";
 import MessageIcon from "@/app/assets/svgs/home/MessageIcon";
+import { useSocket } from "@/app/context/SocketContext";
 
 interface ChatComposerProps {
   value: string;
   onChange: (value: string) => void;
   onSend: () => void;
+  conversationId: string
 }
 
-const ChatComposer = ({ value, onChange, onSend }: ChatComposerProps) => {
+const ChatComposer = ({ value, onChange, onSend, conversationId }: ChatComposerProps) => {
+  const { startTyping, stopTyping } = useSocket();
+
+
   return (
     <div className="flex items-center gap-3">
       <Input
@@ -16,6 +21,8 @@ const ChatComposer = ({ value, onChange, onSend }: ChatComposerProps) => {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && onSend()}
+        onFocus={() => startTyping(conversationId)}
+        onBlur={() => stopTyping(conversationId)}
       />
 
       <button

@@ -12,9 +12,9 @@ const BankTransferIcon = () => {
       <path
         d="M1 1H1.00833"
         stroke="#4B5563"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
