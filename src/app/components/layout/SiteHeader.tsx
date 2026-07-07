@@ -23,7 +23,7 @@ import { useGetMyBuyingOrdersQuery } from "@/app/redux/api/ordersApiSlice";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Categories", href: "/#categories" },
-  { label: "Sell", href: "/list-item" },
+  // { label: "Sell", href: "/list-item" },
 ];
 
 interface SiteHeaderProps {

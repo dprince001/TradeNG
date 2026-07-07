@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   ChevronRight,
@@ -11,6 +11,7 @@ import {
   BadgeCheck,
   PackageCheck,
   Undo2,
+  Star,
 } from "lucide-react";
 import BackButton from "@/app/components/layout/BackButton";
 import Container from "@/app/components/layout/Container";
@@ -30,9 +31,11 @@ import {
   useReleasePaymentMutation,
   useRaiseDisputeMutation,
 } from "@/app/redux/api/transactionsApiSlice";
+import { useLeaveATransactionReviewMutation } from "@/app/redux/api/reviewsApiSlice";
 import ConfirmReceiptModal from "./ConfirmReceiptModal";
 import ConfirmReleaseModal from "../../confirm-delivery/ConfirmReleaseItem";
 import ReportProblemModal from "../../confirm-delivery/ReportProblemModal";
+import ReviewModal from "./ReviewModal";
 
 const OrderDetailsPage = () => {
   const router = useRouter();
@@ -43,6 +46,8 @@ const OrderDetailsPage = () => {
   const [showConfirmReceipt, setShowConfirmReceipt] = useState(false);
   const [showConfirmRelease, setShowConfirmRelease] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [hasReviewed, setHasReviewed] = useState(false);
 
   const { data: transactionData, isFetching } = useGet(
     useGetTransactionDetailQuery,
@@ -52,6 +57,7 @@ const OrderDetailsPage = () => {
   const { handlePost: confirmReceipt, isLoading: confirmingReceipt } = usePost(useConfirmReceiptMutation);
   const { handlePost: releasePayment, isLoading: releasing } = usePost(useReleasePaymentMutation);
   const { handlePost: raiseDispute, isLoading: disputing } = usePost(useRaiseDisputeMutation);
+  const { handlePost: leaveReview, isLoading: submittingReview } = usePost(useLeaveATransactionReviewMutation);
 
   const transaction = transactionData?.transaction;
   const listing = transaction?.listing;
@@ -60,6 +66,19 @@ const OrderDetailsPage = () => {
   const counterparty = isBuyer ? transaction?.seller : transaction?.buyer;
   const counterpartyLabel = isBuyer ? "Seller" : "Buyer";
   const meta = statusMeta[transaction?.status] || statusMeta.PENDING_PAYMENT;
+
+  const reviewedStorageKey = transactionId ? `reviewed_txn_${transactionId}` : "";
+
+  useEffect(() => {
+    if (reviewedStorageKey && localStorage.getItem(reviewedStorageKey) === "1") {
+      setHasReviewed(true);
+    }
+  }, [reviewedStorageKey]);
+
+  const markReviewed = () => {
+    setHasReviewed(true);
+    if (reviewedStorageKey) localStorage.setItem(reviewedStorageKey, "1");
+  };
 
   const handleConfirmReceipt = async () => {
     if (!transactionId) return;
@@ -70,7 +89,10 @@ const OrderDetailsPage = () => {
   const handleConfirmRelease = async () => {
     if (!transactionId) return;
     const response = await releasePayment(transactionId);
-    if (response?.success !== false) setShowConfirmRelease(false);
+    if (response?.success !== false) {
+      setShowConfirmRelease(false);
+      if (isBuyer && !hasReviewed) setShowReviewModal(true);
+    }
   };
 
   const handleReportProblem = async (description: string) => {
@@ -79,6 +101,21 @@ const OrderDetailsPage = () => {
     if (response?.success !== false) {
       setShowReportModal(false);
       router.push("/dispute-center");
+    }
+  };
+
+  const handleSubmitReview = async (rating: number, comment: string) => {
+    if (!transactionId || rating === 0) return;
+    const response = await leaveReview(
+      { transactionId, review: { rating, comment: comment || undefined } },
+      { showSuccessToast: true }
+    );
+    if (response?.success !== false) {
+      markReviewed();
+      setShowReviewModal(false);
+    } else if (response?.error?.toLowerCase().includes("already reviewed")) {
+      markReviewed();
+      setShowReviewModal(false);
     }
   };
 
@@ -314,9 +351,25 @@ const OrderDetailsPage = () => {
                     <CheckCircle2 size={26} className="text-green-600" />
                   </div>
                   <h2 className="text-green-700 text-base font-bold mb-2">Order Complete</h2>
-                  <p className="text-green-700 text-sm leading-[1.6]">
+                  <p className="text-green-700 text-sm leading-[1.6] mb-4">
                     Funds have been released to the seller.
                   </p>
+
+                  {isBuyer &&
+                    (hasReviewed ? (
+                      <div className="flex items-center gap-1.5 text-green-700 text-xs font-semibold">
+                        <Star size={14} fill="#F59E0B" stroke="#F59E0B" />
+                        Thanks for reviewing this order
+                      </div>
+                    ) : (
+                      <Button
+                        fullWidth
+                        onClick={() => setShowReviewModal(true)}
+                        className="font-bold shadow-[0_4px_12px_rgba(255,67,4,0.15)]"
+                      >
+                        Leave a Review
+                      </Button>
+                    ))}
                 </div>
               )}
 
@@ -366,6 +419,16 @@ const OrderDetailsPage = () => {
             isLoading={disputing}
             onSubmit={handleReportProblem}
             onCancel={() => setShowReportModal(false)}
+          />
+        )}
+
+        {showReviewModal && (
+          <ReviewModal
+            revieweeName={`${counterparty?.first_name || ""} ${counterparty?.last_name || ""}`.trim() || counterpartyLabel}
+            revieweeLabel={counterpartyLabel.toLowerCase()}
+            onSubmit={handleSubmitReview}
+            onCancel={() => setShowReviewModal(false)}
+            isLoading={submittingReview}
           />
         )}
       </div>

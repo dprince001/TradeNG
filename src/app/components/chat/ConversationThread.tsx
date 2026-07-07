@@ -269,7 +269,7 @@ const ConversationThread = ({
         )}
 
         {latestAcceptedOffer &&
-          isOfferClosed(latestAcceptedOfferMessage) &&
+          !isOfferClosed(latestAcceptedOfferMessage) &&
           !isSeller && (
             <AcceptedOfferBanner
               amount={latestAcceptedOffer.amount ?? 0}
