@@ -3,8 +3,9 @@
 TradeNG is a peer-to-peer escrow marketplace: sellers list items, buyers purchase directly or negotiate a price via offers, and payments are held in escrow until the buyer confirms receipt. This repo is the **Next.js web client** for the platform.
 
 - **Design (Figma):** https://www.figma.com/design/mTczcEieXFNfN170IUHdmY/Lendsqr-Assessment---Split-?node-id=99-574&p=f
-- **API docs (Swagger UI):** http://localhost:5000/api/docs/v1/ (served by the backend, see [API server](#api-server))
-- **API base URL:** `http://localhost:5000/api/v1`
+- **Backend repo:** https://github.com/marvelmiles/tradeNG-api.git
+- **API docs (Swagger UI):** https://tradeng-api.onrender.com/api/docs/v1/
+- **API base URL:** `https://tradeng-api.onrender.com/api/v1`
 
 ## Tech stack
 
@@ -16,7 +17,7 @@ TradeNG is a peer-to-peer escrow marketplace: sellers list items, buyers purchas
 
 ## Prerequisites
 
-1. **The TradeNG API server must be running locally on port 5000.** This web app talks to `http://localhost:5000/api/v1` (hardcoded in [`src/app/redux/api/apiSlice.ts`](src/app/redux/api/apiSlice.ts)) and connects its Socket.io client to the same origin — there is no `.env` to configure. Clone and run the API server separately before starting this app.
+1. **The TradeNG API.** This web app talks to `https://tradeng-api.onrender.com/api/v1` (hardcoded in [`src/app/redux/api/apiSlice.ts`](src/app/redux/api/apiSlice.ts)) and connects its Socket.io client to the same origin — there is no `.env` to configure. To run against a local instance instead, clone the [backend repo](https://github.com/marvelmiles/tradeNG-api.git), run it on port 5000, and swap the `getBaseUrl()` value in `apiSlice.ts` to `http://localhost:5000/api/v1`.
 2. Node.js (any version compatible with Next.js 13 / React 18, e.g. 18.x or 20.x).
 
 ## Getting started
@@ -51,7 +52,7 @@ The API's `npm run db:seed` script (run on the backend) populates a full set of 
 | `tunde.unverified@tradeng.dev` | Unverified account | `status: "UNVERIFIED"` — use this to test the signup/email-verification flow. Has a live signup OTP: `482913`. |
 | `grace.suspended@tradeng.dev` | Suspended account | `status: "SUSPENDED"` — use this to test the login rejection path for suspended users. |
 
-> These accounts only exist after the API's seed script has been run against your local database. If login fails with "user not found," re-run `npm run db:seed` on the backend.
+> These accounts only exist after the API's seed script has been run against its database. If login fails with "user not found," the hosted database may need to be reseeded (`npm run db:seed` on the backend).
 
 ## Project structure
 
@@ -82,4 +83,4 @@ src/app/
 - **Escrow flow:** Seller publishes a listing → buyer buys directly or negotiates an offer → a `Transaction` is created (`PENDING_PAYMENT`) → buyer checks out via Nomba → webhook/manual verify marks it `PAID` → buyer confirms receipt (`RECEIPT_CONFIRMED`) → buyer releases payment or it auto-releases after 48h (`RELEASED`) → buyer can leave a review. Disputes can be raised at the `PAID`/`RECEIPT_CONFIRMED` stages, moving the transaction to `DISPUTED`.
 - **Response envelope:** Every API response is wrapped as `{ success, message, data, pagination, code, status, ... }`; `usePost`/`useGet` unwrap this so components just deal with `data`.
 
-For the full request/response contracts (schemas, status codes, socket event payloads), see the [API docs](http://localhost:5000/api/docs/v1/) — the Swagger UI is served directly by the running API server.
+For the full request/response contracts (schemas, status codes, socket event payloads), see the [API docs](https://tradeng-api.onrender.com/api/docs/v1/) — the Swagger UI is served directly by the running API server.
